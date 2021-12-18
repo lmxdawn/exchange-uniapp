@@ -1,0 +1,20 @@
+{
+  "common.home": "Home",
+  "common.market": "Market",
+  "common.trade": "Trade",
+  "common.assets": "Wallet",
+  "http.code.1": "The system is busy, please try again later.",
+  "http.code.2": "Login invalid",
+  "http.code.3": "Parameter verification error",
+  "http.code.4": "Permission verification failed",
+  "http.code.5": "No relevant data",
+  "http.code.6": "No changes to the data",
+  "http.code.7": "Data already exists",
+  "http.code.30000": "message failed to send",
+  "http.code.40000": "wrong password",
+  "http.code.40001": "Phone number already exists",
+  "http.code.70001": "Insufficient wallet balance",
+  "http.code.70002": "Trading pair does not exist",
+  "http.code.70003": "Cannot be less than the minimum transaction volume",
+  "http.code.70005": "Cannot be less than the minimum transaction amount"
+}

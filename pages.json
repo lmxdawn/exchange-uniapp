@@ -1,0 +1,62 @@
+{
+  "pages": [
+    //pages数组中第一项表示应用启动页，参考：https://uniapp.dcloud.io/collocation/pages
+    {
+      "path": "pages/home/index",
+      "style": {
+        "navigationBarTitleText": "%common.home%"
+      }
+    },
+    {
+      "path": "pages/market/index",
+      "style": {
+        "navigationBarTitleText": "%common.market%"
+      }
+    },
+    {
+      "path": "pages/trade/index",
+      "style": {
+        "navigationBarTitleText": "%common.trade%"
+      }
+    },
+    {
+      "path": "pages/assets/index",
+      "style": {
+        "navigationBarTitleText": "%common.assets%"
+      }
+    }
+  ],
+  "tabBar": {
+    "color": "#7A7E83",
+    "selectedColor": "#007AFF",
+    "borderStyle": "black",
+    "backgroundColor": "#F8F8F8",
+    "list": [
+      {
+        "pagePath": "pages/home/index",
+        "text": "%common.home%"
+      }
+      ,
+      {
+        "pagePath": "pages/market/index",
+        "text": "%common.market%"
+      }
+      ,
+      {
+        "pagePath": "pages/trade/index",
+        "text": "%common.trade%"
+      }
+      ,
+      {
+        "pagePath": "pages/assets/index",
+        "text": "%common.assets%"
+      }
+    ]
+  },
+  "globalStyle": {
+    "navigationBarTextStyle": "black",
+    "navigationBarTitleText": "uni-app",
+    "navigationBarBackgroundColor": "#F8F8F8",
+    "backgroundColor": "#F8F8F8"
+  }
+}

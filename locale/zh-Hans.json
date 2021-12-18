@@ -1,0 +1,20 @@
+{
+  "common.home": "首页",
+  "common.market": "行情",
+  "common.trade": "交易",
+  "common.assets": "资产",
+  "http.code.1": "系统繁忙，请稍后再试。",
+  "http.code.2": "登录失效",
+  "http.code.3": "参数验证错误",
+  "http.code.4": "权限验证失败",
+  "http.code.5": "没有相关数据",
+  "http.code.6": "数据没有任何更改",
+  "http.code.7": "数据已存在",
+  "http.code.30000": "短信发送失败",
+  "http.code.40000": "密码错误",
+  "http.code.40001": "手机号已存在",
+  "http.code.70001": "钱包余额不足",
+  "http.code.70002": "交易对不存在",
+  "http.code.70003": "不能小于最低交易量",
+  "http.code.70005": "不能小于最低交易额"
+}

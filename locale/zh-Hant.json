@@ -1,0 +1,20 @@
+{
+  "common.home": "首頁",
+  "common.market": "行情",
+  "common.trade": "交易",
+  "common.assets": "資產",
+  "http.code.1": "系統繁忙，請稍後再試。",
+  "http.code.2": "登錄失效",
+  "http.code.3": "參數驗證錯誤",
+  "http.code.4": "權限驗證失敗",
+  "http.code.5": "沒有相關數據",
+  "http.code.6": "數據沒有任何更改",
+  "http.code.7": "數據已存在",
+  "http.code.30000": "短信發送失敗",
+  "http.code.40000": "密碼錯誤",
+  "http.code.40001": "手機號已存在",
+  "http.code.70001": "錢包餘額不足",
+  "http.code.70002": "交易對不存在",
+  "http.code.70003": "不能小於最低交易量",
+  "http.code.70005": "不能小於最低交易額"
+}
