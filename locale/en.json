@@ -2,7 +2,7 @@
   "common.home": "Home",
   "common.market": "Market",
   "common.trade": "Trade",
-  "common.assets": "Wallet",
+  "common.wallet": "Wallet",
   "http.code.1": "The system is busy, please try again later.",
   "http.code.2": "Login invalid",
   "http.code.3": "Parameter verification error",

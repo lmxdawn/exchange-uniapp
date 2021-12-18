@@ -20,36 +20,44 @@
       }
     },
     {
-      "path": "pages/assets/index",
+      "path": "pages/wallet/index",
       "style": {
-        "navigationBarTitleText": "%common.assets%"
+        "navigationBarTitleText": "%common.wallet%"
       }
     }
   ],
   "tabBar": {
-    "color": "#7A7E83",
-    "selectedColor": "#007AFF",
-    "borderStyle": "black",
-    "backgroundColor": "#F8F8F8",
+    "color": "#7a8593",
+    "selectedColor": "#1abb97",
+    "borderStyle": "white",
+    "backgroundColor": "#1f2630",
     "list": [
       {
         "pagePath": "pages/home/index",
+        "iconPath": "static/tabbar/home.png",
+        "selectedIconPath": "static/tabbar/home-selected.png",
         "text": "%common.home%"
       }
       ,
       {
         "pagePath": "pages/market/index",
+        "iconPath": "static/tabbar/market.png",
+        "selectedIconPath": "static/tabbar/market-selected.png",
         "text": "%common.market%"
       }
       ,
       {
         "pagePath": "pages/trade/index",
+        "iconPath": "static/tabbar/trade.png",
+        "selectedIconPath": "static/tabbar/trade-selected.png",
         "text": "%common.trade%"
       }
       ,
       {
-        "pagePath": "pages/assets/index",
-        "text": "%common.assets%"
+        "pagePath": "pages/wallet/index",
+        "iconPath": "static/tabbar/wallet.png",
+        "selectedIconPath": "static/tabbar/wallet-selected.png",
+        "text": "%common.wallet%"
       }
     ]
   },

@@ -2,7 +2,7 @@
   "common.home": "首页",
   "common.market": "行情",
   "common.trade": "交易",
-  "common.assets": "资产",
+  "common.wallet": "资产",
   "http.code.1": "系统繁忙，请稍后再试。",
   "http.code.2": "登录失效",
   "http.code.3": "参数验证错误",

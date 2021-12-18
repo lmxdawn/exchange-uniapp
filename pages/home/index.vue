@@ -29,6 +29,8 @@
 		flex-direction: column;
 		align-items: center;
 		justify-content: center;
+    background-color: black;
+    height: 1500rpx;
 	}
 
 	.logo {
