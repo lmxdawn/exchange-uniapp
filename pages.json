@@ -4,25 +4,41 @@
     {
       "path": "pages/home/index",
       "style": {
-        "navigationBarTitleText": "%common.home%"
+        "navigationBarTitleText": "%common.home%",
+        "navigationStyle":"custom",  //可以去掉小程序端的顶部导航
+        "app-plus":{
+          "titleNView":false   // 去掉APP、H5的顶部导航
+        }
       }
     },
     {
       "path": "pages/market/index",
       "style": {
-        "navigationBarTitleText": "%common.market%"
+        "navigationBarTitleText": "%common.market%",
+        "navigationStyle":"custom",  //可以去掉小程序端的顶部导航
+        "app-plus":{
+          "titleNView":false   // 去掉APP、H5的顶部导航
+        }
       }
     },
     {
       "path": "pages/trade/index",
       "style": {
-        "navigationBarTitleText": "%common.trade%"
+        "navigationBarTitleText": "%common.trade%",
+        "navigationStyle":"custom",  //可以去掉小程序端的顶部导航
+        "app-plus":{
+          "titleNView":false   // 去掉APP、H5的顶部导航
+        }
       }
     },
     {
       "path": "pages/wallet/index",
       "style": {
-        "navigationBarTitleText": "%common.wallet%"
+        "navigationBarTitleText": "%common.wallet%",
+        "navigationStyle":"custom",  //可以去掉小程序端的顶部导航
+        "app-plus":{
+          "titleNView":false   // 去掉APP、H5的顶部导航
+        }
       }
     }
   ],
