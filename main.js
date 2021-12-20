@@ -13,6 +13,12 @@ import store from './store'
 
 import * as filters from "./filters/index"; // 全局过滤器
 
+// uView 组件库
+import uView from '@/uni_modules/uview-ui'
+Vue.use(uView)
+// 使用rpx单位
+// uni.$u.config.unit = 'rpx'
+
 // 实用的方法
 import tui from "./tui";
 
