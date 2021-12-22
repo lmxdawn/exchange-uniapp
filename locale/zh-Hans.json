@@ -4,6 +4,8 @@
   "common.trade": "交易",
   "common.wallet": "资产",
   "common.search.placeholder": "输入搜索关键词",
+  "market.timely": "现货",
+  "market.contract": "合约",
   "http.code.1": "系统繁忙，请稍后再试。",
   "http.code.2": "登录失效",
   "http.code.3": "参数验证错误",

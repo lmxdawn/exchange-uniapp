@@ -103,6 +103,7 @@
 		/* #ifdef H5 */
 		cursor: pointer;
 		/* #endif */
+    justify-content: center;
 	}
 
 	.segmented-control__item {
@@ -114,6 +115,7 @@
 		flex: 1;
 		justify-content: center;
 		align-items: center;
+    border-color: transparent;
 	}
 
 	.segmented-control__item--button {

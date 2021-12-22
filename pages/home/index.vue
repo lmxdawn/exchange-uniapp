@@ -1,25 +1,23 @@
 <template>
   <view>
-    <uni-nav-bar fixed color="#b8c6d8" :border="false" background-color="#212631" @clickLeft="asset" @clickRight="message">
-      <block slot="left">
-        <view class="nav-bar-left">
-          <uni-icons type="contact" size="38" color="#717C8A" @click="asset" />
-        </view>
-      </block>
-      <view class="input-view">
-        <uni-icons class="input-uni-icon" type="search" size="18" color="#717C8A" />
-        <input confirm-type="search" class="nav-bar-input" type="text" :placeholder="$t('common.search.placeholder')" @confirm="confirm" />
-      </view>
-      <block slot="right">
-        <view class="nav-bar-right">
-          <u-icon name="scan" style="margin-right: 10px" color="#b8c6d8" size="28"></u-icon>
-          <view style="margin-right: 10px;position: relative;">
-            <u-icon name="bell" color="#b8c6d8" size="28"></u-icon>
-            <u-badge absolute :offset="[0,0]" isDot type="error" max="99" :value="value"></u-badge>
-          </view>
-        </view>
-      </block>
-    </uni-nav-bar>
+    <my-nav-bar-search
+        statusBar
+        :placeholder="$t('common.search.placeholder')"
+        color="#b8c6d8"
+        backgroundColor="#212631"
+        icon0Name="contact"
+        icon1Name="scan"
+        icon2Name="notification"
+        :icon0Size="43"
+        :icon1Size="23"
+        :icon2Size="28"
+        icon0Color="#717C8A"
+        icon1Color="#b8c6d8"
+        icon2Color="#b8c6d8"
+        :icon2Value="value"
+    >
+
+    </my-nav-bar-search>
 
     <view class="content">
 
@@ -49,7 +47,13 @@
 </template>
 
 <script>
-	export default {
+
+  import myNavBarSearch from "../../components/my-nav-bar/my-nav-bar-search";
+
+  export default {
+    components: {
+      myNavBarSearch
+    },
 		data() {
 			return {
 				title: this.$t('common.home'),
@@ -88,49 +92,6 @@
 </script>
 
 <style lang="scss">
-  $nav-height: 30px;
-
-  .uni-nav-bar-text {
-    font-size: 12px;
-  }
-
-  .nav-bar-left {
-    display: flex;
-    flex-direction: row;
-    align-items: center;
-    justify-content: center;
-  }
-  .nav-bar-right {
-    display: flex;
-    flex-direction: row;
-    align-items: center;
-    justify-content: center;
-  }
-
-  .input-view {
-    display: flex;
-    flex-direction: row;
-    flex: 1;
-    background-color: #292E39;
-    height: $nav-height;
-    border-radius: 15px;
-    padding: 0 15px;
-    flex-wrap: nowrap;
-    line-height: $nav-height;
-    margin: 7px 30px 7px 0;
-  }
-
-  .input-uni-icon {
-    line-height: $nav-height;
-  }
-
-  .nav-bar-input {
-    height: $nav-height;
-    line-height: $nav-height;
-    width: 320rpx;
-    padding: 0 5px;
-    font-size: 14px;
-  }
 
   .content {
     background-color: #212631;
@@ -141,7 +102,16 @@
     padding: 15px 0 20px;
   }
   .swiper-item {
+    width: 100%;
+    height: 100%;
     padding: 0 22px;
+    box-sizing: border-box;
+    image {
+      width: 100%;
+      height: 100%;
+      border-radius: 5px;
+      overflow: hidden;
+    }
   }
 
   .card{
