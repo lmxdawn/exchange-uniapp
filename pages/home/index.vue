@@ -8,7 +8,7 @@
       </block>
       <view class="input-view">
         <uni-icons class="input-uni-icon" type="search" size="18" color="#717C8A" />
-        <input confirm-type="search" class="nav-bar-input" type="text" placeholder="输入搜索关键词" @confirm="confirm" />
+        <input confirm-type="search" class="nav-bar-input" type="text" :placeholder="$t('common.search.placeholder')" @confirm="confirm" />
       </view>
       <block slot="right">
         <view class="nav-bar-right">

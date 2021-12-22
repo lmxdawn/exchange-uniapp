@@ -183,7 +183,7 @@
 		flex-wrap: nowrap;
 		width: 120rpx;
 		// padding: 0 6px;
-		justify-content: center;
+      justify-content: flex-end;
 		align-items: center;
 		/* #ifdef H5 */
 		cursor: pointer;

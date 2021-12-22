@@ -341,7 +341,7 @@
 					width: 30px;
 					position: absolute;
 					bottom: 2px;
-					border-radius: 100px;
+					//border-radius: 100px;
 					transition-property: transform;
 					transition-duration: 300ms;
 				}
