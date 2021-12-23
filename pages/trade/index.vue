@@ -8,17 +8,18 @@
 </template>
 
 <script>
-	export default {
+  export default {
+    components: {
+    },
 		data() {
 			return {
-				title: this.$t('common.trade')
+				title: this.$t('common.trade'),
 			}
 		},
 		onLoad() {
 
 		},
 		methods: {
-
 		}
 	}
 </script>

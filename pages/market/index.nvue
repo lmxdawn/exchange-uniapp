@@ -4,32 +4,35 @@
         :current="navBarTabIndex"
         :tabBars="tabBars"
         statusBar
-        iconLeftName="pushpin"
+        iconLeftName="flag"
         iconRightName="search"
         @clickItem="onNavBarTabClickItem">
     </my-nav-bar-tab>
-    <view class="tabs">
-      <scroll-view ref="tabbar1" id="tab-bar" class="tab-bar" :scroll="false" :scroll-x="true" :show-scrollbar="false"
+    <view class="swiper-list-tabs">
+      <scroll-view ref="tabbar1" id="swiper-list-tab-bar" class="swiper-list-tab-bar" :scroll="false" :scroll-x="true" :show-scrollbar="false"
                    :scroll-into-view="scrollInto">
         <view style="flex-direction: column;">
           <view style="flex-direction: row;">
-            <view class="uni-tab-item" v-for="(tab,index) in tabList" :key="tab.id" :id="tab.id" :ref="'tabitem'+index"
+            <view class="swiper-list-uni-tab-item" v-for="(tab,index) in tabList" :key="tab.id" :id="tab.id" :ref="'tabitem'+index"
                   :data-id="index" :data-current="index" @click="ontabtap">
-              <text class="uni-tab-item-title"
-                    :class="tabIndex==index ? 'uni-tab-item-title-active' : ''">{{tab.name}}</text>
+              <text class="swiper-list-uni-tab-item-title"
+                    :class="tabIndex==index ? 'swiper-list-uni-tab-item-title-active' : ''">{{tab.name}}</text>
             </view>
           </view>
-          <view class="scroll-view-indicator">
-            <view ref="underline" class="scroll-view-underline" :class="isTap ? 'scroll-view-animation':''"
+          <view class="swiper-list-scroll-view-indicator">
+            <view ref="underline" class="swiper-list-scroll-view-underline" :class="isTap ? 'swiper-list-scroll-view-animation':''"
                   :style="{left: indicatorLineLeft + 'px', width: indicatorLineWidth + 'px'}"></view>
           </view>
         </view>
       </scroll-view>
-      <view class="tab-bar-line"></view>
-      <swiper class="tab-box" ref="swiper1" :current="tabIndex" :duration="300" @change="onswiperchange"
+      <view class="swiper-list-tab-bar-line"></view>
+
+      <swiper-page-head></swiper-page-head>
+
+      <swiper class="swiper-list-tab-box" ref="swiper1" :current="tabIndex" :duration="300" @change="onswiperchange"
               @transition="onswiperscroll" @animationfinish="animationfinish" @onAnimationEnd="animationfinish">
-        <swiper-item class="swiper-item" v-for="(page, index) in tabList" :key="index">
-          <swiperPage class="page-item" :nid="page.newsid" :ref="'page' + index"></swiperPage>
+        <swiper-item class="swiper-list-swiper-item" v-for="(page, index) in tabList" :key="index">
+          <swiperPage class="swiper-list-page-item" :nid="page.newsid" :ref="'page' + index"></swiperPage>
         </swiper-item>
       </swiper>
     </view>
@@ -45,6 +48,7 @@ import {
 } from '@dcloudio/uni-i18n'
 import messages from '../../locale/index';
 import swiperPage from './swiper-page.nvue';
+import swiperPageHead from './swiper-page-head.vue';
 import myNavBarTab from '../../components/my-nav-bar/my-nav-bar-tab';
 
 // 缓存每页最多
@@ -58,7 +62,8 @@ const { t } = initVueI18n(messages)
 export default {
   components: {
     swiperPage,
-    myNavBarTab
+    myNavBarTab,
+    swiperPageHead
   },
   computed: {
     tabBars() {
@@ -69,31 +74,31 @@ export default {
     return {
       navBarTabIndex: 0,
       tabList: [
-          {
-        id: "tab01",
-        name: '最新',
-        newsid: 0
-      }, {
-        id: "tab02",
-        name: '大公司',
-        newsid: 23
-      }, {
-        id: "tab03",
-        name: '内容',
-        newsid: 223
-      }, {
-        id: "tab04",
-        name: '消费',
-        newsid: 221
-      }, {
-        id: "tab05",
-        name: '娱乐',
-        newsid: 225
-      }, {
-        id: "tab06",
-        name: '区块链',
-        newsid: 208
-      }],
+        {
+          id: "tab01",
+          name: '最新',
+          newsid: 0
+        }, {
+          id: "tab02",
+          name: '大公司',
+          newsid: 23
+        }, {
+          id: "tab03",
+          name: '内容',
+          newsid: 223
+        }, {
+          id: "tab04",
+          name: '消费',
+          newsid: 221
+        }, {
+          id: "tab05",
+          name: '娱乐',
+          newsid: 225
+        }, {
+          id: "tab06",
+          name: '区块链',
+          newsid: 208
+        }],
       tabIndex: 0,
       cacheTab: [],
       scrollInto: "",
@@ -212,13 +217,13 @@ export default {
       // #endif
 
       // #ifdef MP-WEIXIN || H5 || MP-QQ
-      uni.createSelectorQuery().in(this).select('.tab-box').fields({
+      uni.createSelectorQuery().in(this).select('.swiper-list-tab-box').fields({
         dataset: true,
         size: true,
       }, (res) => {
         this.swiperWidth = res.width;
       }).exec();
-      uni.createSelectorQuery().in(this).selectAll('.uni-tab-item').boundingClientRect((rects) => {
+      uni.createSelectorQuery().in(this).selectAll('.swiper-list-uni-tab-item').boundingClientRect((rects) => {
         rects.forEach((rect) => {
           this.tabListSize[rect.dataset.id] = rect;
         })
@@ -308,7 +313,7 @@ page {
   /* #endif */
 }
 
-.tabs {
+.swiper-list-tabs {
   flex: 1;
   flex-direction: column;
   overflow: hidden;
@@ -318,7 +323,7 @@ page {
   /* #endif */
 }
 
-.tab-bar {
+.swiper-list-tab-bar {
   /* #ifdef APP-PLUS */
   width: 750rpx;
   /* #endif */
@@ -327,10 +332,11 @@ page {
   /* #ifndef APP-PLUS */
   white-space: nowrap;
   /* #endif */
+  z-index: 1000;
 }
 
 /* #ifndef APP-NVUE */
-.tab-bar ::-webkit-scrollbar {
+.swiper-list-tab-bar ::-webkit-scrollbar {
   display: none;
   width: 0 !important;
   height: 0 !important;
@@ -339,13 +345,13 @@ page {
 }
 /* #endif */
 
-.scroll-view-indicator {
+.swiper-list-scroll-view-indicator {
   position: relative;
   height: 2px;
   background-color: transparent;
 }
 
-.scroll-view-underline {
+.swiper-list-scroll-view-underline {
   position: absolute;
   top: 0;
   bottom: 0;
@@ -353,21 +359,21 @@ page {
   background-color: #2DBD96;
 }
 
-.scroll-view-animation {
+.swiper-list-scroll-view-animation {
   transition-duration: 0.2s;
   transition-property: left;
 }
 
-.tab-bar-line {
+.swiper-list-tab-bar-line {
   height: 1px;
   background-color: #292E39;
 }
 
-.tab-box {
+.swiper-list-tab-box {
   flex: 1;
 }
 
-.uni-tab-item {
+.swiper-list-uni-tab-item {
   /* #ifndef APP-PLUS */
   display: inline-block;
   /* #endif */
@@ -376,7 +382,7 @@ page {
   padding-right: 20px;
 }
 
-.uni-tab-item-title {
+.swiper-list-uni-tab-item-title {
   color: #9197A3;
   font-size: 15px;
   height: 40px;
@@ -387,16 +393,16 @@ page {
   /* #endif */
 }
 
-.uni-tab-item-title-active {
+.swiper-list-uni-tab-item-title-active {
   color: #E1E8F5;
 }
 
-.swiper-item {
+.swiper-list-swiper-item {
   flex: 1;
   flex-direction: column;
 }
 
-.page-item {
+.swiper-list-page-item {
   flex: 1;
   flex-direction: row;
   position: absolute;
@@ -405,4 +411,5 @@ page {
   right: 0;
   bottom: 0;
 }
+
 </style>

@@ -1,15 +1,17 @@
 <template>
   <view class="page-news">
     <!-- #ifdef APP-NVUE -->
-    <list ref="list" class="listview">
-      <refresh :display="refreshing" @refresh="onrefresh" @pullingdown="onpullingdown"></refresh>
-      <cell v-for="(item, index) in dataList" :key="item.id">
-        <view style="color: red;height: 150px">{{item.title}}</view>
+    <list ref="list" class="listview" @loadmore="loadMore">
+      <refresh class="refresh" :display="refreshing ? 'show' : 'hide'" @refresh="onrefresh" @pullingdown="onpullingdown">
+        <div class="refresh-view">
+          <loading-indicator class="loading-icon" animating="true"></loading-indicator>
+        </div>
+      </refresh>
+      <cell class="cell" v-for="(item, index) in dataList" :key="item.id">
+        <swiper-item :newsItem="item"></swiper-item>
       </cell>
-      <cell v-if="isLoading || dataList.length > 4">
-        <view class="loading-more">
-          <text class="loading-more-text">{{loadingText}}</text>
-        </view>
+      <cell>
+        <uni-load-more :status="loadingStatus" :contentText="loadingMoreText"></uni-load-more>
       </cell>
     </list>
     <!-- #endif -->
@@ -18,8 +20,8 @@
       <view v-for="(item, index) in dataList" :key="item.id">
         <view style="color: red;height: 80px">{{item.title}}</view>
       </view>
-      <view class="loading-more" v-if="isLoading || dataList.length > 4">
-        <text class="loading-more-text">{{loadingText}}</text>
+      <view class="loading-more">
+        <uni-load-more :status="loadingStatus" :contentText="loadingMoreText"></uni-load-more>
       </view>
     </scroll-view>
     <!-- #endif -->
@@ -28,8 +30,11 @@
 
 <script>
 
+import swiperItem from './swiper-item.nvue';
+
 export default {
   components: {
+    swiperItem
   },
   props: {
     nid: {
@@ -44,17 +49,15 @@ export default {
       refreshing: false,
       refreshFlag: false,
       refreshText: "",
-      isLoading: false,
-      loadingText: '加载中...',
+      loadingStatus: "more",
       isNoData: false,
       pulling: false,
       angle: 0,
       loadingMoreText: {
-        contentdown: '',
-        contentrefresh: '',
-        contentnomore: ''
+        contentdown: ' ',
+        contentrefresh: ' ',
+        contentnomore: ' '
       },
-      refreshIcon: "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAADAAAAAwCAMAAABg3Am1AAAAGXRFWHRTb2Z0d2FyZQBBZG9iZSBJbWFnZVJlYWR5ccllPAAAAB5QTFRFcHBw3Nzct7e39vb2ycnJioqK7e3tpqam29vb////D8oK7wAAAAp0Uk5T////////////ALLMLM8AAABxSURBVHja7JVBDoAgDASrjqj//7CJBi90iyYeOHTPMwmFZrHjYyyFYYUy1bwUZqtJIYVxhf1a6u0R7iUvWsCcrEtwJHp8MwMdvh2amHduiZD3rpWId9+BgPd7Cc2LIkPyqvlQvKxKBJ//Qwq/CacAAwDUv0a0YuKhzgAAAABJRU5ErkJggg=="
     }
   },
   created() {
@@ -65,34 +68,22 @@ export default {
       pageSize: 10,
       column: 'id,post_id,title,author_name,cover,published_at,comments_count'
     };
-
-    this._isWidescreen = false;
-    // #ifdef H5
-    var mediaQueryOb = uni.createMediaQueryObserver(this)
-    mediaQueryOb.observe({
-      minWidth: 768
-    }, matches => {
-      this._isWidescreen = matches;
-    })
-    // #endif
   },
   methods: {
     loadData(refresh) {
-      if (this.isLoading) {
+      if (this.loadingStatus !== "more") {
         return;
       }
 
-      this.isLoading = true;
+      this.loadingStatus = "loading";
       this.isNoData = false;
       this.requestParams.time = new Date().getTime() + '';
 
-      var startTime = new Date();
       uni.request({
         // url: this.$host + 'api/news',
         url: 'https://unidemo.dcloud.net.cn/api/news',
         data: this.requestParams,
         success: (result) => {
-          var endTime = new Date();
           const data = result.data;
           this.isNoData = (data.length <= 0);
 
@@ -118,9 +109,6 @@ export default {
             this.requestParams.minId = data[data.length - 1].id;
           }
 
-          if (this.dataList.length > 0 && this._isWidescreen && this.dataList.length <= 10) {
-            this.goDetail(this.dataList[0]);
-          }
         },
         fail: (err) => {
           if (this.dataList.length == 0) {
@@ -128,17 +116,19 @@ export default {
           }
         },
         complete: (e) => {
-          this.isLoading = false;
+          this.loadingStatus = "more";
           if (refresh) {
+            this.pulling = true;
             this.refreshing = false;
             this.refreshFlag = false;
             this.refreshText = "已刷新";
             if (this.pullTimer) {
               clearTimeout(this.pullTimer);
             }
+            // TODO fix ios和Android 动画时间相反问题
             this.pullTimer = setTimeout(() => {
               this.pulling = false;
-            }, 1000);
+            }, 500);
           }
         }
       });
@@ -150,54 +140,27 @@ export default {
       this.dataList.length = 0;
       this.requestParams.minId = 0;
     },
-    goDetail(detail) {
-      if (this._isWidescreen) { //若为宽屏，则触发右侧详情页的自定义事件
-        uni.$emit('updateDetail', {
-          detail: encodeURIComponent(JSON.stringify(detail))
-        })
-      } else {
-        uni.navigateTo({
-          url: './detail?query=' + encodeURIComponent(JSON.stringify(detail))
-        });
-      }
-    },
-    closeItem(index) {
-      uni.showModal({
-        content: '不感兴趣？',
-        success: (res) => {
-          if (res.confirm) {
-            this.dataList.splice(index, 1);
-          }
-        }
-      })
-    },
     refreshData() {
-      if (this.isLoading) {
-        return;
-      }
       this.pulling = true;
       this.refreshing = true;
       this.refreshText = "正在刷新...";
       this.loadData(true);
     },
     onrefresh(e) {
+      if (!this.refreshFlag) {
+        return;
+      }
       this.refreshData();
       // #ifdef APP-NVUE
       this.$refs.list.resetLoadmore();
       // #endif
+
     },
     onpullingdown(e) {
-      if (this.refreshing) {
+      if (this.refreshing || this.pulling) {
         return;
       }
 
-      // var angle = (e.pullingDistance) / e.viewHeight * 180;
-      // if (angle > 180) {
-      // 	angle = 180;
-      // }
-      // tab.angle = angle;
-
-      this.pulling = false;
       if (Math.abs(e.pullingDistance) > Math.abs(e.viewHeight)) {
         this.refreshFlag = true;
         this.refreshText = "释放立即刷新";
@@ -216,16 +179,7 @@ export default {
 }
 </script>
 
-<style scoped>
-.no-data {
-  flex: 1;
-  position: absolute;
-  left: 0;
-  top: 0;
-  right: 0;
-  bottom: 0;
-  z-index: 10;
-}
+<style lang="scss" scoped>
 
 .page-news {
   flex: 1;
@@ -260,7 +214,7 @@ export default {
   /* #ifndef APP-NVUE */
   display: flex;
   /* #endif */
-  width: 750rpx;
+  /*width: 750rpx;*/
   height: 64px;
   flex-direction: row;
   flex-wrap: nowrap;
@@ -282,28 +236,9 @@ export default {
 }
 
 .loading-icon {
-  width: 28px;
-  height: 28px;
+  width: 20px;
+  height: 20px;
   margin-right: 5px;
-  color: gray;
-}
-
-.loading-text {
-  margin-left: 2px;
-  font-size: 16px;
-  color: #999999;
-}
-
-.loading-more {
-  align-items: center;
-  justify-content: center;
-  padding-top: 14px;
-  padding-bottom: 14px;
-  text-align: center;
-}
-
-.loading-more-text {
-  font-size: 28upx;
-  color: #999;
+  color: #23AD8F;
 }
 </style>

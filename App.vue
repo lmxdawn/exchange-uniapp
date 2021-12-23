@@ -49,9 +49,8 @@ export default {
 }
 </script>
 
-<style lang="scss">
-/*引入uView组件*/
-@import "@/uni_modules/uview-ui/index.scss";
+<style>
 /*每个页面公共的css*/
-@import url("style/base.scss");
+@import "@/style/base.css";
+@import "@/style/iconfont.css";
 </style>

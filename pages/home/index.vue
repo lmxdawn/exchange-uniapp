@@ -15,6 +15,8 @@
         icon1Color="#b8c6d8"
         icon2Color="#b8c6d8"
         :icon2Value="value"
+        @onClickInput="onNavBarClickInput"
+        @onClickIcon="onNavBarClickIcon"
     >
 
     </my-nav-bar-search>
@@ -78,15 +80,27 @@
       adChange(e) {
         this.adCurrent = e.detail.current;
       },
-      message() {
+      onNavBarClickInput() {
 
+      },
+      onNavBarClickIcon(index) {
+        if (index === 0) {
+          this.asset()
+        } else if (index === 1) {
+          this.scan()
+        } else if (index === 2) {
+          this.message()
+        }
       },
       asset() {
 
       },
-      confirm() {
+      scan() {
 
-      }
+      },
+      message() {
+
+      },
 		}
 	}
 </script>

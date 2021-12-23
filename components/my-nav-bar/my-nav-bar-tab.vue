@@ -3,7 +3,7 @@
     <uni-nav-bar :color="color" :border="false" :background-color="backgroundColor" :statusBar="statusBar">
       <block slot="left">
         <view class="nav-bar-left">
-          <u-icon :name="iconLeftName" size="25" :color="iconLeftColor" />
+          <uni-icons :type="iconLeftName" size="25" :color="iconLeftColor" />
         </view>
       </block>
       <view class="nav-bar-center">
@@ -13,7 +13,7 @@
       </view>
       <block slot="right">
         <view class="nav-bar-right">
-          <u-icon :name="iconRightName" size="25" :color="iconRightColor" />
+          <uni-icons :type="iconRightName" size="25" :color="iconRightColor" />
         </view>
       </block>
     </uni-nav-bar>

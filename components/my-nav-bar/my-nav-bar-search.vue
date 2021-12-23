@@ -6,9 +6,9 @@
           <uni-icons :type="icon0Name" :size="icon0Size" :color="icon0Color" @click="onClickIcon(0)" />
         </view>
       </block>
-      <view class="input-view">
+      <view class="input-view" @click="onClickInput">
         <uni-icons class="input-uni-icon" type="search" size="18" color="#717C8A" />
-        <input confirm-type="search" class="nav-bar-input" type="text" :placeholder="placeholder" @confirm="confirm" />
+        <input confirm-type="search" disabled class="nav-bar-input" type="text" :placeholder="placeholder" />
       </view>
       <block slot="right">
         <view class="nav-bar-right" v-if="icon1Name || icon2Name">
@@ -86,6 +86,9 @@ export default {
     },
   },
   methods: {
+    onClickInput() {
+      this.$emit('onClickInput')
+    },
     onClickIcon(index) {
       console.log(index)
       this.$emit('clickIcon', index)
