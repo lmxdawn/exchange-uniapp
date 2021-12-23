@@ -27,12 +27,12 @@
       </scroll-view>
       <view class="swiper-list-tab-bar-line"></view>
 
-      <swiper-page-head></swiper-page-head>
+      <swiper-list-page-head></swiper-list-page-head>
 
       <swiper class="swiper-list-tab-box" ref="swiper1" :current="tabIndex" :duration="300" @change="onswiperchange"
               @transition="onswiperscroll" @animationfinish="animationfinish" @onAnimationEnd="animationfinish">
         <swiper-item class="swiper-list-swiper-item" v-for="(page, index) in tabList" :key="index">
-          <swiperPage class="swiper-list-page-item" :nid="page.newsid" :ref="'page' + index"></swiperPage>
+          <swiper-list-page class="swiper-list-page-item" :nid="page.newsid" :ref="'page' + index"></swiper-list-page>
         </swiper-item>
       </swiper>
     </view>
@@ -47,9 +47,9 @@ import {
   initVueI18n
 } from '@dcloudio/uni-i18n'
 import messages from '../../locale/index';
-import swiperPage from './swiper-page.nvue';
-import swiperPageHead from './swiper-page-head.vue';
 import myNavBarTab from '../../components/my-nav-bar/my-nav-bar-tab';
+import swiperListPage from './swiper-list-page.nvue';
+import swiperListPageHead from './swiper-list-page-head.vue';
 
 // 缓存每页最多
 const MAX_CACHE_DATA = 100;
@@ -61,9 +61,9 @@ const { t } = initVueI18n(messages)
 
 export default {
   components: {
-    swiperPage,
     myNavBarTab,
-    swiperPageHead
+    swiperListPage,
+    swiperListPageHead
   },
   computed: {
     tabBars() {
@@ -76,7 +76,7 @@ export default {
       tabList: [
         {
           id: "tab01",
-          name: '最新',
+          name: 'USDT',
           newsid: 0
         }, {
           id: "tab02",

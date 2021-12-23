@@ -1,9 +1,7 @@
 <template>
 	<view class="content">
-		<image class="logo" src="/static/logo.png"></image>
-		<view class="text-area">
-			<text class="title">{{title}}</text>
-		</view>
+    <view class="box transparent-up"></view>
+    <view class="box transparent-down"></view>
 	</view>
 </template>
 
@@ -14,10 +12,13 @@
 		data() {
 			return {
 				title: this.$t('common.trade'),
+        go: false
 			}
 		},
 		onLoad() {
-
+      setTimeout(() => {
+        this.go = true
+      }, 100)
 		},
 		methods: {
 		}
@@ -31,23 +32,32 @@
 		align-items: center;
 		justify-content: center;
 	}
+  .box {
+    height: 200rpx;
+    width: 200rpx;
+    background-color: transparent;
+  }
 
-	.logo {
-		height: 200rpx;
-		width: 200rpx;
-		margin-top: 200rpx;
-		margin-left: auto;
-		margin-right: auto;
-		margin-bottom: 50rpx;
-	}
-
-	.text-area {
-		display: flex;
-		justify-content: center;
-	}
-
-	.title {
-		font-size: 36rpx;
-		color: #8f8f94;
-	}
+  .transparent-up {  // 这里可以简写哈
+    animation: transparent-up 1.5s forwards;
+  }
+  @keyframes transparent-up {
+    99.9% {
+      background-color: #1A272F;
+    }
+    100% {
+      background-color: transparent;
+    }
+  }
+  .transparent-down {  // 这里可以简写哈
+    animation: transparent-down 1.5s forwards;
+  }
+  @keyframes transparent-down {
+    99.9% {
+      background-color: #24222C;
+    }
+    100% {
+      background-color: transparent;
+    }
+  }
 </style>

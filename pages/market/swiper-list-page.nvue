@@ -8,7 +8,7 @@
         </div>
       </refresh>
       <cell class="cell" v-for="(item, index) in dataList" :key="item.id">
-        <swiper-item :newsItem="item"></swiper-item>
+        <swiper-list-item :listItem="item"></swiper-list-item>
       </cell>
       <cell>
         <uni-load-more :status="loadingStatus" :contentText="loadingMoreText"></uni-load-more>
@@ -18,7 +18,7 @@
     <!-- #ifndef APP-NVUE -->
     <scroll-view class="listview" style="flex: 1;" enableBackToTop="true" scroll-y @scrolltolower="loadMore()">
       <view v-for="(item, index) in dataList" :key="item.id">
-        <view style="color: red;height: 80px">{{item.title}}</view>
+        <swiper-list-item :listItem="item"></swiper-list-item>
       </view>
       <view class="loading-more">
         <uni-load-more :status="loadingStatus" :contentText="loadingMoreText"></uni-load-more>
@@ -30,11 +30,11 @@
 
 <script>
 
-import swiperItem from './swiper-item.nvue';
+import swiperListItem from './swiper-list-item.nvue';
 
 export default {
   components: {
-    swiperItem
+    swiperListItem
   },
   props: {
     nid: {
@@ -68,6 +68,13 @@ export default {
       pageSize: 10,
       column: 'id,post_id,title,author_name,cover,published_at,comments_count'
     };
+
+    setTimeout(() => {
+      let item = this.dataList[2]
+      item.rate = -69.63
+      this.dataList[2] = item
+    }, 3000)
+
   },
   methods: {
     loadData(refresh) {
@@ -97,7 +104,8 @@ export default {
               image_url: news.cover,
               source: news.author_name,
               comment_count: news.comments_count,
-              post_id: news.post_id
+              post_id: news.post_id,
+              rate: 12.50,
             };
           });
 

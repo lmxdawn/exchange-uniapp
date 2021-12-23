@@ -1,0 +1,183 @@
+<template>
+	<view class="swiper-item-cell" @click="click" :class="[background]">
+    <view class="swiper-item-cell-left">
+      <view class="swiper-item-cell-left1">
+        <view class="swiper-item-cell-text-box">
+          <view class="swiper-item-cell-text-img-box">
+            <image src="https://assets-currency.kucoin.com/60c746168afb0a00068fe1ef_LUNA.png"></image>
+            <text class="swiper-item-cell-text swiper-item-cell-text-big-b">LUNA/USDT</text>
+          </view>
+          <text class="swiper-item-cell-text swiper-item-cell-text-small">436828240.31</text>
+        </view>
+      </view>
+      <view class="swiper-item-cell-left2">
+        <view class="swiper-item-cell-text-box">
+          <text class="swiper-item-cell-text swiper-item-cell-text-big">87.8121</text>
+          <text class="swiper-item-cell-text swiper-item-cell-text-small">≈ $ 87.88</text>
+        </view>
+      </view>
+    </view>
+    <view class="swiper-item-cell-right">
+      <view class="swiper-item-cell-text-box">
+        <view class="swiper-item-cell-up-button" :class="[rate > 0 ? 'upRate' : 'downRate']">
+          <text class="swiper-item-cell-text">{{rate > 0 ? '+' : ''}}{{ rate }}%</text>
+        </view>
+      </view>
+    </view>
+  </view>
+</template>
+
+<script>
+	export default {
+		props: {
+			listItem: {
+				type: Object,
+				default: function(e) {
+					return {}
+				}
+			}
+		},
+    computed: {
+      rate() {
+        return Number(this.listItem.rate).toFixed(2)
+      }
+    },
+    data() {
+      return {
+        background: 'transparent-up'
+      }
+    },
+    watch: {
+      listItem: {
+        handler(item,index) {
+          this.background = ''
+          if (item.rate > 0) {
+            this.background = 'transparent-up'
+          } else {
+            this.background = 'transparent-down'
+          }
+        },
+        deep: true
+      }
+    },
+		methods: {
+			click() {
+				this.$emit('click');
+			},
+		}
+	}
+</script>
+
+<style lang="scss" scoped>
+	.swiper-item-cell {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-direction: row;
+    width: 750rpx;
+    padding: 5px 15px;
+    box-sizing: border-box;
+	}
+  .swiper-item-cell-left {
+    flex: 1;
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    align-items: center;
+    //background-color: red;
+  }
+  .swiper-item-cell-right {
+    width: 230rpx;
+    //background-color: green;
+  }
+  .swiper-item-cell-left1 {
+    .swiper-item-cell-text-box {
+      align-items: flex-start;
+    }
+  }
+  .swiper-item-cell-left2 {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    align-items: center;
+  }
+  .swiper-item-cell-up-button {
+    padding: 5px 15px;
+    background-color: greenyellow;
+    display: inline;
+    animation: background-fade 10s forwards;
+    .swiper-item-cell-text {
+      font-size: 13px;
+    }
+    &.upRate {
+      background-color: rgba(26,187,151,.08);
+      .swiper-item-cell-text {
+        color: #1abb97;
+      }
+    }
+    &.downRate {
+      background-color: rgba(237,102,102,.08);
+      .swiper-item-cell-text {
+        color: #ed6666;
+      }
+    }
+  }
+  .swiper-item-cell-text-img-box {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    margin-bottom: 2px;
+    .swiper-item-cell-text {
+      margin-left: 5px;
+    }
+    image {
+      width: 25px;
+      height: 25px;
+    }
+  }
+  .swiper-item-cell-text-big {
+    font-size: 16px;
+    color: #b8c6d8!important;
+  }
+  .swiper-item-cell-text-big-b {
+    font-size: 18px;
+    color: #b8c6d8!important;
+  }
+  .swiper-item-cell-text-small {
+    font-size: 12rpx;
+    color: rgba(184,198,216,.38)!important;
+    margin-top: 5px;
+  }
+  .swiper-item-cell-text-box {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: flex-end;
+  }
+  .swiper-item-cell-text {
+    color: #FFFFFF;
+  }
+
+  .transparent-up {
+    animation: transparent-up 1.5s forwards;
+  }
+  @keyframes transparent-up {
+    99.9% {
+      background-color: #1A272F;
+    }
+    100% {
+      background-color: transparent;
+    }
+  }
+  .transparent-down {
+    animation: transparent-down 1.5s forwards;
+  }
+  @keyframes transparent-down {
+    99.9% {
+      background-color: #24222C;
+    }
+    100% {
+      background-color: transparent;
+    }
+  }
+</style>
