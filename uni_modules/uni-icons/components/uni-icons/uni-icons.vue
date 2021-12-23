@@ -1,6 +1,6 @@
 <template>
 	<!-- #ifdef APP-NVUE -->
-	<text :style="{ color: color, 'font-size': size + 'px' }" class="uni-icons" @click="_onClick">{{unicode}}</text>
+	<text :style="{ color: color, 'font-size': size + 'px' }" :class="[customPrefix ? customPrefix : 'uni-icons']" @click="_onClick">{{unicode}}</text>
 	<!-- #endif -->
 	<!-- #ifndef APP-NVUE -->
 	<text :style="{ color: color, 'font-size': size + 'px' }" class="uni-icons" :class="['uniui-'+type,customPrefix,customPrefix?type:'']" @click="_onClick"></text>
@@ -15,6 +15,11 @@
 	domModule.addRule('fontFace', {
 		'fontFamily': "uniicons",
 		'src': "url('"+iconUrl+"')"
+	});
+	import iconfontUrl from './iconfont-unicode.ttf'
+	domModule.addRule('fontFace', {
+		'fontFamily': "iconfont",
+		'src': "url('"+iconfontUrl+"')"
 	});
 	// #endif
 
@@ -78,12 +83,23 @@
 		font-family: uniicons;
 		src: url('./uniicons.ttf') format('truetype');
 	}
-
+	@import './iconfont.css';
+	@font-face {
+		font-family: iconfont;
+		src: url('./iconfont.ttf') format('truetype');
+	}
 	/* #endif */
+
 	.uni-icons {
 		font-family: uniicons;
 		text-decoration: none;
 		text-align: center;
 	}
+
+  .iconfont {
+    font-family: iconfont;
+    font-size: 16px;
+  }
+
 
 </style>

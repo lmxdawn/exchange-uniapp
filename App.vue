@@ -52,5 +52,4 @@ export default {
 <style>
 /*每个页面公共的css*/
 @import "@/style/base.css";
-@import "@/style/iconfont.css";
 </style>

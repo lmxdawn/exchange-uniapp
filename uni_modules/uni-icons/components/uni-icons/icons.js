@@ -6,6 +6,20 @@ export default {
   "description": "",
   "glyphs": [
     {
+      "icon_id": "02",
+      "name": "icon-xiangshang1",
+      "font_class": "icon-xiangshang1",
+      "unicode": "e76d",
+      "unicode_decimal": 2
+    },
+    {
+      "icon_id": "01",
+      "name": "icon-xiangxia1",
+      "font_class": "icon-xiangxia1",
+      "unicode": "e771",
+      "unicode_decimal": 1
+    },
+    {
       "icon_id": "25027049",
       "name": "yanse",
       "font_class": "color",
