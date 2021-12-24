@@ -32,7 +32,7 @@
       <swiper class="swiper-list-tab-box" ref="swiper1" :current="tabIndex" :duration="300" @change="onswiperchange"
               @transition="onswiperscroll" @animationfinish="animationfinish" @onAnimationEnd="animationfinish">
         <swiper-item class="swiper-list-swiper-item" v-for="(page, index) in tabList" :key="index">
-          <swiper-list-page class="swiper-list-page-item" :nid="page.newsid" :ref="'page' + index"></swiper-list-page>
+          <swiper-list-page class="swiper-list-page-item" :nid="page.nid" :ref="'page' + index"></swiper-list-page>
         </swiper-item>
       </swiper>
     </view>
@@ -75,37 +75,43 @@ export default {
       navBarTabIndex: 0,
       tabList: [
         {
+          id: "tab00",
+          name: t('market.collect'),
+          nid: 0
+        },
+        {
           id: "tab01",
           name: 'USDT',
-          newsid: 0
-        }, {
+          nid: 1
+        },
+        {
           id: "tab02",
-          name: '大公司',
-          newsid: 23
-        }, {
+          name: 'BTC',
+          nid: 2
+        },
+        {
           id: "tab03",
-          name: '内容',
-          newsid: 223
-        }, {
+          name: 'ETH',
+          nid: 3
+        },
+        {
           id: "tab04",
           name: '消费',
-          newsid: 221
-        }, {
+          nid: 225
+        },
+        {
           id: "tab05",
           name: '娱乐',
-          newsid: 225
-        }, {
-          id: "tab06",
-          name: '区块链',
-          newsid: 208
-        }],
+          nid: 208
+        },
+      ],
       tabIndex: 0,
       cacheTab: [],
       scrollInto: "",
       navigateFlag: false,
       indicatorLineLeft: 0,
       indicatorLineWidth: 0,
-      isTap: false
+      isTap: false,
     }
   },
   onReady() {
@@ -116,7 +122,8 @@ export default {
     this._touchTabIndex = 0;
 
     this.pageList = [];
-    for (var i = 0; i < this.tabList.length; i++) {
+    let len = this.tabList.length
+    for (var i = 0; i < len; i++) {
       let item = this.$refs['page' + i]
       if (Array.isArray(item)) {
         this.pageList.push(item[0])
@@ -126,6 +133,25 @@ export default {
     }
     this.switchTab(this.tabIndex);
     this.selectorQuery();
+  },
+  onLoad() {
+    // 监听撮合事件
+    uni.$on('matchWs',(obj)=>{
+      let coinId = obj.coinId
+      let len = this.tabList.length
+      for (var i = 0; i < len; i++) {
+        if (this.tabList[i].nid === coinId) {
+          this.setTabItem(i, obj)
+          break;
+        }
+      }
+      // 总是去更新自选
+      this.setTabItem(0, obj)
+    })
+  },
+  onUnload() {
+    // 移除撮合监听事件
+    uni.$off('matchWs');
   },
   methods: {
     onNavBarTabClickItem(index) {
@@ -289,6 +315,9 @@ export default {
     },
     loadTabData(index) {
       this.pageList[index].loadData();
+    },
+    setTabItem(index, obj) {
+      this.pageList[index].setItem(obj);
     },
     clearTabData(index) {
       this.pageList[index].clear();

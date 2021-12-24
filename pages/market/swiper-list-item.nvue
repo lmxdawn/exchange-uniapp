@@ -5,15 +5,15 @@
         <view class="swiper-item-cell-text-box">
           <view class="swiper-item-cell-text-img-box">
             <image src="https://assets-currency.kucoin.com/60c746168afb0a00068fe1ef_LUNA.png"></image>
-            <text class="swiper-item-cell-text swiper-item-cell-text-big-b">LUNA/USDT</text>
+            <text class="swiper-item-cell-text swiper-item-cell-text-big-b">{{listItem.tradeCoin.name}}/{{listItem.coin.name}}</text>
           </view>
-          <text class="swiper-item-cell-text swiper-item-cell-text-small">436828240.31</text>
+          <text class="swiper-item-cell-text swiper-item-cell-text-small">{{listItem.tradeTotal24}}</text>
         </view>
       </view>
       <view class="swiper-item-cell-left2">
         <view class="swiper-item-cell-text-box">
-          <text class="swiper-item-cell-text swiper-item-cell-text-big">87.8121</text>
-          <text class="swiper-item-cell-text swiper-item-cell-text-small">≈ $ 87.88</text>
+          <text class="swiper-item-cell-text swiper-item-cell-text-big">{{listItem.price}}</text>
+          <text class="swiper-item-cell-text swiper-item-cell-text-small">≈ {{usdtRate.symbol}} {{priceRate}}</text>
         </view>
       </view>
     </view>
@@ -28,6 +28,8 @@
 </template>
 
 <script>
+  import {mapGetters} from "vuex";
+  import {accMul} from "../../utils/decimal"
 	export default {
 		props: {
 			listItem: {
@@ -38,8 +40,14 @@
 			}
 		},
     computed: {
+      ...mapGetters({
+        usdtRate: "usdtRate",
+      }),
+      priceRate() {
+        return Number(accMul(this.usdtRate.price, this.listItem.price)).toFixed(this.usdtRate.precision)
+      },
       rate() {
-        return Number(this.listItem.rate).toFixed(2)
+        return Number(this.listItem.rate24).toFixed(2)
       }
     },
     data() {
@@ -51,7 +59,7 @@
       listItem: {
         handler(item,index) {
           this.background = ''
-          if (item.rate > 0) {
+          if (item.rate24 > 0) {
             this.background = 'transparent-up'
           } else {
             this.background = 'transparent-down'

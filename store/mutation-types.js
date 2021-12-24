@@ -1,3 +1,4 @@
+/*********用户相关***********/
 // 清空用户登录
 export const MEMBER_CLEAR_LOGIN = "MEMBER_CLEAR_LOGIN";
 // 登录的用户信息
@@ -11,6 +12,7 @@ export const MEMBER_LOGIN_PAGE_STATUS = "MEMBER_LOGIN_PAGE_STATUS";
 export const MEMBER_REGISTER = "MEMBER_REGISTER";
 export const MEMBER_REGISTER_INVITE_CODE = "MEMBER_REGISTER_INVITE_CODE";
 
+/*********APP相关***********/
 // 第一次进来的 url
 export const PHONE_FIRST_LOAD_URL = "PHONE_FIRST_LOAD_URL";
 // 服务器的时间
@@ -24,3 +26,7 @@ export const APP_VERSION = "APP_VERSION";
 
 // 广告跳转到 tabBar 的参数
 export const AD_PARAMS = "AD_PARAMS";
+
+/*********行情相关***********/
+export const USDT_RATE_SET = "USDT_RATE_SET"
+export const MARKET_COLLECT_SET = "MARKET_COLLECT_SET"

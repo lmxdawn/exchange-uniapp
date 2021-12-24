@@ -4,6 +4,7 @@ import actions from "./actions";
 import getters from "./getters";
 import app from "./modules/app";
 import user from "./modules/user";
+import market from "./modules/market";
 
 Vue.use(Vuex);
 
@@ -15,6 +16,7 @@ export default new Vuex.Store({
     modules: {
         app,
         user,
+        market,
     },
     strict: debug
     // plugins: debug ? [createLogger()] : []

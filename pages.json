@@ -17,7 +17,8 @@
         "navigationBarTitleText": "%common.market%",
         "navigationStyle":"custom",  //可以去掉小程序端的顶部导航
         "app-plus":{
-          "titleNView":false   // 去掉APP、H5的顶部导航
+          "titleNView":false,   // 去掉APP、H5的顶部导航
+          "background":"#191E29"   // 去掉APP、H5的顶部导航
         }
       }
     },
@@ -80,7 +81,10 @@
   "globalStyle": {
     "navigationBarTextStyle": "black",
     "navigationBarTitleText": "uni-app",
-    "navigationBarBackgroundColor": "#F8F8F8",
-    "backgroundColor": "#F8F8F8"
+    "navigationBarBackgroundColor": "#191E29",
+    "backgroundColor": "#191E29",
+    "app-plus": {
+      "background": "#191E29"
+    }
   }
 }

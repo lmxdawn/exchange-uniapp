@@ -2,12 +2,21 @@
 	<view class="content">
     <view class="box transparent-up"></view>
     <view class="box transparent-down"></view>
+    <my-empty></my-empty>
 	</view>
 </template>
 
 <script>
+  import {mapActions, mapGetters} from "vuex";
+  import myEmpty from "../../components/my-empty/my-empty"
   export default {
     components: {
+      myEmpty
+    },
+    computed: {
+      ...mapGetters({
+        marketCollect: "marketCollect",
+      }),
     },
 		data() {
 			return {
@@ -16,11 +25,33 @@
 			}
 		},
 		onLoad() {
+      // 监听事件
+      uni.$on('matchWs',(obj)=>{
+        console.log(obj)
+      })
+      this.usdtRateSet()
+      this.marketCollectSet(1)
       setTimeout(() => {
         this.go = true
-      }, 100)
+        let item = {
+          tradeCoinId: 1,
+          coinId: 3,
+          price: 3.311,
+          amount: 2,
+        }
+        uni.$emit('matchWs', item)
+
+      }, 2 * 1000)
 		},
+    onUnload() {
+      // 移除撮合监听事件
+      uni.$off('matchWs');
+    },
 		methods: {
+      ...mapActions({
+        usdtRateSet: "usdtRateSet",
+        marketCollectSet: "marketCollectSet",
+      }),
 		}
 	}
 </script>
