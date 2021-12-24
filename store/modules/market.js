@@ -17,7 +17,7 @@ let usdtRateStr = getStorageSync(usdtRateKey)
 let usdtRate = {
     name: "USD",
     symbol: "$",
-    price: 1,
+    price: 0,
     precision: 2,
 }
 if (usdtRateStr) {
