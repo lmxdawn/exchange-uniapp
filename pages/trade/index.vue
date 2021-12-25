@@ -1,7 +1,7 @@
 <template>
 	<view class="content">
-    <view class="box transparent-up"></view>
-    <view class="box transparent-down"></view>
+    <view class="box" :class="[go ? 'transparent-up' : '']"></view>
+    <view class="box" :class="[go ? 'transparent-down' : '']"></view>
     <my-empty></my-empty>
 	</view>
 </template>
@@ -41,6 +41,10 @@
         }
         uni.$emit('matchWs', item)
 
+        setTimeout(() => {
+          this.go = false
+        }, 500)
+
       }, 2 * 1000)
 		},
     onUnload() {
@@ -67,28 +71,14 @@
     height: 200rpx;
     width: 200rpx;
     background-color: transparent;
+    transition-property: background-color;
+    transition-duration: 1s
   }
 
-  .transparent-up {  // 这里可以简写哈
-    animation: transparent-up 1.5s forwards;
+  .transparent-up {
+    background-color: #1A272F;
   }
-  @keyframes transparent-up {
-    99.9% {
-      background-color: #1A272F;
-    }
-    100% {
-      background-color: transparent;
-    }
-  }
-  .transparent-down {  // 这里可以简写哈
-    animation: transparent-down 1.5s forwards;
-  }
-  @keyframes transparent-down {
-    99.9% {
-      background-color: #24222C;
-    }
-    100% {
-      background-color: transparent;
-    }
+  .transparent-down {
+    background-color: #24222C;
   }
 </style>

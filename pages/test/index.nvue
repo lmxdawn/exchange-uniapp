@@ -9,43 +9,34 @@
         @clickItem="onNavBarTabClickItem">
     </my-nav-bar-tab>
 
-    <swiper class="swiper-list-tabs-box" :current="navBarTabIndex" :duration="300" disable-touch>
-
-      <swiper-item class="swiper-list-tabs-item">
-        <view class="swiper-list-tabs">
-          <scroll-view ref="tabbar1" id="swiper-list-tab-bar" class="swiper-list-tab-bar" :scroll="false" :scroll-x="true" :show-scrollbar="false"
-                       :scroll-into-view="scrollInto">
-            <view style="flex-direction: column;">
-              <view style="flex-direction: row;">
-                <view class="swiper-list-uni-tab-item" v-for="(tab,index) in tabList" :key="tab.id" :id="tab.id" :ref="'tabitem'+index"
-                      :data-id="index" :data-current="index" @click="ontabtap">
-                  <text class="swiper-list-uni-tab-item-title"
-                        :class="tabIndex===index ? 'swiper-list-uni-tab-item-title-active' : ''">{{tab.name}}</text>
-                </view>
-              </view>
-              <view class="swiper-list-scroll-view-indicator">
-                <view ref="underline" class="swiper-list-scroll-view-underline" :class="isTap ? 'swiper-list-scroll-view-animation':''"
-                      :style="{left: indicatorLineLeft + 'px', width: indicatorLineWidth + 'px'}"></view>
-              </view>
+    <view class="swiper-list-tabs">
+      <scroll-view ref="tabbar1" id="swiper-list-tab-bar" class="swiper-list-tab-bar" :scroll="false" :scroll-x="true" :show-scrollbar="false"
+                   :scroll-into-view="scrollInto">
+        <view style="flex-direction: column;">
+          <view style="flex-direction: row;">
+            <view class="swiper-list-uni-tab-item" v-for="(tab,index) in tabList" :key="tab.id" :id="tab.id" :ref="'tabitem'+index"
+                  :data-id="index" :data-current="index" @click="ontabtap">
+              <text class="swiper-list-uni-tab-item-title"
+                    :class="tabIndex===index ? 'swiper-list-uni-tab-item-title-active' : ''">{{tab.name}}</text>
             </view>
-          </scroll-view>
-          <view class="swiper-list-tab-bar-line"></view>
-
-          <swiper-list-page-head></swiper-list-page-head>
-
-          <swiper class="swiper-list-tab-box" ref="swiper1" :current="tabIndex" :duration="300" @change="onswiperchange"
-                  @transition="onswiperscroll" @animationfinish="animationfinish" @onAnimationEnd="animationfinish">
-            <swiper-item class="swiper-list-swiper-item" v-for="(page, index) in tabList" :key="index">
-              <swiper-list-page class="swiper-list-page-item" :refresh-status-text="refreshStatusText" :nid="page.nid" :ref="'page' + index"></swiper-list-page>
-            </swiper-item>
-          </swiper>
+          </view>
+          <view class="swiper-list-scroll-view-indicator">
+            <view ref="underline" class="swiper-list-scroll-view-underline" :class="isTap ? 'swiper-list-scroll-view-animation':''"
+                  :style="{left: indicatorLineLeft + 'px', width: indicatorLineWidth + 'px'}"></view>
+          </view>
         </view>
-      </swiper-item>
-      <swiper-item class="swiper-list-tabs-item">
-        <view>slfjdlkfjl</view>
-      </swiper-item>
-    </swiper>
+      </scroll-view>
+      <view class="swiper-list-tab-bar-line"></view>
 
+      <swiper-list-page-head></swiper-list-page-head>
+
+      <swiper class="swiper-list-tab-box" ref="swiper1" :current="tabIndex" :duration="300" @change="onswiperchange"
+              @transition="onswiperscroll" @animationfinish="animationfinish" @onAnimationEnd="animationfinish">
+        <swiper-item class="swiper-list-swiper-item" v-for="(page, index) in tabList" :key="index">
+          <swiper-list-page class="swiper-list-page-item" :refresh-status-text="refreshStatusText" :nid="page.nid" :ref="'page' + index"></swiper-list-page>
+        </swiper-item>
+      </swiper>
+    </view>
   </view>
 </template>
 
@@ -164,18 +155,6 @@ export default {
       // 总是去更新自选
       this.setTabItem(0, obj)
     })
-
-    // 模拟撮合
-    setTimeout(() => {
-      let item = {
-        tradeCoinId: 3,
-        coinId: 1,
-        price: 3.311,
-        amount: 2,
-      }
-      uni.$emit('matchWs', item)
-
-    }, 2 * 1000)
   },
   onUnload() {
     // 移除撮合监听事件
@@ -184,12 +163,6 @@ export default {
   methods: {
     onNavBarTabClickItem(index) {
       this.navBarTabIndex = index
-    },
-    onNavBarTabChage(e) {
-      // #ifndef APP-PLUS || H5 || MP-WEIXIN || MP-QQ
-      let index = e.target.current || e.detail.current;
-      this.navBarTabIndex = index;
-      // #endif
     },
     ontabtap(e) {
       let index = e.target.dataset.current || e.currentTarget.dataset.current;
@@ -374,10 +347,6 @@ page {
   /* #ifndef APP-PLUS */
   width: 100%;
   /* #endif */
-}
-
-.swiper-list-tabs-box {
-  flex: 1;
 }
 
 .swiper-list-tabs {

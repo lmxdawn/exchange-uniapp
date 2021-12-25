@@ -33,6 +33,16 @@
       }
     },
     {
+      "path": "pages/contract/index",
+      "style": {
+        "navigationBarTitleText": "%common.contract%",
+        "navigationStyle":"custom",  //可以去掉小程序端的顶部导航
+        "app-plus":{
+          "titleNView":false   // 去掉APP、H5的顶部导航
+        }
+      }
+    },
+    {
       "path": "pages/wallet/index",
       "style": {
         "navigationBarTitleText": "%common.wallet%",
@@ -68,6 +78,13 @@
         "iconPath": "static/tabbar/trade.png",
         "selectedIconPath": "static/tabbar/trade-selected.png",
         "text": "%common.trade%"
+      }
+      ,
+      {
+        "pagePath": "pages/contract/index",
+        "iconPath": "static/tabbar/contract.png",
+        "selectedIconPath": "static/tabbar/contract-selected.png",
+        "text": "%common.contract%"
       }
       ,
       {

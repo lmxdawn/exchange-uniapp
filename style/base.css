@@ -1,6 +1,9 @@
 .test {
   color: rgb(16, 20, 29);
 }
+
+/* #ifndef APP-NVUE */
 page {
   background-color: #191E29;
 }
+/* #endif */

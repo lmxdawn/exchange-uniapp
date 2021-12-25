@@ -22,7 +22,6 @@
       }
     },
 		onLoad() {
-
 		},
 		methods: {
       charge(lang) {

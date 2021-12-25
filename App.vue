@@ -49,7 +49,7 @@ export default {
 }
 </script>
 
-<style>
+<style lang="scss">
 /*每个页面公共的css*/
-@import "@/style/base.css";
+@import url("style/base.css");
 </style>

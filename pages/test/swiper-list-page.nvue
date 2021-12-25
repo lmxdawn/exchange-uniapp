@@ -121,16 +121,6 @@ export default {
       }
     },
     loadData(refresh) {
-
-      if (this.nid === 0 && this.marketCollect.size === 0) {
-        this.isNoData = true
-        this.dataList = []
-        setTimeout(() => {
-          this.loadingStatus = "noMore";
-        }, 500)
-        return;
-      }
-
       if (this.loadingStatus !== "more") {
         if (refresh) {
           this.refreshStatus()
@@ -139,44 +129,52 @@ export default {
       }
       this.loadingStatus = "loading";
 
+      if (this.nid === 0 && this.marketCollect.size === 0) {
+        this.isNoData = true
+        setTimeout(() => {
+          this.loadingStatus = "noMore";
+        }, 500)
+        return;
+      }
+
       // 如果是自选
       if (this.nid === 0) {
         this.params.collect = [...this.marketCollect].join(",")
       }
       symbolOrderList(this.params)
-        .then(res => {
-          this.isNoData = false
-          if (res.code > 0) {
-            this.loadingStatus = "noMore";
-            if (this.dataList.length === 0) {
-              this.isNoData = true;
+          .then(res => {
+            this.isNoData = false
+            if (res.code > 0) {
+              this.loadingStatus = "noMore";
+              if (this.dataList.length === 0) {
+                this.isNoData = true;
+              }
+              if (refresh) {
+                this.refreshStatus()
+              }
+              return false
             }
+            const dataList = res.data.map((item) => {
+              let difference = accSub(item.price, item.price24)
+              // 计算涨跌幅 涨跌幅=涨跌值/昨收盘*100%
+              item.rate24 = Number(accMul(accDiv(difference, item.price24 === 0 ? 1 : item.price24), 100)).toFixed(2)
+              return item;
+            });
+            // 请求的值小于每页数量
+            this.isNoData = (dataList.length === 0 && this.dataList.length === 0);
+            this.loadingStatus = "more";
             if (refresh) {
+              this.dataList = dataList;
               this.refreshStatus()
+            } else {
+              this.dataList = this.dataList.concat(dataList);
             }
-            return false
-          }
-          const dataList = res.data.map((item) => {
-            let difference = accSub(item.price, item.price24)
-            // 计算涨跌幅 涨跌幅=涨跌值/昨收盘*100%
-            item.rate24 = Number(accMul(accDiv(difference, item.price24 === 0 ? 1 : item.price24), 100)).toFixed(2)
-            return item;
-          });
-          // 请求的值小于每页数量
-          this.isNoData = (dataList.length === 0 && this.dataList.length === 0);
-          this.loadingStatus = "more";
-          if (refresh) {
-            this.dataList = dataList;
-            this.refreshStatus()
-          } else {
-            this.dataList = this.dataList.concat(dataList);
-          }
-          this.params.page++
-          if (dataList.length < this.params.limit) {
-            this.loadingStatus = "noMore";
-          }
-        })
-        .catch(() => {
+            this.params.page++
+            if (dataList.length < this.params.limit) {
+              this.loadingStatus = "noMore";
+            }
+          })
+          .catch(() => {
             this.isNoData = false
             this.loadingStatus = "noMore";
             if (this.dataList.length === 0) {
@@ -185,7 +183,7 @@ export default {
             if (refresh) {
               this.refreshStatus()
             }
-        })
+          })
     },
     loadMore(e) {
       this.loadData();
