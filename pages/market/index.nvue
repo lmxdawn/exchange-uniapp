@@ -58,8 +58,8 @@ import {
 } from '@dcloudio/uni-i18n'
 import messages from '../../locale/index';
 import myNavBarTab from '../../components/my-nav-bar/my-nav-bar-tab';
-import swiperListPage from './swiper-list-page.nvue';
-import swiperListPageHead from './swiper-list-page-head.vue';
+import swiperListPage from '../../components/market/swiper-list-page.nvue';
+import swiperListPageHead from '../../components/market/swiper-list-page-head.vue';
 
 // 缓存每页最多
 const MAX_CACHE_DATA = 100;
