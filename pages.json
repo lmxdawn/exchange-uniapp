@@ -7,7 +7,8 @@
         "navigationBarTitleText": "%common.home%",
         "navigationStyle":"custom",  //可以去掉小程序端的顶部导航
         "app-plus":{
-          "titleNView":false   // 去掉APP、H5的顶部导航
+          "titleNView":false,   // 去掉APP、H5的顶部导航
+          "background":"#191E29"   // 去掉APP、H5的顶部导航
         }
       }
     },
@@ -28,7 +29,8 @@
         "navigationBarTitleText": "%common.trade%",
         "navigationStyle":"custom",  //可以去掉小程序端的顶部导航
         "app-plus":{
-          "titleNView":false   // 去掉APP、H5的顶部导航
+          "titleNView":false,   // 去掉APP、H5的顶部导航
+          "background":"#191E29"   // 去掉APP、H5的顶部导航
         }
       }
     },
@@ -48,7 +50,8 @@
         "navigationBarTitleText": "%common.wallet%",
         "navigationStyle":"custom",  //可以去掉小程序端的顶部导航
         "app-plus":{
-          "titleNView":false   // 去掉APP、H5的顶部导航
+          "titleNView":false,   // 去掉APP、H5的顶部导航
+          "background":"#191E29"   // 去掉APP、H5的顶部导航
         }
       }
     }
