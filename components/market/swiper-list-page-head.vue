@@ -142,7 +142,7 @@
     align-items: center;
     flex-direction: row;
     width: 750rpx;
-    padding: 5px 15px 0;
+    padding: 5px 10px 0;
   }
   .swiper-list-page-table-head-left {
     flex: 1;

@@ -37,7 +37,8 @@
 
       <view class="card">
         <view class="card-head">
-          <u-notice-bar :text="noticeList" bgColor="#191E29" color="#E1E8F5" direction="column" mode="link" speed="250" url="/pages/componentsB/tag/tag"></u-notice-bar>
+          <uni-notice-bar @getmore="getMore" :showGetMore="true" backgroundColor="#191E29" color="#E1E8F5" moreColor="#E1E8F5" :showIcon="true" :scrollable="true" :text="noticeText"></uni-notice-bar>
+          <!--<u-notice-bar :text="noticeList" bgColor="#191E29" color="#E1E8F5" direction="column" mode="link" speed="250" url="/pages/componentsB/tag/tag"></u-notice-bar>-->
         </view>
         <view class="card-body">
 
@@ -55,6 +56,11 @@
   export default {
     components: {
       myNavBarSearch
+    },
+    computed: {
+      noticeText() {
+        return this.noticeList.join(" ")
+      }
     },
 		data() {
 			return {
@@ -91,6 +97,9 @@
         } else if (index === 2) {
           this.message()
         }
+      },
+      getMore() {
+
       },
       asset() {
 

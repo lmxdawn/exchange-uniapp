@@ -36,7 +36,7 @@
           <swiper class="swiper-list-tab-box" ref="swiper1" :current="tabIndex" :duration="300" @change="onswiperchange"
                   @transition="onswiperscroll" @animationfinish="animationfinish" @onAnimationEnd="animationfinish">
             <swiper-item class="swiper-list-swiper-item" v-for="(page, index) in tabList" :key="index">
-              <swiper-list-page class="swiper-list-page-item" :refresh-status-text="refreshStatusText" :nid="page.nid" :ref="'page' + index"></swiper-list-page>
+              <swiper-list-page class="swiper-list-page-item" :loading-more-text="loadingMoreText" :refresh-status-text="refreshStatusText" :nid="page.nid" :ref="'page' + index"></swiper-list-page>
             </swiper-item>
           </swiper>
         </view>
@@ -127,6 +127,11 @@ export default {
         complete: t('common.refresh.complete'),
         pull: t('common.refresh.pull'),
         freed: t('common.refresh.freed'),
+      },
+      loadingMoreText: {
+        contentdown: t('common.more.down'),
+        contentrefresh: t('common.more.refresh'),
+        contentnomore: t('common.more.nomore')
       }
     }
   },
@@ -184,12 +189,6 @@ export default {
   methods: {
     onNavBarTabClickItem(index) {
       this.navBarTabIndex = index
-    },
-    onNavBarTabChage(e) {
-      // #ifndef APP-PLUS || H5 || MP-WEIXIN || MP-QQ
-      let index = e.target.current || e.detail.current;
-      this.navBarTabIndex = index;
-      // #endif
     },
     ontabtap(e) {
       let index = e.target.dataset.current || e.currentTarget.dataset.current;
@@ -360,7 +359,7 @@ export default {
 }
 </script>
 
-<style>
+<style scoped>
 /* #ifndef APP-PLUS */
 page {
   width: 100%;

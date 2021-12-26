@@ -1,6 +1,6 @@
 <template>
   <view class="page-news">
-    <view class="list-view-empty" v-if="isNoData">
+    <view class="list-view-empty" v-if="!isNoData">
       <my-empty v-if="loadingStatus === 'noMore'" :text="emptyText" :click-data="nid" @click="emptyClick"></my-empty>
       <uni-load-more v-else color="#23AD8F" iconType="circle" :status="loadingStatus" :contentText="loadingMoreText"></uni-load-more>
     </view>
@@ -20,7 +20,7 @@
         <cell class="cell" v-for="(item, index) in dataList" :key="item.id">
           <swiper-list-item :listItem="item"></swiper-list-item>
         </cell>
-        <cell>
+        <cell v-if="loadingStatus !== 'noMore' || params.page > 1">
           <uni-load-more :status="loadingStatus" iconType="circle" :contentText="loadingMoreText"></uni-load-more>
         </cell>
       </list>
@@ -30,7 +30,7 @@
         <view v-for="(item, index) in dataList" :key="item.id">
           <swiper-list-item :listItem="item"></swiper-list-item>
         </view>
-        <view class="loading-more">
+        <view class="loading-more" v-if="loadingStatus !== 'noMore' || params.page > 1">
           <uni-load-more :status="loadingStatus" iconType="circle" :contentText="loadingMoreText"></uni-load-more>
         </view>
       </scroll-view>
@@ -77,10 +77,10 @@ export default {
       type: Object,
       default: () => {
         return {
-          initial: '正在刷新',
-          complete: '刷新完成',
-          pull: '下拉刷新',
-          freed: '释放刷新',
+          initial: '',
+          complete: '',
+          pull: '',
+          freed: '',
         }
       }
     }
@@ -96,14 +96,13 @@ export default {
   data() {
     return {
       dataList: [],
-      navigateFlag: false,
       refreshing: false,
       refreshFlag: false,
       refreshText: "",
       refreshIcon: "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAIAAAACABAMAAAAxEHz4AAAABGdBTUEAALGPC/xhBQAAAAFzUkdCAK7OHOkAAAAVUExURUxpcSKtjyOtjyOtkCGujyOujyOtjyVq54MAAAAGdFJOUwCBq1Ms2KeJoRYAAAETSURBVGje7de9DoIwFAXgqrgzKLMOOhMTnZmcndwB4f0fQbHclj+Tnt7E6ZyFpAknHy3hBmMYhmEYhmGgbPbVTlWQtW2TKu5ft5+UioJzV9CmOoCGYAHxhB4QTxBALMEBYgkeEEcYAOIIQ0AMYQSIIYwBOGECwAlTAEqYAVDCHIARFgAYYQmAECaADCYIoLaXFUpwN+T2YoTwCiy4CcD0BdJYhX/LLUAK3Aq2BbVxBUIoIEHuC2SpQPbgA/AFltAEPsJdAL7AEkrkGDvAoOC7dkBGaj4uMFfkTUxOjR3qw8O7HHP8wwqdPgtYwAIWsCBgSlaKgkz7z7TtCh6KggQYyT/G5FP129gZCsMwDMMwDMP8PW8Th/WSXjS8nAAAAABJRU5ErkJggg==",
+      pulling: false,
       isNoData: true,
       loadingStatus: "more",
-      pulling: false,
       params: {
         coinId: this.nid,
         page: 1,

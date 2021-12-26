@@ -1,22 +1,24 @@
 <template>
-  <view>
-    <uni-nav-bar :color="color" :border="false" :background-color="backgroundColor" :statusBar="statusBar">
-      <block slot="left">
-        <view class="nav-bar-left">
-          <uni-icons :type="iconLeftName" size="25" :color="iconLeftColor" />
-        </view>
-      </block>
+  <view class="box">
+    <uni-nav-bar :isIcon="false" :color="color" :border="false" :background-color="backgroundColor" :statusBar="statusBar">
       <view class="nav-bar-center">
         <view class="nav-bar-center-box">
-          <uni-segmented-control :current="current" :values="tabBars" @clickItem="onClickItem" styleType="button"></uni-segmented-control>
+          <uni-segmented-control fontSize="18px" :current="current" :values="tabBars" @clickItem="onClickItem" styleType="text"></uni-segmented-control>
         </view>
       </view>
-      <block slot="right">
-        <view class="nav-bar-right">
-          <uni-icons :type="iconRightName" size="25" :color="iconRightColor" />
-        </view>
-      </block>
     </uni-nav-bar>
+
+    <view class="header-box">
+      <view class="header-box-left">
+        <uni-icons class="header-box-left__drawer" color="#b8c6d8" type="bars" size="28"></uni-icons>
+        <text class="header-box-left__symbol">BTC/USDT</text>
+        <text class="header-box-left__rate" :class="[('header-box-left__rate__' + (rate >= 0 ? 'up' : 'down'))]">{{rate > 0 ? '+' : ''}}{{ rate }}%</text>
+      </view>
+      <view class="header-box-right">
+        <uni-icons class="header-box-right__kline" color="#b8c6d8" custom-prefix="iconfont" type="icon-kxiantu" size="28"></uni-icons>
+        <uni-icons class="header-box-right__more" color="#b8c6d8" type="more-filled" size="28"></uni-icons>
+      </view>
+    </view>
   </view>
 </template>
 
@@ -24,6 +26,10 @@
 export default {
   name: "my-nav-bar-trade",
   props: {
+    rate24: {
+      type: Number,
+      default: 0
+    },
     statusBar: {
       type: Boolean,
       default: false
@@ -38,22 +44,6 @@ export default {
         return []
       }
     },
-    iconLeftName: {
-      type: String,
-      default: ""
-    },
-    iconRightName: {
-      type: String,
-      default: ""
-    },
-    iconLeftColor: {
-      type: String,
-      default: "#E1E8F5"
-    },
-    iconRightColor: {
-      type: String,
-      default: "#E1E8F5"
-    },
     color: {
       type: String,
       default: "#b8c6d8"
@@ -62,6 +52,11 @@ export default {
       type: String,
       default: "#191E29"
     },
+  },
+  computed: {
+    rate() {
+      return Number(this.rate24).toFixed(2)
+    }
   },
   methods: {
     onClickItem(e) {
@@ -74,42 +69,60 @@ export default {
 </script>
 
 <style lang="scss" scoped>
-$nav-height: 30px;
-.uni-nav-bar-text {
-  font-size: 12px;
-}
-
-.nav-bar-left {
-  display: flex;
-  flex-direction: row;
-  align-items: center;
-  justify-content: center;
-}
-.nav-bar-right {
-  //float: right;
-}
-
 .nav-bar-center {
-  display: flex;
   flex: 1;
-  justify-content: center;
-  align-items: center;
 }
 .nav-bar-center-box {
-  width: 300rpx;
+  width: 100px;
   display: flex;
   justify-content: center;
 }
 
-.input-uni-icon {
-  line-height: $nav-height;
+.header-box {
+  width: 750rpx;
+  height: 40px;
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  align-items: center;
+  //background-color: red;
+  padding: 0 13px;
 }
 
-.nav-bar-input {
-  height: $nav-height;
-  line-height: $nav-height;
-  width: 320rpx;
-  padding: 0 5px;
-  font-size: 14px;
+.header-box-left {
+  display: flex;
+  flex-direction: row;
+  justify-content: flex-start;
+  align-items: center;
+  &__symbol {
+    margin-left: 10px;
+    font-size: 20px;
+    font-weight: bold;
+    color: #b8c6d8;
+  }
+  &__rate {
+    padding: 5px 8px;
+    border-radius: 2px;
+    font-size: 14px;
+    margin-left: 10px;
+    &__up {
+      background-color: rgba(26,187,151,.08);
+      color: #1abb97;
+    }
+    &__down {
+      background-color: rgba(237,102,102,.08);
+      color: #ed6666;
+    }
+  }
 }
+.header-box-right {
+  display: flex;
+  flex-direction: row;
+  justify-content: flex-end;
+  align-items: center;
+  &__kline {
+    margin-right: 10px;
+  }
+}
+
 </style>

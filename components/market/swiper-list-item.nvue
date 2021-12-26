@@ -16,8 +16,8 @@
     </view>
     <view class="swiper-item-cell-right">
       <view class="swiper-item-cell-text-box">
-        <view class="swiper-item-cell-up-button" :class="[rate > 0 ? 'upRate' : 'downRate']">
-          <text class="swiper-item-cell-text">{{rate > 0 ? '+' : ''}}{{ rate }}%</text>
+        <view class="swiper-item-cell-up-button" :class="[rate >= 0 ? 'upRate' : 'downRate']">
+          <text class="swiper-item-cell-text">{{rate >= 0 ? '+' : ''}}{{ rate }}%</text>
         </view>
       </view>
     </view>
@@ -84,7 +84,7 @@
     align-items: center;
     flex-direction: row;
     width: 750rpx;
-    padding: 5px 15px;
+    padding: 5px 10px;
     background-color: transparent;
     transition-property: background-color;
     transition-duration: .5s

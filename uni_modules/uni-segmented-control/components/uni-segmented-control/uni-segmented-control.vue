@@ -1,13 +1,13 @@
 <template>
-	<view :class="[styleType === 'text'?'segmented-control--text' : 'segmented-control--button' ]" :style="{backgroundColor: bgColor}" class="segmented-control">
+	<view :class="[styleType === 'text'?'segmented-control--text' : 'segmented-control--button' ]" :style="{backgroundColor: styleType === 'button' ? bgColor : ''}" class="segmented-control">
 		<view v-for="(item, index) in values" :class="[ styleType === 'text' ? '': 'segmented-control__item--button',
 		index === currentIndex&&styleType === 'button' ? 'segmented-control__item--button--active': '',
 		index === 0&&styleType === 'button' ? 'segmented-control__item--button--first': '',
 			index === values.length - 1&&styleType === 'button' ? 'segmented-control__item--button--last': '' ]" :key="index"
-			:style="{ backgroundColor: index === currentIndex ? activeBgColor : bgColor, margin: styleType === 'button' ? '3px' : '0'}"
+			:style="{ backgroundColor: styleType === 'button' ? (index === currentIndex ? activeBgColor : bgColor) : '', margin: styleType === 'button' ? '3px' : '0'}"
 			class="segmented-control__item" @click="_onClick(index)">
 			<view>
-				<text :style="{color: index === currentIndex ? activeColor : defaultColor}" class="segmented-control__text" :class="styleType === 'text' && index === currentIndex ? 'segmented-control__item--text': ''">{{ item }}</text>
+				<text :style="{color: index === currentIndex ? activeColor : defaultColor, fontSize: fontSize}" class="segmented-control__text" :class="styleType === 'text' && index === currentIndex ? '': ''">{{ item }}</text>
 			</view>
 
 		</view>
@@ -61,6 +61,10 @@
 			styleType: {
 				type: String,
 				default: 'button'
+			},
+      fontSize: {
+				type: String,
+				default: '15px'
 			}
 		},
 		data() {
@@ -147,5 +151,6 @@
 		font-size: 14px;
 		line-height: 20px;
 		text-align: center;
+    font-weight: bold;
 	}
 </style>

@@ -6,6 +6,13 @@ export default {
   "description": "",
   "glyphs": [
     {
+      "icon_id": "03",
+      "name": "icon-kxiantu",
+      "font_class": "icon-kxiantu",
+      "unicode": "e650",
+      "unicode_decimal": 3
+    },
+    {
       "icon_id": "02",
       "name": "icon-xiangshang1",
       "font_class": "icon-xiangshang1",
