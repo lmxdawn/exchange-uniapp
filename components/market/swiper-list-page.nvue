@@ -1,8 +1,8 @@
 <template>
   <view class="page-news">
-    <view class="list-view-empty" v-if="!isNoData">
+    <view class="list-view-empty" v-if="isNoData">
       <my-empty v-if="loadingStatus === 'noMore'" :text="emptyText" :click-data="nid" @click="emptyClick"></my-empty>
-      <uni-load-more v-else color="#23AD8F" iconType="circle" :status="loadingStatus" :contentText="loadingMoreText"></uni-load-more>
+      <uni-load-more v-else color="#23AD8F" iconType="circle" :status="loadingStatus" :contentText="{}"></uni-load-more>
     </view>
     <block v-else>
       <!-- #ifdef APP-NVUE -->
@@ -120,7 +120,6 @@ export default {
       }
     },
     loadData(refresh) {
-
       if (this.nid === 0 && this.marketCollect.size === 0) {
         this.isNoData = true
         this.dataList = []
