@@ -3,20 +3,17 @@
     <view class="operation-part">
       <view class="operation-part-left">
         <view class="side-btn-box">
-          <view class="side-btn-p">
-            <view class="side-btn side-btn__buy">
-              <text class="side-btn__text">买入</text>
-            </view>
+          <view class="side-btn side-btn__buy side-btn__buy__activate">
+            <text class="side-btn__text">买入</text>
           </view>
-          <view class="side-btn-p">
-            <view class="side-btn side-btn__sell">
-              <text class="side-btn__text">卖出</text>
-            </view>
+          <view class="side-btn side-btn__sell">
+            <text class="side-btn__text">卖出</text>
           </view>
         </view>
       </view>
-      <view class="operation-part-line"></view>
-      <view class="operation-part-right"></view>
+      <view class="operation-part-right">
+        <view class="test"></view>
+      </view>
     </view>
     <view style="height: 900px;"></view>
   </view>
@@ -44,11 +41,12 @@ export default {
   display: flex;
   flex-direction: row;
   /* #ifndef APP-NVUE */
-  width: 100%;
+  //width: 100%;
   /* #endif */
+  flex: 1;
 }
 .operation-part-left {
-  flex: 1;
+  width: 170px;
   height: 50px;
   padding-right: 10px;
 }
@@ -58,37 +56,50 @@ export default {
 }
 
 .side-btn-box {
+  width: 170px;
+  height: 40px;
   display: flex;
   flex-direction: row;
-  justify-content: flex-start;
-}
-.side-btn-p {
-  position: relative;
-  width: 50%;
-  background-color: #dd524d;
+  justify-content: space-between;
 }
 .side-btn {
-  position: absolute;
-  top: 0;
+  display: flex;
+  flex-direction: row;
+  justify-content: center;
+  align-items: center;
   border-radius: 2px;
-  color: #FFFFFF;
-  width: 92px;
-  height: 40px;
-  line-height: 40px;
-  text-align: center;
+  width: 80px;
+  background-color: rgba(184,198,216,.08);
+  .side-btn__text {
+    color: #949AA6;
+  }
   &__buy {
-    left: 0;
-    padding-right: 10px;
-    background: linear-gradient(-70deg, transparent 20px, #1abb97 0);
-    background-repeat: no-repeat;
+  }
+  &__buy__activate {
+    background-color: #1abb97!important;
+    .side-btn__text {
+      color: #FFFFFF;
+    }
   }
   &__sell {
-    right: 0;
-    padding-left: 10px;
-    background: linear-gradient(110deg, transparent 20px, #1abb97 0);
-    background-repeat: no-repeat;
+  }
+  &__sell__activate {
+    background-color: #ed6666!important;
+    .side-btn__text {
+      color: #FFFFFF;
+    }
   }
   .side-btn__text {
   }
+}
+.test {
+  width: 200px;
+  height: 80px;
+  margin: 100px;
+  background: #ffaaff;
+  border-radius: 15px 20px 35px 50px / 10% 25% 1em 50%;
+  /*水平-----/-----垂直，中间用“/”隔开*/
+  /*左上水平   右上水平   右下水平   左下水平  /  左上垂直   右上垂直   右下垂直   左下垂直*/
+  /*这种方法不推荐使用，太乱了，傻傻分不清楚*/
 }
 </style>
