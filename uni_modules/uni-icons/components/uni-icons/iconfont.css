@@ -1,3 +1,7 @@
+.icon-check:before {
+  content: "\e60b";
+}
+
 .icon-kxiantu:before {
   content: "\e650";
 }

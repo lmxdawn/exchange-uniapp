@@ -21,7 +21,7 @@
           </div>
         </refresh>
         <cell class="cell">
-          <trade-list></trade-list>
+          <trade-list :cancel-text="cancelText" :trade-type-arr="tradeTypeArr"></trade-list>
         </cell>
         <cell class="load-more" v-if="loadingStatus !== 'noMore' || params.page > 1">
           <uni-load-more :status="loadingStatus" iconType="circle" :contentText="loadingMoreText"></uni-load-more>
@@ -30,7 +30,7 @@
       <!-- #endif -->
       <!-- #ifndef APP-NVUE -->
       <scroll-view class="listview" style="flex: 1;" enableBackToTop="true" scroll-y @scrolltolower="loadMore()">
-        <trade-list></trade-list>
+        <trade-list :cancel-text="cancelText" :trade-type-arr="tradeTypeArr"></trade-list>
         <view class="load-more" v-if="loadingStatus !== 'noMore' || params.page > 1">
           <uni-load-more :status="loadingStatus" iconType="circle" :contentText="loadingMoreText"></uni-load-more>
         </view>
@@ -69,7 +69,13 @@
       }),
       tabBars() {
         return [t('common.trade.coin2coin'),t('market.contract')]
-      }
+      },
+      cancelText() {
+        return t('common.cancel')
+      },
+      tradeTypeArr() {
+        return [t('common.trade.limit'),t('common.trade.market')]
+      },
     },
 		data() {
 			return {

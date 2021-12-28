@@ -10,18 +10,67 @@
             <text class="side-btn__text">卖出</text>
           </view>
         </view>
+
+        <my-popup ref="tradeTypePopup" @selected="tradeTypeSelected" :current="tradeForm.type" :list="tradeTypeArr" :cancel-text="cancelText">
+          <view class="trade-type" @click="tradeTypeShow">
+            <text class="trade-type__text">{{ tradeTypeArr[tradeForm.type] }}</text>
+            <uni-icons class="trade-type__down" color="#c1cdde" custom-prefix="iconfont" type="icon-xiangxia1" size="13"></uni-icons>
+          </view>
+        </my-popup>
+
+        <view class="trade-input-box">
+          <uni-number-box class="trade-input" background="rgba(184,198,216,.08)" color="#ffffff" placeholder="fsdafsdafdsa" placeholderColor="#b8c6d8" v-model="tradeForm.price" :step="0.01"></uni-number-box>
+        </view>
+
+
+
       </view>
       <view class="operation-part-right">
-        <view class="test"></view>
+
       </view>
     </view>
+
     <view style="height: 900px;"></view>
   </view>
 </template>
 
 <script>
+import myPopup from "../../components/my-popup/my-popup"
 export default {
-  name: "trade-list"
+  name: "trade-list",
+  props: {
+    cancelText: {
+      type: String,
+      default: ""
+    },
+    tradeTypeArr: {
+      type: Array,
+      default() {
+        return []
+      }
+    }
+  },
+  components: {
+    myPopup
+  },
+  computed: {
+  },
+  data() {
+    return {
+      tradeForm: {
+        type: 0,
+        price: 0.1
+      }
+    }
+  },
+  methods: {
+    tradeTypeShow() {
+      this.$refs.tradeTypePopup.open('bottom')
+    },
+    tradeTypeSelected(index) {
+      this.tradeForm.type = index
+    },
+  }
 }
 </script>
 
@@ -47,7 +96,6 @@ export default {
 }
 .operation-part-left {
   width: 170px;
-  height: 50px;
   padding-right: 10px;
 }
 .operation-part-right {
@@ -57,7 +105,7 @@ export default {
 
 .side-btn-box {
   width: 170px;
-  height: 40px;
+  height: 35px;
   display: flex;
   flex-direction: row;
   justify-content: space-between;
@@ -92,14 +140,25 @@ export default {
   .side-btn__text {
   }
 }
-.test {
-  width: 200px;
-  height: 80px;
-  margin: 100px;
-  background: #ffaaff;
-  border-radius: 15px 20px 35px 50px / 10% 25% 1em 50%;
-  /*水平-----/-----垂直，中间用“/”隔开*/
-  /*左上水平   右上水平   右下水平   左下水平  /  左上垂直   右上垂直   右下垂直   左下垂直*/
-  /*这种方法不推荐使用，太乱了，傻傻分不清楚*/
+
+.trade-type {
+  display: flex;
+  flex-direction: row;
+  justify-content: flex-start;
+  align-items: center;
+  padding: 10px 0;
+  &__text {
+    font-size: 13px;
+    color: #c1cdde;
+  }
+  &__down {
+    margin-left: 5px;
+  }
 }
+
+.trade-input-box {
+}
+.trade-input {
+}
+
 </style>
