@@ -2,33 +2,119 @@
   <view class="list-box">
     <view class="operation-part">
       <view class="operation-part-left">
-        <view class="side-btn-box">
-          <view class="side-btn side-btn__buy side-btn__buy__activate">
-            <text class="side-btn__text">买入</text>
+
+        <view>
+          <view class="side-btn-box">
+            <view class="side-btn"
+                  :class="[index === tradeForm.direction ? 'activate' : '', index === 0 ? 'side-btn__buy' : 'side-btn__sell']"
+                  v-for="(item, index) in tradeDirectionArr"
+                  @click="tradeDirectionClick(index)"
+                  :key="index">
+              <text class="side-btn__text">{{item}}</text>
+            </view>
           </view>
-          <view class="side-btn side-btn__sell">
-            <text class="side-btn__text">卖出</text>
+
+          <my-popup ref="tradeTypePopup" @selected="tradeTypeSelected" :current="tradeForm.type" :list="tradeTypeArr" :cancel-text="cancelText">
+            <view class="trade-type" @click="tradeTypeShow">
+              <text class="trade-type__text">{{ tradeTypeArr[tradeForm.type] }}</text>
+              <uni-icons class="trade-type__down" color="#c1cdde" custom-prefix="iconfont" type="icon-xiangxia1" size="13"></uni-icons>
+            </view>
+          </my-popup>
+
+          <view class="trade-dotted-box" v-if="tradeForm.type === 1">
+            <text class="trade-dotted">{{tradeMarketArr[tradeForm.type]}}</text>
+            <view class="trade-line"></view>
+          </view>
+
+          <view class="trade-input-box" v-else>
+            <uni-number-box class="trade-input" background="rgba(184,198,216,.08)" color="#9197A3" placeholder="USDT" placeholderColor="#4F5460" v-model="tradeForm.price" :step="0.01"></uni-number-box>
+            <view class="trade-line">
+              <text class="trade-line__text">≈0.00 USD</text>
+            </view>
+          </view>
+
+          <view class="trade-input-box">
+            <uni-number-box class="trade-input" background="rgba(184,198,216,.08)" color="#9197A3" placeholder="BTC" placeholderColor="#4F5460" v-model="tradeForm.amount" :step="0.01"></uni-number-box>
+          </view>
+
+          <view class="trade-balance">
+            <text class="trade-balance__symbol">可用USDT</text>
+            <text class="trade-balance__text">--</text>
+          </view>
+
+          <view class="trade-percentage">
+            <view class="trade-percentage-item">
+              <text class="trade-percentage-item__text">25%</text>
+            </view>
+            <view class="trade-percentage-item">
+              <text class="trade-percentage-item__text">50%</text>
+            </view>
+            <view class="trade-percentage-item">
+              <text class="trade-percentage-item__text">75%</text>
+            </view>
+            <view class="trade-percentage-item">
+              <text class="trade-percentage-item__text">100%</text>
+            </view>
+          </view>
+
+          <view class="trade-line"></view>
+
+          <view class="trade-total">
+            <text class="trade-total__text">成交金额 0 USDT</text>
+          </view>
+          <view class="trade-total">
+            <text class="trade-total__text">≈0 USD</text>
           </view>
         </view>
 
-        <my-popup ref="tradeTypePopup" @selected="tradeTypeSelected" :current="tradeForm.type" :list="tradeTypeArr" :cancel-text="cancelText">
-          <view class="trade-type" @click="tradeTypeShow">
-            <text class="trade-type__text">{{ tradeTypeArr[tradeForm.type] }}</text>
-            <uni-icons class="trade-type__down" color="#c1cdde" custom-prefix="iconfont" type="icon-xiangxia1" size="13"></uni-icons>
-          </view>
-        </my-popup>
-
-        <view class="trade-input-box">
-          <uni-number-box class="trade-input" background="rgba(184,198,216,.08)" color="#ffffff" placeholder="fsdafsdafdsa" placeholderColor="#b8c6d8" v-model="tradeForm.price" :step="0.01"></uni-number-box>
+        <view class="trade-sub-btn" :class="[tradeForm.direction === 0 ? 'buy' : 'sell']">
+          <text class="trade-sub-btn__text">{{ tradeDirectionArr[tradeForm.direction] }} BTC</text>
         </view>
-
-
 
       </view>
+
       <view class="operation-part-right">
+        <view class="depth-list">
+          <view class="depth-list-head">
+            <text class="depth-list-head__text">价格(USDT)</text>
+            <text class="depth-list-head__text">累计(BTC)</text>
+          </view>
+          <view class="depth-list-body">
+            <view class="depth-list-item" v-for="(item, index) in depthSellList" :key="index">
+              <text class="depth-list-item__price sell">{{item.price}}</text>
+              <text class="depth-list-item__amount">{{ item.amount }}</text>
+            </view>
+          </view>
+          <view class="depth-list-line">
+            <text class="depth-list-line__price buy">0.07899</text>
+            <text class="depth-list-line__rate">≈0.07899 USD</text>
+          </view>
+          <view class="depth-list-body">
+            <view class="depth-list-item" v-for="(item, index) in depthBuyList" :key="index">
+              <text class="depth-list-item__price buy">{{item.price}}</text>
+              <text class="depth-list-item__amount">{{ item.amount }}</text>
+            </view>
+          </view>
+        </view>
+
+        <view class="depth-btn-box">
+          <view class="depth-btn-decimal">
+            <text class="depth-btn-decimal__text">1位小数</text>
+          </view>
+
+          <my-popup ref="depthTypePopup" @selected="depthTypeSelected" :current="depthType" :list="depthTypeArr" :cancel-text="cancelText">
+            <view class="depth-btn-type" @click="depthTypeShow">
+              <view class="depth-btn-type__item" :class="depthType === 1 ? 'sell' : (depthType === 2 ? 'buy' : 'buy')"></view>
+              <view class="depth-btn-type__item" :class="depthType === 1 ? 'sell' : (depthType === 2 ? 'buy' : '')"></view>
+              <view class="depth-btn-type__item" :class="depthType === 1 ? 'sell' : (depthType === 2 ? 'buy' : 'sell')"></view>
+            </view>
+          </my-popup>
+
+        </view>
 
       </view>
     </view>
+
 
     <view style="height: 900px;"></view>
   </view>
@@ -48,19 +134,60 @@ export default {
       default() {
         return []
       }
-    }
+    },
+    tradeMarketArr: {
+      type: Array,
+      default() {
+        return []
+      }
+    },
+    tradeDirectionArr: {
+      type: Array,
+      default() {
+        return []
+      }
+    },
+    depthTypeArr: {
+      type: Array,
+      default() {
+        return []
+      }
+    },
   },
   components: {
     myPopup
   },
   computed: {
+    depthSellList() {
+      let len = this.depthType === 0 ? 7 : (this.depthType === 1 ? 14 : 0)
+      let list = []
+      for (let i = 0; i < len; i++) {
+        let item = this.depthSell[i] || {price: '--', amount: '--'}
+        list.push(item)
+      }
+      return list
+    },
+    depthBuyList() {
+      let len = this.depthType === 0 ? 7 : (this.depthType === 2 ? 14 : 0)
+      let list = []
+      for (let i = 0; i < len; i++) {
+        let item = this.depthBuy[i] || {price: '--', amount: '--'}
+        list.push(item)
+      }
+      return list
+    },
   },
   data() {
     return {
       tradeForm: {
         type: 0,
-        price: 0.1
-      }
+        direction: 0,
+        price: "",
+        amount: ""
+      },
+      depthType: 0,
+      depthSell: [],
+      depthBuy: [],
     }
   },
   methods: {
@@ -70,6 +197,15 @@ export default {
     tradeTypeSelected(index) {
       this.tradeForm.type = index
     },
+    tradeDirectionClick(index) {
+      this.tradeForm.direction = index
+    },
+    depthTypeShow() {
+      this.$refs.depthTypePopup.open('bottom')
+    },
+    depthTypeSelected(index) {
+      this.depthType = index
+    },
   }
 }
 </script>
@@ -77,7 +213,7 @@ export default {
 <style lang="scss" scoped>
 .list-box {
   flex: 1;
-  background-color: #212631;
+  background-color: #191E29;
   width: 750rpx;
   border-top-left-radius: 20px;
   border-top-right-radius: 20px;
@@ -96,16 +232,16 @@ export default {
 }
 .operation-part-left {
   width: 170px;
-  padding-right: 10px;
+  padding-right: 15px;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
 }
 .operation-part-right {
   flex: 1;
-  height: 50px;
 }
 
 .side-btn-box {
-  width: 170px;
-  height: 35px;
   display: flex;
   flex-direction: row;
   justify-content: space-between;
@@ -115,29 +251,28 @@ export default {
   flex-direction: row;
   justify-content: center;
   align-items: center;
+  height: 35px;
+  padding: 0 20px;
   border-radius: 2px;
-  width: 80px;
   background-color: rgba(184,198,216,.08);
   .side-btn__text {
-    color: #949AA6;
+    color: #E1E8F5;
   }
   &__buy {
-  }
-  &__buy__activate {
-    background-color: #1abb97!important;
-    .side-btn__text {
-      color: #FFFFFF;
+    &.activate {
+      background-color: #2DBD96!important;
+      .side-btn__text {
+        color: #FFFFFF;
+      }
     }
   }
   &__sell {
-  }
-  &__sell__activate {
-    background-color: #ed6666!important;
-    .side-btn__text {
-      color: #FFFFFF;
+    &.activate {
+      background-color: #ED6666!important;
+      .side-btn__text {
+        color: #FFFFFF;
+      }
     }
-  }
-  .side-btn__text {
   }
 }
 
@@ -149,16 +284,203 @@ export default {
   padding: 10px 0;
   &__text {
     font-size: 13px;
-    color: #c1cdde;
+    color: #E1E8F5;
   }
   &__down {
     margin-left: 5px;
   }
 }
 
+.trade-line {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  height: 18px;
+  &__text {
+    color: #9197A3;
+    font-size: 12px;
+  }
+}
+
+.trade-dotted-box {
+}
+.trade-dotted {
+  text-align: center;
+  height: 35px;
+  line-height: 35px;
+  border-top: dotted 1px #9197A3;
+  border-bottom: dotted 1px #9197A3;
+  border-left: dotted 1px #9197A3;
+  border-right: dotted 1px #9197A3;
+  border-top-right-radius: 2px;
+  border-top-left-radius: 2px;
+  border-bottom-left-radius: 2px;
+  // nvue 边框线虚线时，圆角都一样的话会有问题
+  border-bottom-right-radius: 3px;
+  color: #9197A3;
+  font-size: 14px;
+}
+
 .trade-input-box {
 }
 .trade-input {
+}
+
+.trade-balance {
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  align-items: center;
+  height: 40px;
+  &__symbol {
+    color: #9197A3;
+    font-size: 12px;
+  }
+  &__text {
+    font-size: 12px;
+    color: #c1cdde;
+  }
+}
+
+.trade-percentage {
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.trade-percentage-item {
+  background-color: rgba(184,198,216,.08);
+  border: solid 1px #404550;
+  padding: 1px 4px;
+  &__text {
+    color: #9197A3;
+    font-size: 12px;
+  }
+}
+
+.trade-total {
+  &__text {
+    font-size: 13px;
+    color: #c1cdde;
+  }
+}
+.trade-sub-btn {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 10px 0;
+  border-radius: 3px;
+  &.buy {
+    background-color: #2DBD96
+  }
+  &.sell {
+    background-color: #ED6666
+  }
+  &__text {
+    font-size: 13px;
+    color: #FFFFFF;
+  }
+}
+
+.depth-list {
+
+}
+.depth-list-head {
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  align-items: center;
+  padding: 3px 0;
+  &__text {
+    font-size: 12px;
+    color: #9197A3;
+  }
+}
+
+.depth-list-line {
+  border-top: solid 1px #292E39;
+  border-bottom: solid 1px #292E39;
+  padding: 5px 0;
+  &__price {
+    font-size: 16px;
+    font-weight: bold;
+    &.sell {
+      color: #ED6666;
+    }
+    &.buy {
+      color: #2DBD96;
+    }
+  }
+  &__rate {
+    font-size: 12px;
+    color: #9197A3;
+  }
+}
+
+.depth-list-item {
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  align-items: center;
+  padding: 3px 0;
+  &__price {
+    font-size: 14px;
+    &.sell {
+      color: #ED6666;
+    }
+    &.buy {
+      color: #2DBD96;
+    }
+  }
+  &__amount {
+    font-size: 14px;
+    color: #E1E8F5;
+  }
+}
+
+.depth-btn-box {
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  align-items: center;
+  margin-top: 10px;
+}
+.depth-btn-decimal {
+  flex: 1;
+  padding: 6px 0;
+  text-align: center;
+  border: solid 1px rgba(184,198,216,.08);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  border-radius: 1px;
+  &__text {
+    font-size: 14px;
+    color: #E1E8F5;
+  }
+}
+.depth-btn-type {
+  height: 30px;
+  margin-left: 10px;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  border: solid 1px rgba(184,198,216,.08);
+  padding: 6px;
+  border-radius: 1px;
+  &__item {
+    width: 25px;
+    height: 3px;
+    border-radius: 2px;
+    background-color: #9197A3;
+    &.sell {
+      background-color: #ED6666;
+    }
+    &.buy {
+      background-color: #2DBD96;
+    }
+  }
 }
 
 </style>

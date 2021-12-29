@@ -74,7 +74,7 @@
 		},
 		data() {
 			return {
-				inputValue: 0
+				inputValue: ""
 			};
 		},
 		watch: {
@@ -86,6 +86,9 @@
 			}
 		},
 		created() {
+      if (this.inputValue === "") {
+        return false
+      }
 			if (this.value === 1) {
 				this.inputValue = +this.modelValue;
 			}

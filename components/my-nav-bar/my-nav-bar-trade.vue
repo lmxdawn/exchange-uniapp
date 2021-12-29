@@ -15,7 +15,7 @@
         <text class="header-box-left__rate" :class="[('header-box-left__rate__' + (rate >= 0 ? 'up' : 'down'))]">{{rate > 0 ? '+' : ''}}{{ rate }}%</text>
       </view>
       <view class="header-box-right">
-        <uni-icons class="header-box-right__kline" color="#b8c6d8" custom-prefix="iconfont" type="icon-kxiantu" size="28"></uni-icons>
+        <uni-icons class="header-box-right__kline" color="#b8c6d8" custom-prefix="iconfont" type="icon-kxiantu" size="25"></uni-icons>
         <uni-icons class="header-box-right__more" color="#b8c6d8" type="more-filled" size="28"></uni-icons>
       </view>
     </view>
@@ -50,7 +50,7 @@ export default {
     },
     backgroundColor: {
       type: String,
-      default: "#191E29"
+      default: "#11151F"
     },
   },
   computed: {
@@ -101,17 +101,17 @@ export default {
     color: #b8c6d8;
   }
   &__rate {
-    padding: 5px 8px;
+    padding: 3px 8px;
     border-radius: 2px;
     font-size: 14px;
     margin-left: 10px;
     &__up {
       background-color: rgba(26,187,151,.08);
-      color: #1abb97;
+      color: #2DBD96;
     }
     &__down {
       background-color: rgba(237,102,102,.08);
-      color: #ed6666;
+      color: #ED6666;
     }
   }
 }

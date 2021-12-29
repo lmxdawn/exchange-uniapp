@@ -6,13 +6,13 @@
     <uni-popup ref="myPopup" :maskClick="false" @change="change" @maskClick="maskClick">
       <view class="my-popup">
         <view class="my-popup-list">
-          <view class="my-popup-list-item" :class="[index === current ? 'selected' : '']" v-for="(item, index) in list" @click="selected(index)">
+          <view class="my-popup-list-item" :class="[index === current ? 'selected' : '']" v-for="(item, index) in list" :key="index" @click="selected(index)">
             <text class="my-popup-list-item__text">{{item}}</text>
-            <uni-icons v-if="index === current" class="my-popup-list-item__check" color="#1ABB97" custom-prefix="iconfont" type="icon-check" size="20"></uni-icons>
+            <uni-icons v-if="index === current" class="my-popup-list-item__check" color="#2DBD96" custom-prefix="iconfont" type="icon-check" size="20"></uni-icons>
           </view>
         </view>
         <view class="my-popup-close">
-          <view class="my-popup-close-btn">
+          <view class="my-popup-close-btn" @click="maskClick">
             <text class="my-popup-close__text">{{cancelText}}</text>
           </view>
         </view>

@@ -21,7 +21,12 @@
           </div>
         </refresh>
         <cell class="cell">
-          <trade-list :cancel-text="cancelText" :trade-type-arr="tradeTypeArr"></trade-list>
+          <trade-list
+              :cancel-text="cancelText"
+              :trade-type-arr="tradeTypeArr"
+              :trade-market-arr="tradeMarketArr"
+              :trade-direction-arr="tradeDirectionArr"
+              :depth-type-arr="depthTypeArr"></trade-list>
         </cell>
         <cell class="load-more" v-if="loadingStatus !== 'noMore' || params.page > 1">
           <uni-load-more :status="loadingStatus" iconType="circle" :contentText="loadingMoreText"></uni-load-more>
@@ -30,7 +35,12 @@
       <!-- #endif -->
       <!-- #ifndef APP-NVUE -->
       <scroll-view class="listview" style="flex: 1;" enableBackToTop="true" scroll-y @scrolltolower="loadMore()">
-        <trade-list :cancel-text="cancelText" :trade-type-arr="tradeTypeArr"></trade-list>
+        <trade-list
+            :cancel-text="cancelText"
+            :trade-type-arr="tradeTypeArr"
+            :trade-market-arr="tradeMarketArr"
+            :trade-direction-arr="tradeDirectionArr"
+            :depth-type-arr="depthTypeArr"></trade-list>
         <view class="load-more" v-if="loadingStatus !== 'noMore' || params.page > 1">
           <uni-load-more :status="loadingStatus" iconType="circle" :contentText="loadingMoreText"></uni-load-more>
         </view>
@@ -68,13 +78,22 @@
         marketCollect: "marketCollect",
       }),
       tabBars() {
-        return [t('common.trade.coin2coin'),t('market.contract')]
+        return [t('trade.coin2coin'),t('market.contract')]
       },
       cancelText() {
         return t('common.cancel')
       },
       tradeTypeArr() {
-        return [t('common.trade.limit'),t('common.trade.market')]
+        return [t('trade.limit'),t('trade.market')]
+      },
+      tradeMarketArr() {
+        return [t('trade.market.buy'),t('trade.market.sell')]
+      },
+      tradeDirectionArr() {
+        return [t('trade.direction.buy'),t('trade.direction.sell')]
+      },
+      depthTypeArr() {
+        return [t('trade.depth.type.all'),t('trade.depth.type.sell'),t('trade.depth.type.buy')]
       },
     },
 		data() {
@@ -221,6 +240,7 @@
     width: 100%;
     height: 100%;
     display: flex;
+    background-color: #11151F;
   }
   /* #endif */
   .page-header {
@@ -234,7 +254,7 @@
     flex-direction: column;
   }
   .page-line {
-    height: 10px;
+    height: 3px;
   }
   .page-body {
     flex: 1;
@@ -257,7 +277,7 @@
   }
 
   .load-more {
-    background-color: #212631;
+    background-color: #191E29;
   }
 
   .refresh {

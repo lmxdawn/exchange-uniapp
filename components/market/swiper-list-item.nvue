@@ -120,13 +120,13 @@
     &.upRate {
       background-color: rgba(26,187,151,.08);
       .swiper-item-cell-text {
-        color: #1abb97;
+        color: #2DBD96;
       }
     }
     &.downRate {
       background-color: rgba(237,102,102,.08);
       .swiper-item-cell-text {
-        color: #ed6666;
+        color: #ED6666;
       }
     }
   }
