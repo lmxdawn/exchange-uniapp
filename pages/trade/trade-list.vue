@@ -81,25 +81,25 @@
           </view>
           <view class="depth-list-body">
             <view class="depth-list-item" v-for="(item, index) in depthSellList" :key="index">
-              <text class="depth-list-item__price sell">{{item.price}}</text>
-              <text class="depth-list-item__amount">{{ item.amount }}</text>
+              <text class="depth-list-item__price sell">{{item.price < 0 ? '--' : Number(item.price).toFixed(symbol.tradePricePrecision)}}</text>
+              <text class="depth-list-item__amount">{{ item.amount < 0 ? '--' : Number(item.amount).toFixed(symbol.tradeAmountPrecision) }}</text>
             </view>
           </view>
           <view class="depth-list-line">
-            <text class="depth-list-line__price buy">{{price}}</text>
-            <text class="depth-list-line__rate">≈{{priceRate(symbol.price)}} {{usdtRate.name}}</text>
+            <text class="depth-list-line__price buy">{{price < 0 ? '--' : Number(price).toFixed(symbol.tradePricePrecision)}}</text>
+            <text class="depth-list-line__rate">≈{{price < 0 ? '' : priceRate(symbol.price)}} {{usdtRate.name}}</text>
           </view>
           <view class="depth-list-body">
             <view class="depth-list-item" v-for="(item, index) in depthBuyList" :key="index">
-              <text class="depth-list-item__price buy">{{item.price}}</text>
-              <text class="depth-list-item__amount">{{ item.amount }}</text>
+              <text class="depth-list-item__price buy">{{item.price < 0 ? '--' : Number(item.price).toFixed(symbol.tradePricePrecision)}}</text>
+              <text class="depth-list-item__amount">{{ item.amount < 0 ? '--' : Number(item.amount).toFixed(symbol.tradeAmountPrecision) }}</text>
             </view>
           </view>
         </view>
 
         <view class="depth-btn-box">
           <view class="depth-btn-decimal">
-            <text class="depth-btn-decimal__text">1{{decimalTitle}}</text>
+            <text class="depth-btn-decimal__text">{{symbol.tradePricePrecision}} {{decimalTitle}}</text>
           </view>
 
           <my-popup ref="depthTypePopup" @selected="depthTypeSelected" :current="depthType" :list="depthTypeArr" :cancel-text="cancelText">
@@ -143,7 +143,7 @@ export default {
     },
     price: {
       type: Number,
-      default: 0
+      default: -1
     },
     cancelText: {
       type: String,
@@ -220,7 +220,7 @@ export default {
       let len = this.depthType === 0 ? 7 : (this.depthType === 1 ? 14 : 0)
       let list = []
       for (let i = 0; i < len; i++) {
-        let item = this.depthSell[i] || {price: '--', amount: '--'}
+        let item = this.depthSell[i] || {price: -1, amount: -1}
         list.push(item)
       }
       return list
@@ -229,7 +229,7 @@ export default {
       let len = this.depthType === 0 ? 7 : (this.depthType === 2 ? 14 : 0)
       let list = []
       for (let i = 0; i < len; i++) {
-        let item = this.depthBuy[i] || {price: '--', amount: '--'}
+        let item = this.depthBuy[i] || {price: -1, amount: -1}
         list.push(item)
       }
       return list
