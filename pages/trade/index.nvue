@@ -78,7 +78,7 @@
   import {accDiv, accMul, accSub} from "../../utils/decimal";
   import {symbolList, symbolRead} from "../../api/trade/symbol";
   import {marketDepthList} from "../../api/market/depth";
-  import {memberCoinBalance, memberCoinSymbolBalance} from "../../api/user/memberCoin";
+  import {memberCoinSymbolBalance} from "../../api/user/memberCoin";
 
   const { t } = initVueI18n(messages)
 
