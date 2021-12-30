@@ -15,3 +15,11 @@ export function memberCoinBalance(params) {
         params: params
     });
 }
+// 获取交易对钱包余额
+export function memberCoinSymbolBalance(params) {
+    return request({
+        url: "/user/member-coin/symbol-balance",
+        method: "get",
+        params: params
+    });
+}

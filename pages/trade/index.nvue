@@ -25,6 +25,7 @@
           <trade-list
               :symbol="symbol"
               :balance="balance"
+              :tradeBalance="tradeBalance"
               :cancel-text="cancelText"
               :trade-type-arr="tradeTypeArr"
               :trade-market-arr="tradeMarketArr"
@@ -41,6 +42,7 @@
         <trade-list
             :symbol="symbol"
             :balance="balance"
+            :tradeBalance="tradeBalance"
             :cancel-text="cancelText"
             :trade-type-arr="tradeTypeArr"
             :trade-market-arr="tradeMarketArr"
@@ -76,7 +78,7 @@
   import {accDiv, accMul, accSub} from "../../utils/decimal";
   import {symbolList, symbolRead} from "../../api/trade/symbol";
   import {marketDepthList} from "../../api/market/depth";
-  import {memberCoinBalance} from "../../api/user/memberCoin";
+  import {memberCoinBalance, memberCoinSymbolBalance} from "../../api/user/memberCoin";
 
   const { t } = initVueI18n(messages)
 
@@ -148,6 +150,7 @@
           contentrefresh: t('common.more.refresh'),
           contentnomore: t('common.more.nomore')
         },
+        tradeBalance: -1,
         balance: -1,
         symbol: {
           tradeCoin: {
@@ -291,14 +294,16 @@
       },
       getBalance() {
         let params = {
+          tradeCoinId: this.params.tradeCoinId,
           coinId: this.params.coinId,
         }
-        memberCoinBalance(params)
+        memberCoinSymbolBalance(params)
             .then(res => {
               if (res.code > 0) {
                 this.$tui.toast(t('http.code.' + res.code))
                 return false
               }
+              this.tradeBalance = res.data.tradeBalance || 0.00
               this.balance = res.data.balance || 0.00
             })
       },

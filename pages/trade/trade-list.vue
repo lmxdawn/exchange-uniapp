@@ -38,8 +38,8 @@
           </view>
 
           <view class="trade-balance">
-            <text class="trade-balance__symbol">{{usableTitle}}{{ symbol.coin.name }}</text>
-            <text class="trade-balance__text">{{ balance < 0 ? '--' : balance }}</text>
+            <text class="trade-balance__symbol">{{usableTitle}}{{tradeForm.direction === 1 ? symbol.coin.name : symbol.tradeCoin.name}}</text>
+            <text class="trade-balance__text">{{ balanceNum < 0 ? '--' : balanceNum }}</text>
           </view>
 
           <view class="trade-percentage">
@@ -137,6 +137,10 @@ export default {
       type: Number,
       default: -1
     },
+    tradeBalance: {
+      type: Number,
+      default: -1
+    },
     price: {
       type: Number,
       default: 0
@@ -197,6 +201,9 @@ export default {
     ...mapGetters({
       usdtRate: "usdtRate",
     }),
+    balanceNum() {
+      return this.tradeForm.direction === 1 ? this.balance : this.tradeBalance
+    },
     priceRate() {
       return price => {
         let usdtPrice = this.symbol.coin.usdtPrice
