@@ -10,7 +10,7 @@
       <view class="swiper-item-cell-left2">
         <view class="swiper-item-cell-text-box">
           <text class="swiper-item-cell-text swiper-item-cell-text-big">{{listItem.price}}</text>
-          <text class="swiper-item-cell-text swiper-item-cell-text-small">≈ {{usdtRate.symbol}} {{priceRate}}</text>
+          <text class="swiper-item-cell-text swiper-item-cell-text-small">≈ {{priceRate}} {{usdtRate.symbol}}</text>
         </view>
       </view>
     </view>

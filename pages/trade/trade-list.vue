@@ -6,7 +6,7 @@
         <view>
           <view class="side-btn-box">
             <view class="side-btn"
-                  :class="[index === tradeForm.direction ? 'activate' : '', index === 0 ? 'side-btn__buy' : 'side-btn__sell']"
+                  :class="[index === tradeForm.direction - 1 ? 'activate' : '', index === 0 ? 'side-btn__buy' : 'side-btn__sell']"
                   v-for="(item, index) in tradeDirectionArr"
                   @click="tradeDirectionClick(index)"
                   :key="index">
@@ -14,32 +14,32 @@
             </view>
           </view>
 
-          <my-popup ref="tradeTypePopup" @selected="tradeTypeSelected" :current="tradeForm.type" :list="tradeTypeArr" :cancel-text="cancelText">
+          <my-popup ref="tradeTypePopup" @selected="tradeTypeSelected" :current="tradeForm.type - 1" :list="tradeTypeArr" :cancel-text="cancelText">
             <view class="trade-type" @click="tradeTypeShow">
-              <text class="trade-type__text">{{ tradeTypeArr[tradeForm.type] }}</text>
+              <text class="trade-type__text">{{ tradeTypeArr[tradeForm.type - 1] }}</text>
               <uni-icons class="trade-type__down" color="#c1cdde" custom-prefix="iconfont" type="icon-xiangxia1" size="13"></uni-icons>
             </view>
           </my-popup>
 
-          <view class="trade-dotted-box" v-if="tradeForm.type === 1">
-            <text class="trade-dotted">{{tradeMarketArr[tradeForm.type]}}</text>
+          <view class="trade-dotted-box" v-if="tradeForm.type === 2">
+            <text class="trade-dotted">{{tradeMarketArr[tradeForm.type - 1]}}</text>
             <view class="trade-line"></view>
           </view>
 
           <view class="trade-input-box" v-else>
-            <uni-number-box class="trade-input" background="rgba(184,198,216,.08)" color="#9197A3" placeholder="USDT" placeholderColor="#4F5460" v-model="tradeForm.price" :step="0.01"></uni-number-box>
+            <uni-number-box class="trade-input" background="rgba(184,198,216,.08)" color="#9197A3" :placeholder="symbol.coin.name" placeholderColor="#4F5460" v-model="tradeForm.price" :step="0.01"></uni-number-box>
             <view class="trade-line">
-              <text class="trade-line__text">≈0.00 USD</text>
+              <text class="trade-line__text">≈{{priceRate(tradeForm.price)}} {{usdtRate.name}}</text>
             </view>
           </view>
 
           <view class="trade-input-box">
-            <uni-number-box class="trade-input" background="rgba(184,198,216,.08)" color="#9197A3" placeholder="BTC" placeholderColor="#4F5460" v-model="tradeForm.amount" :step="0.01"></uni-number-box>
+            <uni-number-box class="trade-input" background="rgba(184,198,216,.08)" color="#9197A3" :placeholder="amountPlaceholder" placeholderColor="#4F5460" v-model="tradeForm.amount" :step="0.01"></uni-number-box>
           </view>
 
           <view class="trade-balance">
-            <text class="trade-balance__symbol">可用USDT</text>
-            <text class="trade-balance__text">--</text>
+            <text class="trade-balance__symbol">{{usableTitle}}{{ symbol.coin.name }}</text>
+            <text class="trade-balance__text">{{ balance < 0 ? '--' : balance }}</text>
           </view>
 
           <view class="trade-percentage">
@@ -59,16 +59,16 @@
 
           <view class="trade-line"></view>
 
-          <view class="trade-total">
-            <text class="trade-total__text">成交金额 0 USDT</text>
+          <view class="trade-total" v-if="tradeForm.type === 1">
+            <text class="trade-total__text">{{moneyTitle}} 0 {{ symbol.coin.name }}</text>
           </view>
-          <view class="trade-total">
-            <text class="trade-total__text">≈0 USD</text>
+          <view class="trade-total" v-if="tradeForm.type === 1">
+            <text class="trade-total__text">≈{{priceRate(tradeForm.money)}} {{usdtRate.name}}</text>
           </view>
         </view>
 
-        <view class="trade-sub-btn" :class="[tradeForm.direction === 0 ? 'buy' : 'sell']">
-          <text class="trade-sub-btn__text">{{ tradeDirectionArr[tradeForm.direction] }} BTC</text>
+        <view class="trade-sub-btn" :class="[tradeForm.direction === 1 ? 'buy' : 'sell']">
+          <text class="trade-sub-btn__text">{{ tradeDirectionArr[tradeForm.direction - 1] }} {{ symbol.tradeCoin.name }}</text>
         </view>
 
       </view>
@@ -76,8 +76,8 @@
       <view class="operation-part-right">
         <view class="depth-list">
           <view class="depth-list-head">
-            <text class="depth-list-head__text">价格(USDT)</text>
-            <text class="depth-list-head__text">累计(BTC)</text>
+            <text class="depth-list-head__text">{{priceTitle}}({{ symbol.coin.name }})</text>
+            <text class="depth-list-head__text">{{amountTitle}}({{ symbol.tradeCoin.name }})</text>
           </view>
           <view class="depth-list-body">
             <view class="depth-list-item" v-for="(item, index) in depthSellList" :key="index">
@@ -86,8 +86,8 @@
             </view>
           </view>
           <view class="depth-list-line">
-            <text class="depth-list-line__price buy">0.07899</text>
-            <text class="depth-list-line__rate">≈0.07899 USD</text>
+            <text class="depth-list-line__price buy">{{price}}</text>
+            <text class="depth-list-line__rate">≈{{priceRate(symbol.price)}} {{usdtRate.name}}</text>
           </view>
           <view class="depth-list-body">
             <view class="depth-list-item" v-for="(item, index) in depthBuyList" :key="index">
@@ -99,7 +99,7 @@
 
         <view class="depth-btn-box">
           <view class="depth-btn-decimal">
-            <text class="depth-btn-decimal__text">1位小数</text>
+            <text class="depth-btn-decimal__text">1{{decimalTitle}}</text>
           </view>
 
           <my-popup ref="depthTypePopup" @selected="depthTypeSelected" :current="depthType" :list="depthTypeArr" :cancel-text="cancelText">
@@ -121,10 +121,26 @@
 </template>
 
 <script>
+import {mapGetters} from "vuex";
 import myPopup from "../../components/my-popup/my-popup"
+import {accMul} from "../../utils/decimal";
 export default {
   name: "trade-list",
   props: {
+    symbol: {
+      type: Object,
+      default() {
+        return {}
+      }
+    },
+    balance: {
+      type: Number,
+      default: -1
+    },
+    price: {
+      type: Number,
+      default: 0
+    },
     cancelText: {
       type: String,
       default: ""
@@ -153,11 +169,43 @@ export default {
         return []
       }
     },
+    priceTitle: {
+      type: String,
+      default: ""
+    },
+    amountTitle: {
+      type: String,
+      default: ""
+    },
+    usableTitle: {
+      type: String,
+      default: ""
+    },
+    moneyTitle: {
+      type: String,
+      default: ""
+    },
+    decimalTitle: {
+      type: String,
+      default: ""
+    },
   },
   components: {
     myPopup
   },
   computed: {
+    ...mapGetters({
+      usdtRate: "usdtRate",
+    }),
+    priceRate() {
+      return price => {
+        let usdtPrice = this.symbol.coin.usdtPrice
+        return Number(accMul(accMul(this.usdtRate.price, usdtPrice), price)).toFixed(this.usdtRate.precision)
+      }
+    },
+    amountPlaceholder() {
+      return this.tradeForm.type === 2 && this.tradeForm.direction === 1 ? this.symbol.coin.name : this.symbol.tradeCoin.name
+    },
     depthSellList() {
       let len = this.depthType === 0 ? 7 : (this.depthType === 1 ? 14 : 0)
       let list = []
@@ -180,10 +228,13 @@ export default {
   data() {
     return {
       tradeForm: {
-        type: 0,
-        direction: 0,
+        tradeCoinId: 0,
+        coinId: 0,
+        type: 1,
+        direction: 1,
         price: "",
-        amount: ""
+        amount: "",
+        money: 0,
       },
       depthType: 0,
       depthSell: [],
@@ -195,10 +246,10 @@ export default {
       this.$refs.tradeTypePopup.open('bottom')
     },
     tradeTypeSelected(index) {
-      this.tradeForm.type = index
+      this.tradeForm.type = index + 1
     },
     tradeDirectionClick(index) {
-      this.tradeForm.direction = index
+      this.tradeForm.direction = index + 1
     },
     depthTypeShow() {
       this.$refs.depthTypePopup.open('bottom')

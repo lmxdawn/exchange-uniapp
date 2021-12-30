@@ -48,7 +48,7 @@ import {
 import messages from '../../locale/index';
 import swiperListItem from './swiper-list-item.nvue';
 import {accAdd, accMul, accSub, accDiv} from "../../utils/decimal";
-import {symbolOrderList} from "../../api/trade/symbol";
+import {symbolList} from "../../api/trade/symbol";
 import myEmpty from "../../components/my-empty/my-empty";
 
 const { t } = initVueI18n(messages)
@@ -141,7 +141,7 @@ export default {
       if (this.nid === 0) {
         this.params.collect = [...this.marketCollect].join(",")
       }
-      symbolOrderList(this.params)
+      symbolList(this.params)
         .then(res => {
           this.isNoData = false
           if (res.code > 0) {

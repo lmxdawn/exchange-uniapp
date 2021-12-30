@@ -11,7 +11,7 @@
     <view class="header-box">
       <view class="header-box-left">
         <uni-icons class="header-box-left__drawer" color="#b8c6d8" type="bars" size="28"></uni-icons>
-        <text class="header-box-left__symbol">BTC/USDT</text>
+        <text class="header-box-left__symbol">{{ symbol.tradeCoin.name }}/{{ symbol.coin.name }}</text>
         <text class="header-box-left__rate" :class="[('header-box-left__rate__' + (rate >= 0 ? 'up' : 'down'))]">{{rate > 0 ? '+' : ''}}{{ rate }}%</text>
       </view>
       <view class="header-box-right">
@@ -26,6 +26,12 @@
 export default {
   name: "my-nav-bar-trade",
   props: {
+    symbol: {
+      type: Object,
+      default() {
+        return {}
+      }
+    },
     rate24: {
       type: Number,
       default: 0

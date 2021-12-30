@@ -5,6 +5,7 @@
         :current="navBarTabIndex"
         :tabBars="tabBars"
         statusBar
+        :symbol="symbol"
         @clickItem="onNavBarTabClickItem">
     </my-nav-bar-trade>
 
@@ -22,6 +23,8 @@
         </refresh>
         <cell class="cell">
           <trade-list
+              :symbol="symbol"
+              :balance="balance"
               :cancel-text="cancelText"
               :trade-type-arr="tradeTypeArr"
               :trade-market-arr="tradeMarketArr"
@@ -36,11 +39,18 @@
       <!-- #ifndef APP-NVUE -->
       <scroll-view class="listview" style="flex: 1;" enableBackToTop="true" scroll-y @scrolltolower="loadMore()">
         <trade-list
+            :symbol="symbol"
+            :balance="balance"
             :cancel-text="cancelText"
             :trade-type-arr="tradeTypeArr"
             :trade-market-arr="tradeMarketArr"
             :trade-direction-arr="tradeDirectionArr"
-            :depth-type-arr="depthTypeArr"></trade-list>
+            :depth-type-arr="depthTypeArr"
+            :priceTitle="priceTitle"
+            :amountTitle="amountTitle"
+            :usableTitle="usableTitle"
+            :moneyTitle="moneyTitle"
+            :decimalTitle="decimalTitle"></trade-list>
         <view class="load-more" v-if="loadingStatus !== 'noMore' || params.page > 1">
           <uni-load-more :status="loadingStatus" iconType="circle" :contentText="loadingMoreText"></uni-load-more>
         </view>
@@ -64,7 +74,9 @@
   import myNavBarTrade from "../../components/my-nav-bar/my-nav-bar-trade"
   import tradeList from "./trade-list"
   import {accDiv, accMul, accSub} from "../../utils/decimal";
-  import {symbolOrderList} from "../../api/trade/symbol";
+  import {symbolList, symbolRead} from "../../api/trade/symbol";
+  import {marketDepthList} from "../../api/market/depth";
+  import {memberCoinBalance} from "../../api/user/memberCoin";
 
   const { t } = initVueI18n(messages)
 
@@ -95,6 +107,21 @@
       depthTypeArr() {
         return [t('trade.depth.type.all'),t('trade.depth.type.sell'),t('trade.depth.type.buy')]
       },
+      priceTitle() {
+        return t('common.price')
+      },
+      amountTitle() {
+        return t('common.amount')
+      },
+      usableTitle() {
+        return t('common.usable')
+      },
+      moneyTitle() {
+        return t('common.money')
+      },
+      decimalTitle() {
+        return t('common.decimal')
+      },
     },
 		data() {
 			return {
@@ -107,9 +134,8 @@
         isNoData: true,
         loadingStatus: "more",
         params: {
-          coinId: this.nid,
-          page: 1,
-          limit: 100,
+          tradeCoinId: 3,
+          coinId: 1,
         },
         refreshStatusText: {
           initial: t('common.refresh.initial'),
@@ -121,11 +147,25 @@
           contentdown: t('common.more.down'),
           contentrefresh: t('common.more.refresh'),
           contentnomore: t('common.more.nomore')
+        },
+        balance: -1,
+        symbol: {
+          tradeCoin: {
+            name: "BTC",
+          },
+          coin: {
+            name: "USDT",
+            usdtPrice: 1
+          },
+          price: 0,
+          tradeTotalPrecision: 0,
+          tradePricePrecision: 0,
+          tradeAmountPrecision: 0,
         }
       }
 		},
 		onLoad() {
-
+      this.init()
 		},
     onUnload() {
 
@@ -146,7 +186,7 @@
         }
         this.loadingStatus = "loading";
 
-        symbolOrderList(this.params)
+        symbolList(this.params)
             .then(res => {
               this.isNoData = false
               if (res.code > 0) {
@@ -229,7 +269,55 @@
           this.refreshFlag = false;
           this.refreshText = this.refreshStatusText.pull;
         }
-      }
+      },
+      init() {
+        this.getSymbol()
+        this.getBalance()
+        this.getDepth()
+      },
+      getSymbol() {
+        let params = {
+          tradeCoinId: this.params.tradeCoinId,
+          coinId: this.params.coinId,
+        }
+        symbolRead(params)
+            .then(res => {
+              if (res.code > 0) {
+                this.$tui.toast(t('http.code.' + res.code))
+                return false
+              }
+              this.symbol = res.data
+            })
+      },
+      getBalance() {
+        let params = {
+          coinId: this.params.coinId,
+        }
+        memberCoinBalance(params)
+            .then(res => {
+              if (res.code > 0) {
+                this.$tui.toast(t('http.code.' + res.code))
+                return false
+              }
+              this.balance = res.data.balance || 0.00
+            })
+      },
+      getDepth() {
+        let params = {
+          tradeCoinId: this.params.tradeCoinId,
+          coinId: this.params.coinId,
+        }
+        marketDepthList(params)
+            .then(res => {
+              if (res.code > 0) {
+                this.$tui.toast(t('http.code.' + res.code))
+                return false
+              }
+              let sellList = res.data.sellList || []
+              this.depthSell = sellList.reverse()
+              this.depthBuy = res.data.buyList ||[]
+            })
+      },
 		}
 	}
 </script>
