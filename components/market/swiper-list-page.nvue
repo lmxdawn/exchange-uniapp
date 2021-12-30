@@ -1,9 +1,6 @@
 <template>
   <view class="page-news">
-    <view class="list-view-empty" v-if="isNoData">
-      <my-empty v-if="loadingStatus === 'noMore'" :text="emptyText" :click-data="nid" @click="emptyClick"></my-empty>
-      <uni-load-more v-else color="#23AD8F" iconType="circle" :status="loadingStatus" :contentText="{}"></uni-load-more>
-    </view>
+    <my-empty v-if="isNoData" :text="emptyText" :click-data="nid" @click="emptyClick" :loadingStatus="loadingStatus"></my-empty>
     <block v-else>
       <!-- #ifdef APP-NVUE -->
       <list ref="list" class="listview" @loadmore="loadMore">
@@ -281,19 +278,6 @@ export default {
   /* #ifndef MP-ALIPAY */
   flex-direction: column;
   /* #endif */
-}
-
-.list-view-empty {
-  position: absolute;
-  top: 0;
-  left: 0;
-  width: 750rpx;
-  height: 300px;
-  display: flex;
-  flex-direction: row;
-  justify-content: center;
-  align-items: flex-start;
-  padding-top: 80px;
 }
 
 .refresh {

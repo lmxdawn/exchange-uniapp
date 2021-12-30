@@ -1,10 +1,13 @@
 <template>
-  <view class="my-empty" @click="onClick">
-    <image class="my-empty__image" :src="icon" :style="[imageStyle]"></image>
-    <text
-        class="my-empty__text"
-        :style="[textStyle]"
-    >{{text}}</text>
+  <view class="my-empty-box" :style="{paddingTop:paddingTop}">
+    <view class="my-empty" v-if="loadingStatus === 'noMore'" @click="onClick">
+      <image class="my-empty__image" :src="icon" :style="[imageStyle]"></image>
+      <text
+          class="my-empty__text"
+          :style="[textStyle]"
+      >{{text}}</text>
+    </view>
+    <uni-load-more v-else color="#23AD8F" iconType="circle" :status="loadingStatus" :contentText="{}"></uni-load-more>
   </view>
 </template>
 
@@ -45,6 +48,15 @@ export default {
       type: [String, Number],
       default: '128px'
     },
+    // 顶部
+    paddingTop: {
+      type: [String, Number],
+      default: '20px'
+    },
+    loadingStatus: {
+      type: String,
+      default: "more"
+    },
   },
   computed: {
     imageStyle() {
@@ -71,6 +83,17 @@ export default {
 
 <style lang="scss" scoped>
 
+.my-empty-box {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 750rpx;
+  display: flex;
+  flex-direction: row;
+  justify-content: center;
+  align-items: flex-start;
+}
+
 .my-empty {
   /* #ifndef APP-NVUE */
   display: flex;
@@ -83,6 +106,7 @@ export default {
   }
   &__text {
     margin-top: 10px;
+    color: #9197A3;
   }
 }
 

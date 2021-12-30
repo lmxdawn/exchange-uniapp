@@ -115,6 +115,16 @@
       </view>
     </view>
 
+    <view class="trade-order-head">
+      <view class="trade-order-head-tab">
+        <text class="trade-order-head-tab__text">当前委托</text>
+      </view>
+      <uni-icons color="#E1E8F5" type="list" size="28"></uni-icons>
+    </view>
+
+    <view class="trade-order-list">
+      <my-empty v-if="isNoData" :text="emptyText" height="80px" width="80px" :loadingStatus="loadingStatus"></my-empty>
+    </view>
 
     <view style="height: 900px;"></view>
   </view>
@@ -123,6 +133,7 @@
 <script>
 import {mapGetters} from "vuex";
 import myPopup from "../../components/my-popup/my-popup"
+import myEmpty from "../../components/my-empty/my-empty";
 import {accMul} from "../../utils/decimal";
 export default {
   name: "trade-list",
@@ -189,9 +200,28 @@ export default {
       type: String,
       default: ""
     },
+    isNoData: {
+      type: Boolean,
+      default: false
+    },
+    emptyText: {
+      type: String,
+      default: ""
+    },
+    loadingStatus: {
+      type: String,
+      default: "noMore"
+    },
+    orderList: {
+      type: Array,
+      default() {
+        return []
+      }
+    }
   },
   components: {
-    myPopup
+    myPopup,
+    myEmpty
   },
   computed: {
     ...mapGetters({
@@ -276,7 +306,6 @@ export default {
   /* #ifndef APP-NVUE */
   overflow: hidden auto;
   /* #endif */
-  padding: 20px 15px 0;
 }
 .operation-part {
   display: flex;
@@ -285,6 +314,7 @@ export default {
   //width: 100%;
   /* #endif */
   flex: 1;
+  padding: 20px 15px;
 }
 .operation-part-left {
   width: 170px;
@@ -526,7 +556,7 @@ export default {
   padding: 6px;
   border-radius: 1px;
   &__item {
-    width: 25px;
+    width: 20px;
     height: 3px;
     border-radius: 2px;
     background-color: #9197A3;
@@ -539,4 +569,24 @@ export default {
   }
 }
 
+.trade-order-head {
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  align-items: center;
+  padding: 0 15px;
+  border-bottom: solid 1px rgba(184,198,216,.08);
+}
+.trade-order-head-tab {
+  padding: 8px 0;
+  border-bottom: solid 3px #2DBD96;
+  &__text {
+    font-size: 13px;
+    color: #E1E8F5;
+  }
+}
+.trade-order-list {
+  min-height: 300px;
+  position: relative;
+}
 </style>

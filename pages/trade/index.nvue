@@ -35,7 +35,9 @@
               :amountTitle="amountTitle"
               :usableTitle="usableTitle"
               :moneyTitle="moneyTitle"
-              :decimalTitle="decimalTitle"></trade-list>
+              :decimalTitle="decimalTitle"
+              :emptyText="emptyText"
+              :isNoData="isNoData"></trade-list>
         </cell>
         <cell class="load-more" v-if="loadingStatus !== 'noMore' || params.page > 1">
           <uni-load-more :status="loadingStatus" iconType="circle" :contentText="loadingMoreText"></uni-load-more>
@@ -57,7 +59,9 @@
             :amountTitle="amountTitle"
             :usableTitle="usableTitle"
             :moneyTitle="moneyTitle"
-            :decimalTitle="decimalTitle"></trade-list>
+            :decimalTitle="decimalTitle"
+            :emptyText="emptyText"
+            :isNoData="isNoData"></trade-list>
         <view class="load-more" v-if="loadingStatus !== 'noMore' || params.page > 1">
           <uni-load-more :status="loadingStatus" iconType="circle" :contentText="loadingMoreText"></uni-load-more>
         </view>
@@ -129,6 +133,9 @@
       decimalTitle() {
         return t('common.decimal')
       },
+      emptyText() {
+        return t('common.empty')
+      },
     },
 		data() {
 			return {
@@ -138,7 +145,7 @@
         refreshText: "",
         refreshIcon: "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAIAAAACABAMAAAAxEHz4AAAABGdBTUEAALGPC/xhBQAAAAFzUkdCAK7OHOkAAAAVUExURUxpcSKtjyOtjyOtkCGujyOujyOtjyVq54MAAAAGdFJOUwCBq1Ms2KeJoRYAAAETSURBVGje7de9DoIwFAXgqrgzKLMOOhMTnZmcndwB4f0fQbHclj+Tnt7E6ZyFpAknHy3hBmMYhmEYhmGgbPbVTlWQtW2TKu5ft5+UioJzV9CmOoCGYAHxhB4QTxBALMEBYgkeEEcYAOIIQ0AMYQSIIYwBOGECwAlTAEqYAVDCHIARFgAYYQmAECaADCYIoLaXFUpwN+T2YoTwCiy4CcD0BdJYhX/LLUAK3Aq2BbVxBUIoIEHuC2SpQPbgA/AFltAEPsJdAL7AEkrkGDvAoOC7dkBGaj4uMFfkTUxOjR3qw8O7HHP8wwqdPgtYwAIWsCBgSlaKgkz7z7TtCh6KggQYyT/G5FP129gZCsMwDMMwDMP8PW8Th/WSXjS8nAAAAABJRU5ErkJggg==",
         pulling: false,
-        isNoData: true,
+        isNoData: false,
         loadingStatus: "more",
         params: {
           tradeCoinId: 3,
