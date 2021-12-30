@@ -165,7 +165,7 @@
             name: "USDT",
             usdtPrice: 1
           },
-          price: 0,
+          price: -1,
           tradeTotalPrecision: 0,
           tradePricePrecision: 0,
           tradeAmountPrecision: 0,

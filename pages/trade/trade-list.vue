@@ -86,8 +86,8 @@
             </view>
           </view>
           <view class="depth-list-line">
-            <text class="depth-list-line__price buy">{{price < 0 ? '--' : Number(price).toFixed(symbol.tradePricePrecision)}}</text>
-            <text class="depth-list-line__rate">≈{{price < 0 ? '' : priceRate(symbol.price)}} {{usdtRate.name}}</text>
+            <text class="depth-list-line__price buy">{{symbol.price < 0 ? '--' : Number(symbol.price).toFixed(symbol.tradePricePrecision)}}</text>
+            <text class="depth-list-line__rate">≈{{symbol.price < 0 ? '--' : priceRate(symbol.price)}} {{usdtRate.name}}</text>
           </view>
           <view class="depth-list-body">
             <view class="depth-list-item" v-for="(item, index) in depthBuyList" :key="index">
@@ -138,10 +138,6 @@ export default {
       default: -1
     },
     tradeBalance: {
-      type: Number,
-      default: -1
-    },
-    price: {
       type: Number,
       default: -1
     },
