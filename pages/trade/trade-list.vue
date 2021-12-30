@@ -60,10 +60,10 @@
           <view class="trade-line"></view>
 
           <view class="trade-total" v-if="tradeForm.type === 1">
-            <text class="trade-total__text">{{moneyTitle}} 0 {{ symbol.coin.name }}</text>
+            <text class="trade-total__text">{{moneyTitle}} {{money}} {{ symbol.coin.name }}</text>
           </view>
           <view class="trade-total" v-if="tradeForm.type === 1">
-            <text class="trade-total__text">≈{{priceRate(tradeForm.money)}} {{usdtRate.name}}</text>
+            <text class="trade-total__text">≈{{priceRate(money)}} {{usdtRate.name}}</text>
           </view>
         </view>
 
@@ -213,6 +213,9 @@ export default {
     amountPlaceholder() {
       return this.tradeForm.type === 2 && this.tradeForm.direction === 1 ? this.symbol.coin.name : this.symbol.tradeCoin.name
     },
+    money() {
+      return accMul(this.tradeForm.amount, this.tradeForm.price)
+    },
     depthSellList() {
       let len = this.depthType === 0 ? 7 : (this.depthType === 1 ? 14 : 0)
       let list = []
@@ -241,7 +244,6 @@ export default {
         direction: 1,
         price: "",
         amount: "",
-        money: 0,
       },
       depthType: 0,
       depthSell: [],
