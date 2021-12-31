@@ -5,6 +5,8 @@
 
 [uni-app切换页面闪屏或者白屏](https://ask.dcloud.net.cn/question/73807)
 
+[服务端代码，点击跳转](https://github.com/lmxdawn/exchange)
+
 # 示例图
 
 ![df078ac8c0ca4f76ed88b1928f66cfd](https://user-images.githubusercontent.com/21293193/147812493-d3270188-9e32-4c32-92fa-9b638ecddc64.jpg)
