@@ -290,6 +290,7 @@ export default {
         direction: 1,
         price: "",
         amount: "",
+        total: "",
       },
       depthType: 0,
       depthSell: [],
@@ -313,21 +314,35 @@ export default {
       this.depthType = index
     },
     orderSub() {
+      if (this.memberInfo.id <= 0) {
+        // TODO 未登录
+        // return false
+      }
       if (this.tradeFormLoading) {
         return false
       }
-      let data = {
-
+      if (this.tradeForm.type === 1 && (!this.tradeForm.price || this.tradeForm.price <= 0)) {
+        this.$tui.toast( t('trade.order.sub.not.price'))
+        return false
+      }
+      if (!this.tradeForm.amount || this.tradeForm.amount <= 0) {
+        this.$tui.toast( t('trade.order.sub.not.amount'))
+        return false
+      }
+      if (this.tradeForm.type === 2 && this.tradeForm.direction === 1) {
+        this.tradeForm.total = this.tradeForm.amount
       }
       this.tradeFormLoading = true
-      entrustOrderCreate(data)
+      entrustOrderCreate(this.tradeForm)
         .then(res => {
+          this.tradeFormLoading = false
           if (res.code > 0) {
             this.$tui.toast(t('http.code.' + res.code))
             return false
           }
         })
         .catch(() => {
+          this.tradeFormLoading = false
           this.$tui.toast(t('http.code.1'))
         })
     }
