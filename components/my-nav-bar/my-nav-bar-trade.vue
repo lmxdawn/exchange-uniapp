@@ -15,7 +15,7 @@
         <text class="header-box-left__rate" :class="[('header-box-left__rate__' + (rate >= 0 ? 'up' : 'down'))]">{{rate > 0 ? '+' : ''}}{{ rate }}%</text>
       </view>
       <view class="header-box-right">
-        <uni-icons class="header-box-right__kline" color="#b8c6d8" custom-prefix="iconfont" type="icon-kxiantu" size="25"></uni-icons>
+        <uni-icons class="header-box-right__kline" color="#b8c6d8" custom-prefix="iconfont" type="icon-kxiantu" size="25" @click="kLineClick"></uni-icons>
         <uni-icons class="header-box-right__more" color="#b8c6d8" type="more-filled" size="28"></uni-icons>
       </view>
     </view>
@@ -23,6 +23,8 @@
 </template>
 
 <script>
+import {navigateTo} from "../../utils/common";
+
 export default {
   name: "my-nav-bar-trade",
   props: {
@@ -70,6 +72,9 @@ export default {
         this.$emit('clickItem', e.currentIndex)
       }
     },
+    kLineClick() {
+      navigateTo("trade/kLine")
+    }
   }
 }
 </script>

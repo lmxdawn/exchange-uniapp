@@ -1,7 +1,7 @@
 <template>
 	<view class="content">
 		<image class="logo" src="/static/logo.png"></image>
-		<view class="text-area">
+		<view class="text-area" @click="kLineClick">
 			<text class="title">{{title}}</text>
 		</view>
     <view @click="charge('en')">切换英文</view>
@@ -10,7 +10,9 @@
 </template>
 
 <script>
-	export default {
+	import {navigateTo} from "../../utils/common";
+
+  export default {
 		data() {
 			return {
 
@@ -28,6 +30,9 @@
         console.log(lang)
         uni.setLocale(lang)
         this.$i18n.locale = lang
+      },
+      kLineClick() {
+        navigateTo("trade/kLine")
       }
 		}
 	}
