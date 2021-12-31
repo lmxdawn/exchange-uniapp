@@ -27,14 +27,14 @@
           </view>
 
           <view class="trade-input-box" v-else>
-            <uni-number-box class="trade-input" background="rgba(184,198,216,.08)" color="#9197A3" :placeholder="symbol.coin.name" placeholderColor="#4F5460" v-model="tradeForm.price" :step="0.01"></uni-number-box>
+            <uni-number-box class="trade-input" background="rgba(184,198,216,.08)" color="#9197A3" :placeholder="symbol.coin.name" placeholderColor="#4F5460" v-model="tradeForm.price" :step="stepPrice"></uni-number-box>
             <view class="trade-line">
               <text class="trade-line__text">≈{{priceRate(tradeForm.price)}} {{usdtRate.name}}</text>
             </view>
           </view>
 
           <view class="trade-input-box">
-            <uni-number-box class="trade-input" background="rgba(184,198,216,.08)" color="#9197A3" :placeholder="amountPlaceholder" placeholderColor="#4F5460" v-model="tradeForm.amount" :step="0.01"></uni-number-box>
+            <uni-number-box class="trade-input" background="rgba(184,198,216,.08)" color="#9197A3" :placeholder="amountPlaceholder" placeholderColor="#4F5460" v-model="tradeForm.amount" :step="stepAmount"></uni-number-box>
           </view>
 
           <view class="trade-balance">
@@ -67,7 +67,7 @@
           </view>
         </view>
 
-        <view class="trade-sub-btn" :class="[tradeForm.direction === 1 ? 'buy' : 'sell']">
+        <view class="trade-sub-btn" :class="[tradeForm.direction === 1 ? 'buy' : 'sell']" @click="orderSub">
           <text class="trade-sub-btn__text">{{ tradeDirectionArr[tradeForm.direction - 1] }} {{ symbol.tradeCoin.name }}</text>
         </view>
 
@@ -117,24 +117,28 @@
 
     <view class="trade-order-head">
       <view class="trade-order-head-tab">
-        <text class="trade-order-head-tab__text">当前委托</text>
+        <text class="trade-order-head-tab__text">{{orderHeadTitle}}</text>
       </view>
       <uni-icons color="#E1E8F5" type="list" size="28"></uni-icons>
     </view>
 
-    <view class="trade-order-list">
+    <view class="trade-order-list" :style="[{height: isNoData ? '200px' : ''}]">
       <my-empty v-if="isNoData" :text="emptyText" height="80px" width="80px" :loadingStatus="loadingStatus"></my-empty>
     </view>
-
-    <view style="height: 900px;"></view>
   </view>
 </template>
 
 <script>
+import {initVueI18n} from '@dcloudio/uni-i18n'
+import messages from '../../locale/index';
 import {mapGetters} from "vuex";
 import myPopup from "../../components/my-popup/my-popup"
 import myEmpty from "../../components/my-empty/my-empty";
-import {accMul} from "../../utils/decimal";
+import {accMul,accDiv} from "../../utils/decimal";
+import {entrustOrderCreate} from "../../api/trade/entrustOrder";
+
+const { t } = initVueI18n(messages)
+
 export default {
   name: "trade-list",
   props: {
@@ -152,61 +156,21 @@ export default {
       type: Number,
       default: -1
     },
-    cancelText: {
-      type: String,
-      default: ""
-    },
-    tradeTypeArr: {
+    depthSell: {
       type: Array,
       default() {
         return []
       }
     },
-    tradeMarketArr: {
+    depthBuy: {
       type: Array,
       default() {
         return []
       }
-    },
-    tradeDirectionArr: {
-      type: Array,
-      default() {
-        return []
-      }
-    },
-    depthTypeArr: {
-      type: Array,
-      default() {
-        return []
-      }
-    },
-    priceTitle: {
-      type: String,
-      default: ""
-    },
-    amountTitle: {
-      type: String,
-      default: ""
-    },
-    usableTitle: {
-      type: String,
-      default: ""
-    },
-    moneyTitle: {
-      type: String,
-      default: ""
-    },
-    decimalTitle: {
-      type: String,
-      default: ""
     },
     isNoData: {
       type: Boolean,
       default: false
-    },
-    emptyText: {
-      type: String,
-      default: ""
     },
     loadingStatus: {
       type: String,
@@ -225,8 +189,27 @@ export default {
   },
   computed: {
     ...mapGetters({
+      memberInfo: "memberInfo",
       usdtRate: "usdtRate",
     }),
+    stepPrice() {
+      let precision = this.symbol.tradePricePrecision
+      if (precision == 0) {
+        return 1
+      } else {
+        let pow = Math.pow(10, precision)
+        return Number(accDiv(1, pow)).toFixed(precision)
+      }
+    },
+    stepAmount() {
+      let precision = this.tradeForm.type === 1 ? this.symbol.tradeAmountPrecision : this.symbol.tradeTotalPrecision
+      if (precision == 0) {
+        return 1
+      } else {
+        let pow = Math.pow(10, precision)
+        return Number(accDiv(1, pow)).toFixed(precision)
+      }
+    },
     balanceNum() {
       return this.tradeForm.direction === 1 ? this.balance : this.tradeBalance
     },
@@ -260,9 +243,46 @@ export default {
       }
       return list
     },
+    cancelText() {
+      return t('common.cancel')
+    },
+    tradeTypeArr() {
+      return [t('trade.limit'),t('trade.market')]
+    },
+    tradeMarketArr() {
+      return [t('trade.market.buy'),t('trade.market.sell')]
+    },
+    tradeDirectionArr() {
+      return [t('trade.direction.buy'),t('trade.direction.sell')]
+    },
+    depthTypeArr() {
+      return [t('trade.depth.type.all'),t('trade.depth.type.sell'),t('trade.depth.type.buy')]
+    },
+    priceTitle() {
+      return t('common.price')
+    },
+    amountTitle() {
+      return t('common.amount')
+    },
+    usableTitle() {
+      return t('common.usable')
+    },
+    moneyTitle() {
+      return t('common.money')
+    },
+    decimalTitle() {
+      return t('common.decimal')
+    },
+    orderHeadTitle() {
+      return t('trade.order.head')
+    },
+    emptyText() {
+      return t('common.empty')
+    },
   },
   data() {
     return {
+      tradeFormLoading: false,
       tradeForm: {
         tradeCoinId: 0,
         coinId: 0,
@@ -292,6 +312,25 @@ export default {
     depthTypeSelected(index) {
       this.depthType = index
     },
+    orderSub() {
+      if (this.tradeFormLoading) {
+        return false
+      }
+      let data = {
+
+      }
+      this.tradeFormLoading = true
+      entrustOrderCreate(data)
+        .then(res => {
+          if (res.code > 0) {
+            this.$tui.toast(t('http.code.' + res.code))
+            return false
+          }
+        })
+        .catch(() => {
+          this.$tui.toast(t('http.code.1'))
+        })
+    }
   }
 }
 </script>
@@ -586,7 +625,6 @@ export default {
   }
 }
 .trade-order-list {
-  min-height: 300px;
   position: relative;
 }
 </style>

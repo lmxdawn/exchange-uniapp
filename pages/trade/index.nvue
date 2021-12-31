@@ -26,18 +26,11 @@
               :symbol="symbol"
               :balance="balance"
               :tradeBalance="tradeBalance"
-              :cancel-text="cancelText"
-              :trade-type-arr="tradeTypeArr"
-              :trade-market-arr="tradeMarketArr"
-              :trade-direction-arr="tradeDirectionArr"
-              :depth-type-arr="depthTypeArr"
-              :priceTitle="priceTitle"
-              :amountTitle="amountTitle"
-              :usableTitle="usableTitle"
-              :moneyTitle="moneyTitle"
-              :decimalTitle="decimalTitle"
-              :emptyText="emptyText"
-              :isNoData="isNoData"></trade-list>
+              :depth-sell="depthSell"
+              :depth-buy="depthBuy"
+              :isNoData="isNoData"
+              :loading-status="loadingStatus"
+              :orderList="orderList"></trade-list>
         </cell>
         <cell class="load-more" v-if="loadingStatus !== 'noMore' || params.page > 1">
           <uni-load-more :status="loadingStatus" iconType="circle" :contentText="loadingMoreText"></uni-load-more>
@@ -50,18 +43,11 @@
             :symbol="symbol"
             :balance="balance"
             :tradeBalance="tradeBalance"
-            :cancel-text="cancelText"
-            :trade-type-arr="tradeTypeArr"
-            :trade-market-arr="tradeMarketArr"
-            :trade-direction-arr="tradeDirectionArr"
-            :depth-type-arr="depthTypeArr"
-            :priceTitle="priceTitle"
-            :amountTitle="amountTitle"
-            :usableTitle="usableTitle"
-            :moneyTitle="moneyTitle"
-            :decimalTitle="decimalTitle"
-            :emptyText="emptyText"
-            :isNoData="isNoData"></trade-list>
+            :depth-sell="depthSell"
+            :depth-buy="depthBuy"
+            :isNoData="isNoData"
+            :loading-status="loadingStatus"
+            :orderList="orderList"></trade-list>
         <view class="load-more" v-if="loadingStatus !== 'noMore' || params.page > 1">
           <uni-load-more :status="loadingStatus" iconType="circle" :contentText="loadingMoreText"></uni-load-more>
         </view>
@@ -77,17 +63,15 @@
   // #ifdef APP-PLUS
   const dom = weex.requireModule('dom');
   // #endif
-  import {
-    initVueI18n
-  } from '@dcloudio/uni-i18n'
+  import {initVueI18n} from '@dcloudio/uni-i18n'
   import messages from '../../locale/index';
   import {mapActions, mapGetters} from "vuex";
   import myNavBarTrade from "../../components/my-nav-bar/my-nav-bar-trade"
   import tradeList from "./trade-list"
-  import {accDiv, accMul, accSub} from "../../utils/decimal";
-  import {symbolList, symbolRead} from "../../api/trade/symbol";
+  import {symbolRead} from "../../api/trade/symbol";
   import {marketDepthList} from "../../api/market/depth";
   import {memberCoinSymbolBalance} from "../../api/user/memberCoin";
+  import {entrustOrderList} from "../../api/trade/entrustOrder";
 
   const { t } = initVueI18n(messages)
 
@@ -103,39 +87,6 @@
       tabBars() {
         return [t('trade.coin2coin'),t('market.contract')]
       },
-      cancelText() {
-        return t('common.cancel')
-      },
-      tradeTypeArr() {
-        return [t('trade.limit'),t('trade.market')]
-      },
-      tradeMarketArr() {
-        return [t('trade.market.buy'),t('trade.market.sell')]
-      },
-      tradeDirectionArr() {
-        return [t('trade.direction.buy'),t('trade.direction.sell')]
-      },
-      depthTypeArr() {
-        return [t('trade.depth.type.all'),t('trade.depth.type.sell'),t('trade.depth.type.buy')]
-      },
-      priceTitle() {
-        return t('common.price')
-      },
-      amountTitle() {
-        return t('common.amount')
-      },
-      usableTitle() {
-        return t('common.usable')
-      },
-      moneyTitle() {
-        return t('common.money')
-      },
-      decimalTitle() {
-        return t('common.decimal')
-      },
-      emptyText() {
-        return t('common.empty')
-      },
     },
 		data() {
 			return {
@@ -145,8 +96,6 @@
         refreshText: "",
         refreshIcon: "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAIAAAACABAMAAAAxEHz4AAAABGdBTUEAALGPC/xhBQAAAAFzUkdCAK7OHOkAAAAVUExURUxpcSKtjyOtjyOtkCGujyOujyOtjyVq54MAAAAGdFJOUwCBq1Ms2KeJoRYAAAETSURBVGje7de9DoIwFAXgqrgzKLMOOhMTnZmcndwB4f0fQbHclj+Tnt7E6ZyFpAknHy3hBmMYhmEYhmGgbPbVTlWQtW2TKu5ft5+UioJzV9CmOoCGYAHxhB4QTxBALMEBYgkeEEcYAOIIQ0AMYQSIIYwBOGECwAlTAEqYAVDCHIARFgAYYQmAECaADCYIoLaXFUpwN+T2YoTwCiy4CcD0BdJYhX/LLUAK3Aq2BbVxBUIoIEHuC2SpQPbgA/AFltAEPsJdAL7AEkrkGDvAoOC7dkBGaj4uMFfkTUxOjR3qw8O7HHP8wwqdPgtYwAIWsCBgSlaKgkz7z7TtCh6KggQYyT/G5FP129gZCsMwDMMwDMP8PW8Th/WSXjS8nAAAAABJRU5ErkJggg==",
         pulling: false,
-        isNoData: false,
-        loadingStatus: "more",
         params: {
           tradeCoinId: 3,
           coinId: 1,
@@ -176,7 +125,12 @@
           tradeTotalPrecision: 0,
           tradePricePrecision: 0,
           tradeAmountPrecision: 0,
-        }
+        },
+        depthSell: [],
+        depthBuy: [],
+        isNoData: false,
+        loadingStatus: "more",
+        orderList: [],
       }
 		},
 		onLoad() {
@@ -193,57 +147,10 @@
         this.navBarTabIndex = index
       },
       loadData(refresh) {
-        if (this.loadingStatus !== "more") {
-          if (refresh) {
-            this.refreshStatus()
-          }
-          return;
-        }
-        this.loadingStatus = "loading";
-
-        symbolList(this.params)
-            .then(res => {
-              this.isNoData = false
-              if (res.code > 0) {
-                this.loadingStatus = "noMore";
-                if (this.dataList.length === 0) {
-                  this.isNoData = true;
-                }
-                if (refresh) {
-                  this.refreshStatus()
-                }
-                return false
-              }
-              const dataList = res.data.map((item) => {
-                return item;
-              });
-              // 请求的值小于每页数量
-              this.isNoData = (dataList.length === 0 && this.dataList.length === 0);
-              this.loadingStatus = "more";
-              if (refresh) {
-                this.dataList = dataList;
-                this.refreshStatus()
-              } else {
-                this.dataList = this.dataList.concat(dataList);
-              }
-              this.params.page++
-              if (dataList.length < this.params.limit) {
-                this.loadingStatus = "noMore";
-              }
-            })
-            .catch(() => {
-              this.isNoData = false
-              this.loadingStatus = "noMore";
-              if (this.dataList.length === 0) {
-                this.isNoData = true;
-              }
-              if (refresh) {
-                this.refreshStatus()
-              }
-            })
+        this.init(refresh)
       },
       loadMore(e) {
-        this.loadData();
+        this.getOrderList();
       },
       refreshStatus() {
         setTimeout(() => {
@@ -285,17 +192,14 @@
           this.refreshText = this.refreshStatusText.pull;
         }
       },
-      init() {
+      init(refresh) {
         this.getSymbol()
         this.getBalance()
-        this.getDepth()
+        this.getDepth(refresh)
+        this.getOrderList();
       },
       getSymbol() {
-        let params = {
-          tradeCoinId: this.params.tradeCoinId,
-          coinId: this.params.coinId,
-        }
-        symbolRead(params)
+        symbolRead(this.params)
             .then(res => {
               if (res.code > 0) {
                 this.$tui.toast(t('http.code.' + res.code))
@@ -305,11 +209,7 @@
             })
       },
       getBalance() {
-        let params = {
-          tradeCoinId: this.params.tradeCoinId,
-          coinId: this.params.coinId,
-        }
-        memberCoinSymbolBalance(params)
+        memberCoinSymbolBalance(this.params)
             .then(res => {
               if (res.code > 0) {
                 this.$tui.toast(t('http.code.' + res.code))
@@ -319,13 +219,12 @@
               this.balance = res.data.balance || 0.00
             })
       },
-      getDepth() {
-        let params = {
-          tradeCoinId: this.params.tradeCoinId,
-          coinId: this.params.coinId,
-        }
-        marketDepthList(params)
+      getDepth(refresh) {
+        marketDepthList(this.params)
             .then(res => {
+              if (refresh) {
+                this.refreshStatus()
+              }
               if (res.code > 0) {
                 this.$tui.toast(t('http.code.' + res.code))
                 return false
@@ -334,7 +233,40 @@
               this.depthSell = sellList.reverse()
               this.depthBuy = res.data.buyList ||[]
             })
+            .catch(() => {
+              if (refresh) {
+                this.refreshStatus()
+              }
+            })
       },
+      getOrderList() {
+        let params = {
+          tradeCoinId: this.params.tradeCoinId,
+          coinId: this.params.coinId,
+          page: 1,
+          limit: 20
+        }
+        entrustOrderList(params)
+          .then(res => {
+            this.loadingStatus = "noMore";
+            if (res.code > 0) {
+              if (this.orderList.length === 0) {
+                this.isNoData = true;
+              }
+              return false
+            }
+            let dataList = res.data || []
+            this.isNoData = (dataList.length === 0 && this.orderList.length === 0);
+            this.orderList = dataList;
+          })
+          .catch(() => {
+            this.isNoData = false
+            this.loadingStatus = "noMore";
+            if (this.orderList.length === 0) {
+              this.isNoData = true;
+            }
+          })
+      }
 		}
 	}
 </script>
