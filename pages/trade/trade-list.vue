@@ -27,7 +27,7 @@
           </view>
 
           <view class="trade-input-box" v-else>
-            <uni-number-box class="trade-input" background="rgba(184,198,216,.08)" color="#9197A3" :placeholder="symbol.coin.name" placeholderColor="#4F5460" v-model="tradeForm.price" :step="stepPrice"></uni-number-box>
+            <uni-number-box class="trade-input" background="rgba(184,198,216,.08)" color="#9197A3" :placeholder="pair.coin.name" placeholderColor="#4F5460" v-model="tradeForm.price" :step="stepPrice"></uni-number-box>
             <view class="trade-line">
               <text class="trade-line__text">≈{{priceRate(tradeForm.price)}} {{usdtRate.name}}</text>
             </view>
@@ -38,7 +38,7 @@
           </view>
 
           <view class="trade-balance">
-            <text class="trade-balance__symbol">{{usableTitle}}{{tradeForm.direction === 1 ? symbol.coin.name : symbol.tradeCoin.name}}</text>
+            <text class="trade-balance__pair">{{usableTitle}}{{tradeForm.direction === 1 ? pair.coin.name : pair.tradeCoin.name}}</text>
             <text class="trade-balance__text">{{ balanceNum < 0 ? '--' : balanceNum }}</text>
           </view>
 
@@ -60,7 +60,7 @@
           <view class="trade-line"></view>
 
           <view class="trade-total" v-if="tradeForm.type === 1">
-            <text class="trade-total__text">{{moneyTitle}} {{money}} {{ symbol.coin.name }}</text>
+            <text class="trade-total__text">{{moneyTitle}} {{money}} {{ pair.coin.name }}</text>
           </view>
           <view class="trade-total" v-if="tradeForm.type === 1">
             <text class="trade-total__text">≈{{priceRate(money)}} {{usdtRate.name}}</text>
@@ -68,7 +68,7 @@
         </view>
 
         <view class="trade-sub-btn" :class="[tradeForm.direction === 1 ? 'buy' : 'sell']" @click="orderSub">
-          <text class="trade-sub-btn__text">{{ tradeDirectionArr[tradeForm.direction - 1] }} {{ symbol.tradeCoin.name }}</text>
+          <text class="trade-sub-btn__text">{{ tradeDirectionArr[tradeForm.direction - 1] }} {{ pair.tradeCoin.name }}</text>
         </view>
 
       </view>
@@ -76,30 +76,30 @@
       <view class="operation-part-right">
         <view class="depth-list">
           <view class="depth-list-head">
-            <text class="depth-list-head__text">{{priceTitle}}({{ symbol.coin.name }})</text>
-            <text class="depth-list-head__text">{{amountTitle}}({{ symbol.tradeCoin.name }})</text>
+            <text class="depth-list-head__text">{{priceTitle}}({{ pair.coin.name }})</text>
+            <text class="depth-list-head__text">{{amountTitle}}({{ pair.tradeCoin.name }})</text>
           </view>
           <view class="depth-list-body">
             <view class="depth-list-item" v-for="(item, index) in depthSellList" :key="index">
-              <text class="depth-list-item__price sell">{{item.price < 0 ? '--' : Number(item.price).toFixed(symbol.tradePricePrecision)}}</text>
-              <text class="depth-list-item__amount">{{ item.amount < 0 ? '--' : Number(item.amount).toFixed(symbol.tradeAmountPrecision) }}</text>
+              <text class="depth-list-item__price sell">{{item.price < 0 ? '--' : Number(item.price).toFixed(pair.tradePricePrecision)}}</text>
+              <text class="depth-list-item__amount">{{ item.amount < 0 ? '--' : Number(item.amount).toFixed(pair.tradeAmountPrecision) }}</text>
             </view>
           </view>
           <view class="depth-list-line">
-            <text class="depth-list-line__price buy">{{symbol.price < 0 ? '--' : Number(symbol.price).toFixed(symbol.tradePricePrecision)}}</text>
-            <text class="depth-list-line__rate">≈{{symbol.price < 0 ? '--' : priceRate(symbol.price)}} {{usdtRate.name}}</text>
+            <text class="depth-list-line__price buy">{{pair.price < 0 ? '--' : Number(pair.price).toFixed(pair.tradePricePrecision)}}</text>
+            <text class="depth-list-line__rate">≈{{pair.price < 0 ? '--' : priceRate(pair.price)}} {{usdtRate.name}}</text>
           </view>
           <view class="depth-list-body">
             <view class="depth-list-item" v-for="(item, index) in depthBuyList" :key="index">
-              <text class="depth-list-item__price buy">{{item.price < 0 ? '--' : Number(item.price).toFixed(symbol.tradePricePrecision)}}</text>
-              <text class="depth-list-item__amount">{{ item.amount < 0 ? '--' : Number(item.amount).toFixed(symbol.tradeAmountPrecision) }}</text>
+              <text class="depth-list-item__price buy">{{item.price < 0 ? '--' : Number(item.price).toFixed(pair.tradePricePrecision)}}</text>
+              <text class="depth-list-item__amount">{{ item.amount < 0 ? '--' : Number(item.amount).toFixed(pair.tradeAmountPrecision) }}</text>
             </view>
           </view>
         </view>
 
         <view class="depth-btn-box">
           <view class="depth-btn-decimal">
-            <text class="depth-btn-decimal__text">{{symbol.tradePricePrecision}} {{decimalTitle}}</text>
+            <text class="depth-btn-decimal__text">{{pair.tradePricePrecision}} {{decimalTitle}}</text>
           </view>
 
           <my-popup ref="depthTypePopup" @selected="depthTypeSelected" :current="depthType" :list="depthTypeArr" :cancel-text="cancelText">
@@ -142,7 +142,7 @@ const { t } = initVueI18n(messages)
 export default {
   name: "trade-list",
   props: {
-    symbol: {
+    pair: {
       type: Object,
       default() {
         return {}
@@ -193,7 +193,7 @@ export default {
       usdtRate: "usdtRate",
     }),
     stepPrice() {
-      let precision = this.symbol.tradePricePrecision
+      let precision = this.pair.tradePricePrecision
       if (precision == 0) {
         return 1
       } else {
@@ -202,7 +202,7 @@ export default {
       }
     },
     stepAmount() {
-      let precision = this.tradeForm.type === 1 ? this.symbol.tradeAmountPrecision : this.symbol.tradeTotalPrecision
+      let precision = this.tradeForm.type === 1 ? this.pair.tradeAmountPrecision : this.pair.tradeTotalPrecision
       if (precision == 0) {
         return 1
       } else {
@@ -215,12 +215,12 @@ export default {
     },
     priceRate() {
       return price => {
-        let usdtPrice = this.symbol.coin.usdtPrice
+        let usdtPrice = this.pair.coin.usdtPrice
         return Number(accMul(accMul(this.usdtRate.price, usdtPrice), price)).toFixed(this.usdtRate.precision)
       }
     },
     amountPlaceholder() {
-      return this.tradeForm.type === 2 && this.tradeForm.direction === 1 ? this.symbol.coin.name : this.symbol.tradeCoin.name
+      return this.tradeForm.type === 2 && this.tradeForm.direction === 1 ? this.pair.coin.name : this.pair.tradeCoin.name
     },
     money() {
       return accMul(this.tradeForm.amount, this.tradeForm.price)
@@ -293,8 +293,6 @@ export default {
         total: "",
       },
       depthType: 0,
-      depthSell: [],
-      depthBuy: [],
     }
   },
   methods: {
@@ -472,7 +470,7 @@ export default {
   justify-content: space-between;
   align-items: center;
   height: 40px;
-  &__symbol {
+  &__pair {
     color: #9197A3;
     font-size: 12px;
   }

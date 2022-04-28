@@ -11,7 +11,7 @@
     <view class="header-box">
       <view class="header-box-left">
         <uni-icons class="header-box-left__drawer" color="#b8c6d8" type="bars" size="28"></uni-icons>
-        <text class="header-box-left__symbol">{{ symbol.tradeCoin.name }}/{{ symbol.coin.name }}</text>
+        <text class="header-box-left__pair">{{ pair.tradeCoin.name }}/{{ pair.coin.name }}</text>
         <text class="header-box-left__rate" :class="[('header-box-left__rate__' + (rate >= 0 ? 'up' : 'down'))]">{{rate > 0 ? '+' : ''}}{{ rate }}%</text>
       </view>
       <view class="header-box-right">
@@ -28,7 +28,7 @@ import {navigateTo} from "../../utils/common";
 export default {
   name: "my-nav-bar-trade",
   props: {
-    symbol: {
+    pair: {
       type: Object,
       default() {
         return {}
@@ -105,10 +105,10 @@ export default {
   flex-direction: row;
   justify-content: flex-start;
   align-items: center;
-  &__symbol {
+  &__pair {
     margin-left: 10px;
     font-size: 20px;
-    font-weight: bold;
+    font-weight: 500;
     color: #b8c6d8;
   }
   &__rate {

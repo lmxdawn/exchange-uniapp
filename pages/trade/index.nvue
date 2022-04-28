@@ -5,7 +5,7 @@
         :current="navBarTabIndex"
         :tabBars="tabBars"
         statusBar
-        :symbol="symbol"
+        :pair="pair"
         @clickItem="onNavBarTabClickItem">
     </my-nav-bar-trade>
 
@@ -23,11 +23,9 @@
         </refresh>
         <cell class="cell">
           <trade-list
-              :symbol="symbol"
+              :pair="pair"
               :balance="balance"
               :tradeBalance="tradeBalance"
-              :depth-sell="depthSell"
-              :depth-buy="depthBuy"
               :isNoData="isNoData"
               :loading-status="loadingStatus"
               :orderList="orderList"></trade-list>
@@ -40,11 +38,9 @@
       <!-- #ifndef APP-NVUE -->
       <scroll-view class="listview" style="flex: 1;" enableBackToTop="true" scroll-y @scrolltolower="loadMore()">
         <trade-list
-            :symbol="symbol"
+            :pair="pair"
             :balance="balance"
             :tradeBalance="tradeBalance"
-            :depth-sell="depthSell"
-            :depth-buy="depthBuy"
             :isNoData="isNoData"
             :loading-status="loadingStatus"
             :orderList="orderList"></trade-list>
@@ -68,7 +64,6 @@
   import {mapActions, mapGetters} from "vuex";
   import myNavBarTrade from "../../components/my-nav-bar/my-nav-bar-trade"
   import tradeList from "./trade-list"
-  import {symbolRead} from "../../api/trade/symbol";
   import {marketDepthList} from "../../api/market/depth";
   import {memberCoinSymbolBalance} from "../../api/user/memberCoin";
   import {entrustOrderList} from "../../api/trade/entrustOrder";
@@ -82,6 +77,7 @@
     },
     computed: {
       ...mapGetters({
+        pair: "pair",
         marketCollect: "marketCollect",
       }),
       tabBars() {
@@ -113,19 +109,6 @@
         },
         tradeBalance: -1,
         balance: -1,
-        symbol: {
-          tradeCoin: {
-            name: "BTC",
-          },
-          coin: {
-            name: "USDT",
-            usdtPrice: 1
-          },
-          price: -1,
-          tradeTotalPrecision: 0,
-          tradePricePrecision: 0,
-          tradeAmountPrecision: 0,
-        },
         depthSell: [],
         depthBuy: [],
         isNoData: false,
@@ -141,6 +124,7 @@
     },
 		methods: {
       ...mapActions({
+        setPair: "setPair",
         usdtRateSet: "usdtRateSet",
       }),
       onNavBarTabClickItem(index) {
@@ -193,23 +177,22 @@
         }
       },
       init(refresh) {
-        this.getSymbol()
-        this.getBalance()
-        this.getDepth(refresh)
-        this.getOrderList();
-      },
-      getSymbol() {
-        symbolRead(this.params)
-            .then(res => {
-              if (res.code > 0) {
-                this.$tui.toast(t('http.code.' + res.code))
-                return false
-              }
-              this.symbol = res.data
-            })
+        this.setPair(this.params)
+          .then(b => {
+            if (!b) {
+              this.$tui.toast("error")
+            }
+            this.getBalance()
+            this.getDepth(refresh)
+            this.getOrderList();
+          })
       },
       getBalance() {
-        memberCoinSymbolBalance(this.params)
+        const params = {
+          tradeCoinId: this.pair.tradeCoin.id,
+          coinId: this.pair.coin.id,
+        }
+        memberCoinSymbolBalance(params)
             .then(res => {
               if (res.code > 0) {
                 this.$tui.toast(t('http.code.' + res.code))
@@ -220,7 +203,11 @@
             })
       },
       getDepth(refresh) {
-        marketDepthList(this.params)
+        const params = {
+          tradeCoinId: this.pair.tradeCoin.id,
+          coinId: this.pair.coin.id,
+        }
+        marketDepthList(params)
             .then(res => {
               if (refresh) {
                 this.refreshStatus()
@@ -241,8 +228,8 @@
       },
       getOrderList() {
         let params = {
-          tradeCoinId: this.params.tradeCoinId,
-          coinId: this.params.coinId,
+          tradeCoinId: this.pair.tradeCoin.id,
+          coinId: this.pair.coin.id,
           page: 1,
           limit: 20
         }

@@ -1,14 +1,17 @@
 import * as types from "../mutation-types";
 import {getStorageSync, setStorageSync} from "../../utils/storage"
 import {usdtRateRead} from "../../api/trade/usdtRate";
+import {symbolRead} from "../../api/trade/symbol";
 
+// 自选
 const marketCollectKey = "marketCollectKey";
 let marketCollect = getStorageSync(marketCollectKey) || "[]"
 let marketCollectSet = new Set()
 if (marketCollect) {
     try {
         marketCollectSet = new Set(JSON.parse(marketCollect))
-    }catch (e) {}
+    } catch (e) {
+    }
 }
 
 // 汇率
@@ -22,29 +25,83 @@ let usdtRate = {
 }
 if (usdtRateStr) {
     try {
-        let tmpUsdtRate = JSON.parse(usdtRateStr)
-        usdtRate.name = tmpUsdtRate.name || ""
-        usdtRate.symbol = tmpUsdtRate.symbol || ""
-        usdtRate.price = tmpUsdtRate.price || 0
-        usdtRate.precision = tmpUsdtRate.precision || 2
-    }catch (e) {}
+        let obj = JSON.parse(usdtRateStr)
+        usdtRate.name = obj.name || ""
+        usdtRate.symbol = obj.symbol || ""
+        usdtRate.price = obj.price || 0
+        usdtRate.precision = obj.precision || 2
+    } catch (e) {
+    }
+}
+
+// 交易对信息
+const pairKey = "pairKey";
+let pairStr = getStorageSync(pairKey)
+let pair = {
+    tradeCoin: {
+        id: 1,
+        name: "--",
+    },
+    coin: {
+        id: 3,
+        name: "--",
+        usdtPrice: 1
+    },
+    price: -1,
+    tradeTotalPrecision: 0,
+    tradePricePrecision: 0,
+    tradeAmountPrecision: 0,
+}
+if (pairStr) {
+    try {
+        let obj = JSON.parse(pairStr)
+        pair.tradeCoin = obj.tradeCoin || {} // 交易币种
+        pair.coin = obj.coin || {} // 对标币种
+        pair.price = obj.price || -1 // 价格
+        pair.tradeTotalPrecision = obj.tradeTotalPrecision || 0 // 总量精度
+        pair.tradePricePrecision = obj.tradePricePrecision || 0 // 价格精度
+        pair.tradeAmountPrecision = obj.tradeAmountPrecision || 0 // 数量精度
+    } catch (e) {
+    }
 }
 
 
 const state = {
+    pair: pair,
     usdtRate: usdtRate,
     marketCollect: marketCollectSet,
 };
 
 // getters
 const getters = {
+    pair: state => state.pair,
     usdtRate: state => state.usdtRate,
     marketCollect: state => state.marketCollect,
 };
 
 // actions
 const actions = {
-    usdtRateSet({state,commit}, name) {
+    setPair({state, commit}, data) {
+        const params = {
+            tradeCoinId: data.tradeCoinId || state.pair.tradeCoin.id,
+            coinId: data.coinId || state.pair.coin.id,
+        }
+        return new Promise((resolve, reject) => {
+            symbolRead(params)
+                .then(res => {
+                    if (res.code > 0) {
+                        resolve(false)
+                        return false
+                    }
+                    commit("setPair", res.data)
+                    resolve(true)
+                })
+                .catch(() => {
+                    resolve()
+                })
+        })
+    },
+    usdtRateSet({state, commit}, name) {
         if (!name) {
             name = state.usdtRate.name
         }
@@ -64,6 +121,7 @@ const actions = {
                         precision: res.data.precision,
                     }
                     commit(types.USDT_RATE_SET, obj);
+                    resolve(true)
                 })
                 .catch(() => {
                     reject()
@@ -93,6 +151,15 @@ const mutations = {
         }
         setStorageSync(marketCollectKey, JSON.stringify([...state.marketCollect]))
     },
+    ["setPair"](state, obj) {
+        state.pair.tradeCoin = obj.tradeCoin || {} // 交易币种
+        state.pair.coin = obj.coin || {} // 对标币种
+        state.pair.price = obj.price || -1 // 价格
+        state.pair.tradeTotalPrecision = obj.tradeTotalPrecision || 0 // 总量精度
+        state.pair.tradePricePrecision = obj.tradePricePrecision || 0 // 价格精度
+        state.pair.tradeAmountPrecision = obj.tradeAmountPrecision || 0 // 数量精度
+        setStorageSync(pairKey, JSON.stringify(state.pair))
+    }
 };
 export default {
     state,

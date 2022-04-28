@@ -1,9 +1,12 @@
 <template>
-  <k-echarts ref="kEcharts" :init-data="data" />
+  <my-k-line ref="myKLine" :pair="pair"/>
 </template>
 
 <script>
-import kEcharts from '../../components/k-echart/index'
+import myKLine from '../../components/my-k-line/index'
+import {mapActions, mapGetters} from "vuex";
+
+
 let r =  [
   [
     1628069160,
@@ -498,20 +501,35 @@ for (let i in r) {
   dd[i] = item
 }
 export default {
+  computed: {
+    ...mapGetters({
+      pair: "pair",
+    }),
+  },
   components: {
-    kEcharts
+    myKLine
   },
   data() {
     return {
-      data: []
+      data: [],
+      params: {
+        tradeCoinId: "",
+        coinId: "",
+      },
     }
   },
   onReady() {
     setTimeout(() => {
-      this.$refs.kEcharts.init(dd)
+      this.setPair(this.params)
+        .then(b => {
+          this.$refs.myKLine.init(dd)
+        })
     }, 200)
   },
   methods: {
+    ...mapActions({
+      setPair: "setPair"
+    })
   }
 }
 </script>
