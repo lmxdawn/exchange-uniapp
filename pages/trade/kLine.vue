@@ -507,7 +507,9 @@ export default {
     }
   },
   onReady() {
-    this.$refs.kEcharts.init(dd)
+    setTimeout(() => {
+      this.$refs.kEcharts.init(dd)
+    }, 200)
   },
   methods: {
   }

@@ -5,10 +5,10 @@
       "path": "pages/home/index",
       "style": {
         "navigationBarTitleText": "%common.home%",
-        "navigationStyle":"custom",  //可以去掉小程序端的顶部导航
+        "navigationStyle":"custom",
         "app-plus":{
-          "titleNView":false,   // 去掉APP、H5的顶部导航
-          "background":"#191E29"   // 去掉APP、H5的顶部导航
+          "titleNView":false,
+          "background":"#191E29"
         }
       }
     },
@@ -16,10 +16,10 @@
       "path": "pages/market/index",
       "style": {
         "navigationBarTitleText": "%common.market%",
-        "navigationStyle":"custom",  //可以去掉小程序端的顶部导航
+        "navigationStyle":"custom",
         "app-plus":{
-          "titleNView":false,   // 去掉APP、H5的顶部导航
-          "background":"#191E29"   // 去掉APP、H5的顶部导航
+          "titleNView":false,
+          "background":"#191E29"
         }
       }
     },
@@ -27,10 +27,10 @@
       "path": "pages/trade/index",
       "style": {
         "navigationBarTitleText": "%common.trade%",
-        "navigationStyle":"custom",  //可以去掉小程序端的顶部导航
-        "app-plus":{
-          "titleNView":false,   // 去掉APP、H5的顶部导航
-          "background":"#11151F"   // 去掉APP、H5的顶部导航
+        "navigationStyle":"custom",
+        "app-plus": {
+          "titleNView":false,
+          "background":"#11151F"
         }
       }
     },
@@ -38,10 +38,10 @@
       "path": "pages/contract/index",
       "style": {
         "navigationBarTitleText": "%common.contract%",
-        "navigationStyle":"custom",  //可以去掉小程序端的顶部导航
+        "navigationStyle":"custom",
         "app-plus":{
-          "titleNView":false,   // 去掉APP、H5的顶部导航
-          "background":"#191E29"  // 去掉APP、H5的顶部导航
+          "titleNView":false,
+          "background":"#191E29"
         }
       }
     },
@@ -49,10 +49,10 @@
       "path": "pages/wallet/index",
       "style": {
         "navigationBarTitleText": "%common.wallet%",
-        "navigationStyle":"custom",  //可以去掉小程序端的顶部导航
+        "navigationStyle":"custom",
         "app-plus":{
-          "titleNView":false,   // 去掉APP、H5的顶部导航
-          "background":"#191E29"   // 去掉APP、H5的顶部导航
+          "titleNView":false,
+          "background":"#191E29"
         }
       }
     },
@@ -60,11 +60,12 @@
       "path": "pages/trade/kLine",
       "style": {
         "navigationBarTitleText": "",
-        "navigationStyle":"custom",  //可以去掉小程序端的顶部导航
+        "navigationStyle":"custom",
         "app-plus":{
-          "titleNView":false,   // 去掉APP、H5的顶部导航
-          "background":"#191E29",   // 去掉APP、H5的顶部导航
-          "animationType": "pop-in"
+          "titleNView":false,
+          "background":"#191E29",
+          "animationAlphaBGColor":"#191E29",
+          "animationType": "slider-in-right"
         }
       }
     }
@@ -117,8 +118,7 @@
     "navigationBarBackgroundColor": "#191E29",
     "backgroundColor": "#191E29",
     "app-plus": {
-      "background": "#191E29",
-      "animationAlphaBGColor": "#191E29"
+      "background": "#191E29"
     }
   }
 }
