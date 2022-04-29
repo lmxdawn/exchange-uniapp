@@ -523,7 +523,7 @@ export default {
         .then(b => {
           setTimeout(() => {
             this.$refs.myKLine.init(dd)
-          }, 1000)
+          }, 200)
         })
   },
   methods: {

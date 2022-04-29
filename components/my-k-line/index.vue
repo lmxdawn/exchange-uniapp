@@ -1,6 +1,6 @@
 <template>
   <view>
-    <nav-bar :pair="pair"></nav-bar>
+    <nav-bar :pair="pair" :statusBar="true"></nav-bar>
     <k-echarts ref="kEcharts" :init-data="data" />
   </view>
 </template>
@@ -23,7 +23,7 @@ export default {
   },
   data() {
     return {
-      data: []
+      data: [],
     }
   },
   methods: {
