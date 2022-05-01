@@ -4,7 +4,7 @@
       <view class="header-box">
         <view class="header-box-left">
           <uni-icons type="back" color="#b8c6d8" size="28"@click="back"></uni-icons>
-          <view class="header-line">|</view>
+          <text class="header-line">|</text>
           <uni-icons class="header-box-left__drawer" color="#b8c6d8" type="bars" size="28"></uni-icons>
           <text class="header-box-left__symbol">{{ pair.tradeCoin.name }}/{{ pair.coin.name }}</text>
         </view>
@@ -66,6 +66,7 @@ export default {
 .header-line {
   margin-left: 5rpx;
   margin-right: 10rpx;
+  color: #b8c6d8;
 }
 
 .header-box-left {

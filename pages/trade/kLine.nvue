@@ -1,0 +1,40 @@
+<template>
+  <my-k-line ref="myKLine" :pair="pair"/>
+</template>
+<script>
+import myKLine from '../../components/my-k-line/index'
+import {mapActions, mapGetters} from "vuex";
+export default {
+  computed: {
+    ...mapGetters({
+      pair: "pair",
+    }),
+  },
+  components: {
+    myKLine
+  },
+  data() {
+    return {
+      params: {
+        tradeCoinId: "",
+        coinId: "",
+      },
+    };
+  },
+  onLoad() {
+    this.setPair(this.params)
+      .then(b => {
+
+      })
+  },
+  methods: {
+    ...mapActions({
+      setPair: "setPair"
+    }),
+  }
+};
+</script>
+
+
+<style>
+</style>

@@ -65,7 +65,8 @@
         "navigationStyle":"custom",
         "app-plus":{
           "titleNView":false,
-          "background":"#191E29"
+          "background":"#191E29",
+          "animationType": "slide-in-right"
         }
       }
     }
