@@ -188,8 +188,7 @@ export default {
             left: '2%',
             right: '18%',
             height: '65%',
-            bottom: '0%',
-            borderWidth: 20
+            bottom: '0%'
           },
           {
             left: '2%',
@@ -280,23 +279,9 @@ export default {
           {
             type: 'inside',
             xAxisIndex: [0, 1],
-            zoomOnMouseWheel: false,
-            moveOnMouseMove: false,
-            moveOnMouseWheel: false,
-            start: 0,
+            start: 75,
             end: 100,
           },
-          {
-            show: true,
-            xAxisIndex: [0, 1],
-            type: 'inside',
-            zoomOnMouseWheel: false,
-            moveOnMouseMove: false,
-            moveOnMouseWheel: false,
-            top: '85%',
-            start: 0,
-            end: 100,
-          }
         ],
         series: [
           {
@@ -412,7 +397,7 @@ export default {
 		},
 		methods: {
 			initEcharts() {
-				myChart = echarts.init(document.getElementById('echarts'), null, {renderer: 'svg'})
+				myChart = echarts.init(document.getElementById('echarts'))
 				// 观测更新的数据在 view 层可以直接访问到
 				myChart.setOption(this.option)
 			},
@@ -445,6 +430,6 @@ export default {
   height: 482px;
   overflow: hidden;
   width: 100%;
-  background-color: #12023e;
+  background-color: #121620;
 }
 </style>
