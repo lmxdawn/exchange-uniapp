@@ -1,5 +1,5 @@
 <template>
-  <view>
+  <view class="my-k-line">
     <nav-bar :pair="pair" :statusBar="true"></nav-bar>
     <view class="k-line-header">
       <view class="k-line-header-left">
@@ -26,7 +26,7 @@
     </view>
     <view class="k-line-tab">
       <view class="k-line-tab-item">
-        <text class="k-line-tab-item-text">分时</text>
+        <text class="k-line-tab-item-text selected">分时</text>
         <view class="k-line-tab-item-under selected"></view>
       </view>
       <view class="k-line-tab-item">
@@ -52,6 +52,27 @@
     </view>
     <view class="k-line-webview">
       <web-view ref="kLineWebview" class="k-line-webview" name='child' src="/hybrid/html/kline.html"></web-view>
+    </view>
+    <view class="k-line-division"></view>
+    <view class="k-line-division2"></view>
+    <view class="k-line-middle-tab">
+      <view class="k-line-middle-tab-item">
+        <text class="k-line-middle-tab-item-text selected">买卖盘</text>
+        <view class="k-line-middle-tab-item-under w48 selected"></view>
+      </view>
+      <view class="k-line-middle-tab-item">
+        <text class="k-line-middle-tab-item-text">近期成交</text>
+        <view class="k-line-middle-tab-item-under w64"></view>
+      </view>
+      <view class="k-line-middle-tab-item">
+        <text class="k-line-middle-tab-item-text">币种简介</text>
+        <view class="k-line-middle-tab-item-under w64"></view>
+      </view>
+    </view>
+    <view class="k-line-tab1">
+      <view class="k-depth-webview">
+        <web-view ref="kDepthWebview" class="k-depth-webview" name='depthChild' src="/hybrid/html/depth.html"></web-view>
+      </view>
     </view>
   </view>
 </template>
@@ -153,6 +174,9 @@ export default {
 .k-line-tab-item-text {
   color: #9197A3;
   font-size: 14px;
+  &.selected {
+    color: #E1E8F5;
+  }
 }
 .k-line-tab-item-under {
   margin-top: 3px;
@@ -164,6 +188,57 @@ export default {
 }
 .k-line-webview {
   width: 750rpx;
-  height: 400px
+  height: 890rpx
+}
+
+.k-line-division {
+  height: 2px;
+  width: 750rpx;
+  background-color: #191E29;
+}
+
+.k-line-division2 {
+  height: 8px;
+  width: 750rpx;
+  background-color: #000000;
+}
+
+.k-line-middle-tab {
+  display: flex;
+  flex-direction: row;
+  padding: 5px 15px;
+}
+.k-line-middle-tab-item {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  margin-right: 20px;
+}
+.k-line-middle-tab-item-text {
+  color: #9197A3;
+  font-size: 17px;
+  &.selected {
+    color: #E1E8F5;
+  }
+}
+.k-line-middle-tab-item-under {
+  margin-top: 3px;
+  width: 18px;
+  height: 4px;
+  &.selected {
+    background-color: #2DBD96;
+  }
+  &.w48 {
+    width: 48px;
+  }
+  &.w64 {
+    width: 64px;
+  }
+}
+
+.k-depth-webview {
+  width: 750rpx;
+  height: 400rpx
 }
 </style>
