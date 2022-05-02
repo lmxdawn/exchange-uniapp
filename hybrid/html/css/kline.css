@@ -45,3 +45,12 @@
     justify-content: space-between;
     padding: 5px 0;
 }
+
+.ctr-label {
+    color: #51617b;
+}
+
+.ctr-value {
+    color: #acbadf;
+    margin-left: 30px;
+}

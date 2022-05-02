@@ -1,0 +1,22 @@
+* {
+    margin: 0;
+    padding: 0;
+}
+.depth-charts {
+    width: 100vw;
+    height: 100vh;
+    background-color: #121620;
+    background-image: linear-gradient(rgba(153, 151, 151, 0.1) 1px, transparent 0),
+    linear-gradient(90deg, rgba(153, 151, 151, 0.1) 1px, transparent 0),
+    linear-gradient(white 1px, transparent 0),
+    linear-gradient(90deg, white 1px, transparent 0);
+    background-size: 40px 40px, 80px 80px, 0 0, 0 0;
+}
+
+.depth-charts-tooltip-row {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: space-between;
+    padding: 5px 0;
+}
