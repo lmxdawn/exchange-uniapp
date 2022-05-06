@@ -38,6 +38,7 @@ let oldData = [
     ["2004-02-26", 10598.14, 10580.14, 10493.71, 10652.96, 223230000],
     ["2004-02-27", 10581.55, 10583.92, 10519.03, 10689.55, 200050000],
 ];
+
 // 解析数据 数据意义(下标)：[1]开盘(open)，[2]收盘(close)，[3]最低(lowest)，[4]最高(highest)，[5]数量(vol)
 function splitData(rawData) {
     let raw = JSON.parse(JSON.stringify(rawData))
@@ -55,6 +56,7 @@ function splitData(rawData) {
         volumes: volumes
     };
 }
+
 // 计算MA
 function calculateMA(dayCount, data) {
     let result = [];
@@ -72,12 +74,14 @@ function calculateMA(dayCount, data) {
     }
     return result;
 }
+
 // 截取数字字符串 保留precision小数
 function formatterNum(value, precision) {
     // console.log(value)
     let reg = new RegExp('^\\d+(?:\\.\\d{0,' + precision + '})?')
     return value.toString().match(reg)
 }
+
 // 追加数据
 function addData(oo) {
     let isUp = false;
@@ -85,7 +89,7 @@ function addData(oo) {
     for (let i = 0; i < oldData.length; i++) {
         if (oldData[i][0] === oo[0]) {
             isUp = true;
-            isUpIndex =  i;
+            isUpIndex = i;
             oldData[isUpIndex] = oo
         }
     }
@@ -95,6 +99,7 @@ function addData(oo) {
     }
     createKline(oldData)
 }
+
 // 获取k线数据,生成k线
 function createKline(optionData) {
     const data = splitData(optionData)
@@ -167,6 +172,7 @@ function createKline(optionData) {
         ]
     })
 }
+
 // 初始化(配置项)
 function chartInit() {
     let upColor = '#23AD8F';
@@ -529,16 +535,20 @@ function chartInit() {
     };
     myChart.setOption(option);
     // 加载上一页数据
-    myChart.on('datazoom', (params) => {
-        let num = params.batch[0]['start'];
-        if (num === 0) {
-            console.log('到最左边了')
-        }
-    })
+    setTimeout(() => {
+        myChart.on('dataZoom', (params) => {
+            let num = params.batch[0]['start'];
+            console.log('NUM为：', num)
+            if (num === 0) {
+                console.log('到最左边了')
+            }
+        })
+    }, 3000)
     window.addEventListener('resize', () => {
         myChart.resize()
     })
 }
+
 const myChart = echarts.init(document.getElementById('main'));
 chartInit()
 createKline(oldData)

@@ -51,7 +51,7 @@
       </view>
     </view>
     <view class="k-line-webview">
-      <k-echart ref="kEcharts"></k-echart>
+      <web-view ref="kLineWebview" class="k-line-webview" name='child' src="/hybrid/html/kline.html"></web-view>
     </view>
     <view class="k-line-division"></view>
     <view class="k-line-division2"></view>
@@ -71,7 +71,7 @@
     </view>
     <view class="k-line-tab1">
       <view class="k-depth-webview">
-        <!--<web-view ref="kDepthWebview" class="k-depth-webview" name='depthChild' src="/hybrid/html/depth.html"></web-view>-->
+        <web-view ref="kDepthWebview" class="k-depth-webview" name='depthChild' src="/hybrid/html/depth.html"></web-view>
       </view>
     </view>
   </view>
@@ -79,11 +79,9 @@
 
 <script>
 import navBar from './nav-bar'
-import kEchart from '../k-echart/index'
 export default {
   components: {
-    navBar,
-    kEchart
+    navBar
   },
   props: {
     pair: {
@@ -99,9 +97,6 @@ export default {
     }
   },
   methods: {
-    init(data) {
-      this.$refs.kEcharts.init(data)
-    },
     // 调用 webview 内部逻辑
     evalJs() {
       let obj = ["2004-02-28", 10583.92, 10985.92, 10519.03, 10689.55, 200050000]
@@ -117,6 +112,9 @@ export default {
 </script>
 
 <style lang="scss" scoped>
+.my-k-line {
+  display: flex;
+}
 .k-line-header {
   display: flex;
   flex-direction: row;
