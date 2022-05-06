@@ -108,6 +108,7 @@
 		cursor: pointer;
 		/* #endif */
     justify-content: center;
+    flex: 1;
 	}
 
 	.segmented-control__item {

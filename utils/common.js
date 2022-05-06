@@ -1,8 +1,12 @@
 // 跳转
-export function navigateTo(path) {
-    uni.navigateTo({
-        url: "/pages/" + path
-    });
+export function navigateTo(path, isRight = false) {
+    let obj = {
+        url: "/pages/" + path,
+    }
+    if (isRight) {
+        obj.animationType = 'slide-in-right'
+    }
+    uni.navigateTo(obj);
 }
 
 // 跳转到登录页面

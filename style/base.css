@@ -4,6 +4,7 @@
 
 /* #ifndef APP-NVUE */
 page {
+  width: 750rpx;
   background-color: #191E29;
 }
 /* #endif */

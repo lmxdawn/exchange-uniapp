@@ -8,15 +8,15 @@
       </view>
     </uni-nav-bar>
 
-    <view class="header-box">
+    <view class="header-box" :style="{backgroundColor: backgroundColor}">
       <view class="header-box-left">
-        <uni-icons class="header-box-left__drawer" color="#b8c6d8" type="bars" size="28"></uni-icons>
+        <uni-icons class="header-box-left__drawer" :color="color" type="bars" size="28"></uni-icons>
         <text class="header-box-left__pair">{{ pair.tradeCoin.name }}/{{ pair.coin.name }}</text>
         <text class="header-box-left__rate" :class="[('header-box-left__rate__' + (rate >= 0 ? 'up' : 'down'))]">{{rate > 0 ? '+' : ''}}{{ rate }}%</text>
       </view>
       <view class="header-box-right">
-        <uni-icons class="header-box-right__kline" color="#b8c6d8" custom-prefix="iconfont" type="icon-kxiantu" size="25" @click="kLineClick"></uni-icons>
-        <uni-icons class="header-box-right__more" color="#b8c6d8" type="more-filled" size="28"></uni-icons>
+        <uni-icons class="header-box-right__kline" :color="color" custom-prefix="iconfont" type="icon-kxiantu" size="25" @click="kLineClick"></uni-icons>
+        <uni-icons class="header-box-right__more" :color="color" type="more-filled" size="28"></uni-icons>
       </view>
     </view>
   </view>
@@ -73,7 +73,7 @@ export default {
       }
     },
     kLineClick() {
-      navigateTo("trade/kLine")
+      navigateTo("trade/kLine", true)
     }
   }
 }
@@ -86,11 +86,10 @@ export default {
 .nav-bar-center-box {
   width: 100px;
   display: flex;
-  justify-content: center;
+  justify-content: space-between;
 }
 
 .header-box {
-  width: 750rpx;
   height: 40px;
   display: flex;
   flex-direction: row;

@@ -100,7 +100,9 @@ export default {
   },
   methods: {
     init(data) {
-      this.$refs.kEcharts.init(data)
+      setTimeout(() => {
+        this.$refs.kEcharts.init(data)
+      }, 450)
     },
     // 调用 webview 内部逻辑
     evalJs() {
@@ -117,6 +119,9 @@ export default {
 </script>
 
 <style lang="scss" scoped>
+.my-k-line {
+  width: 750rpx;
+}
 .k-line-header {
   display: flex;
   flex-direction: row;

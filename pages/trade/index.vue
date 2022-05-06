@@ -259,23 +259,15 @@
 </script>
 
 <style lang="scss" scoped>
-  /* #ifndef APP-PLUS */
-  page {
-    width: 100%;
-    height: 100%;
-    display: flex;
-    background-color: #11151F;
-  }
-  /* #endif */
   .page-header {
   }
   .page-box {
     flex: 1;
     /* #ifndef APP-PLUS */
-    width: 100%;
     display: flex;
     /* #endif */
     flex-direction: column;
+    background-color: #11151F;
   }
   .page-line {
     height: 3px;

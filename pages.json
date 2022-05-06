@@ -30,9 +30,7 @@
         "navigationStyle":"custom",
         "app-plus": {
           "titleNView":false,
-          "background":"#11151F",
-          "animationAlphaBGColor":"#11151F",
-          "animationType": "slide-in-right"
+          "background":"#11151F"
         }
       }
     },
@@ -65,8 +63,7 @@
         "navigationStyle":"custom",
         "app-plus":{
           "titleNView":false,
-          "background":"#191E29",
-          "animationType": "slide-in-right"
+          "background":"#191E29"
         }
       }
     }
@@ -120,8 +117,7 @@
     "backgroundColor": "black",
     "app-plus": {
       "background": "black",
-      "backgroundColor": "black",
-      "animationAlphaBGColor": "black"
+      "backgroundColor": "black"
     }
   }
 }

@@ -351,13 +351,11 @@ export default {
 <style lang="scss" scoped>
 .list-box {
   flex: 1;
-  background-color: #191E29;
   width: 750rpx;
+  background-color: #191E29;
   border-top-left-radius: 20px;
   border-top-right-radius: 20px;
-  /* #ifndef APP-NVUE */
   overflow: hidden auto;
-  /* #endif */
 }
 .operation-part {
   display: flex;
