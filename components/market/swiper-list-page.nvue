@@ -312,12 +312,12 @@ export default {
   width: 20px;
   height: 20px;
   margin-left: 5px;
-  color: #23AD8F;
+  color: #2DBD96;
 }
 
 .loading-text {
   margin-left: 2px;
   font-size: 16px;
-  color: #23AD8F;
+  color: #2DBD96;
 }
 </style>

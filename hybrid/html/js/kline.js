@@ -175,7 +175,7 @@ function createKline(optionData) {
 
 // 初始化(配置项)
 function chartInit() {
-    let upColor = '#23AD8F';
+    let upColor = '#2DBD96';
     let downColor = '#ED6666';
     let colorList = ['#c23531', '#2f4554', '#61a0a8', '#d48265', '#91c7ae', '#749f83', '#ca8622', '#bda29a', '#6e7074',
         '#546570', '#c4ccd3'

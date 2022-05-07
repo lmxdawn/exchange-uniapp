@@ -7,7 +7,7 @@
           :style="[textStyle]"
       >{{text}}</text>
     </view>
-    <uni-load-more v-else color="#23AD8F" iconType="circle" :status="loadingStatus" :contentText="{}"></uni-load-more>
+    <uni-load-more v-else color="#2DBD96" iconType="circle" :status="loadingStatus" :contentText="{}"></uni-load-more>
   </view>
 </template>
 

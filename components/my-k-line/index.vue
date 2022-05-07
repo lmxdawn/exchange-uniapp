@@ -50,30 +50,7 @@
         <view class="k-line-tab-item-under"></view>
       </view>
     </view>
-    <view class="k-line-webview">
-      <k-echart ref="kEcharts"></k-echart>
-    </view>
-    <view class="k-line-division"></view>
-    <view class="k-line-division2"></view>
-    <view class="k-line-middle-tab">
-      <view class="k-line-middle-tab-item">
-        <text class="k-line-middle-tab-item-text selected">买卖盘</text>
-        <view class="k-line-middle-tab-item-under w48 selected"></view>
-      </view>
-      <view class="k-line-middle-tab-item">
-        <text class="k-line-middle-tab-item-text">近期成交</text>
-        <view class="k-line-middle-tab-item-under w64"></view>
-      </view>
-      <view class="k-line-middle-tab-item">
-        <text class="k-line-middle-tab-item-text">币种简介</text>
-        <view class="k-line-middle-tab-item-under w64"></view>
-      </view>
-    </view>
-    <view class="k-line-tab1">
-      <view class="k-depth-webview">
-        <!--<web-view ref="kDepthWebview" class="k-depth-webview" name='depthChild' src="/hybrid/html/depth.html"></web-view>-->
-      </view>
-    </view>
+    <k-echart ref="kEcharts"></k-echart>
   </view>
 </template>
 
@@ -99,9 +76,9 @@ export default {
     }
   },
   methods: {
-    init(data) {
+    init(kLineData, buyData, sellData) {
       setTimeout(() => {
-        this.$refs.kEcharts.init(data)
+        this.$refs.kEcharts.init(kLineData, buyData, sellData)
       }, 450)
     },
     // 调用 webview 内部逻辑
@@ -137,7 +114,7 @@ export default {
 }
 .k-line-header-left-up {
   font-size: 25px;
-  color: #23AD8F;
+  color: #2DBD96;
   margin-bottom: 5px;
 }
 .k-line-header-left-bottom {
@@ -146,10 +123,10 @@ export default {
 }
 .k-line-header-left-bottom-price {
   font-size: 13px;
-  color: #E1E8F5;
+  color: #b8c6d8;
 }
 .k-line-header-left-bottom-rate {
-  color: #23AD8F;
+  color: #2DBD96;
   font-size: 13px;
 }
 .k-line-header-right {
@@ -166,7 +143,7 @@ export default {
   font-size: 12px;
 }
 .k-line-header-right-item-right {
-  color: #E1E8F5;
+  color: #b8c6d8;
   font-size: 12px;
 }
 .k-line-tab {
@@ -185,7 +162,7 @@ export default {
   color: #9197A3;
   font-size: 14px;
   &.selected {
-    color: #E1E8F5;
+    color: #b8c6d8;
   }
 }
 .k-line-tab-item-under {
@@ -195,60 +172,5 @@ export default {
   &.selected {
     background-color: #2DBD96;
   }
-}
-.k-line-webview {
-  width: 750rpx;
-  height: 800rpx
-}
-
-.k-line-division {
-  height: 2px;
-  width: 750rpx;
-  background-color: #191E29;
-}
-
-.k-line-division2 {
-  height: 8px;
-  width: 750rpx;
-  background-color: #000000;
-}
-
-.k-line-middle-tab {
-  display: flex;
-  flex-direction: row;
-  padding: 5px 15px;
-}
-.k-line-middle-tab-item {
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
-  align-items: center;
-  margin-right: 20px;
-}
-.k-line-middle-tab-item-text {
-  color: #9197A3;
-  font-size: 17px;
-  &.selected {
-    color: #E1E8F5;
-  }
-}
-.k-line-middle-tab-item-under {
-  margin-top: 3px;
-  width: 18px;
-  height: 4px;
-  &.selected {
-    background-color: #2DBD96;
-  }
-  &.w48 {
-    width: 48px;
-  }
-  &.w64 {
-    width: 64px;
-  }
-}
-
-.k-depth-webview {
-  width: 750rpx;
-  height: 400rpx
 }
 </style>

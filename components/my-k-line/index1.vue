@@ -130,7 +130,7 @@ export default {
 }
 .k-line-header-left-up {
   font-size: 25px;
-  color: #23AD8F;
+  color: #2DBD96;
   margin-bottom: 5px;
 }
 .k-line-header-left-bottom {
@@ -142,7 +142,7 @@ export default {
   color: #E1E8F5;
 }
 .k-line-header-left-bottom-rate {
-  color: #23AD8F;
+  color: #2DBD96;
   font-size: 13px;
 }
 .k-line-header-right {
