@@ -4,7 +4,7 @@
     {
       "path": "pages/home/index",
       "style": {
-        "navigationBarTitleText": "%common.home%",
+        "navigationBarTitleText": "%common.title%",
         "navigationStyle":"custom",
         "app-plus":{
           "titleNView":false,
@@ -15,7 +15,7 @@
     {
       "path": "pages/market/index",
       "style": {
-        "navigationBarTitleText": "%common.market%",
+        "navigationBarTitleText": "%common.title%",
         "navigationStyle":"custom",
         "app-plus":{
           "titleNView":false,
@@ -26,7 +26,7 @@
     {
       "path": "pages/trade/index",
       "style": {
-        "navigationBarTitleText": "%common.trade%",
+        "navigationBarTitleText": "%common.title%",
         "navigationStyle":"custom",
         "app-plus": {
           "titleNView":false,
@@ -37,7 +37,7 @@
     {
       "path": "pages/contract/index",
       "style": {
-        "navigationBarTitleText": "%common.contract%",
+        "navigationBarTitleText": "%common.title%",
         "navigationStyle":"custom",
         "app-plus":{
           "titleNView":false,
@@ -48,7 +48,7 @@
     {
       "path": "pages/wallet/index",
       "style": {
-        "navigationBarTitleText": "%common.wallet%",
+        "navigationBarTitleText": "%common.title%",
         "navigationStyle":"custom",
         "app-plus":{
           "titleNView":false,
@@ -59,7 +59,7 @@
     {
       "path": "pages/trade/kLine",
       "style": {
-        "navigationBarTitleText": "",
+        "navigationBarTitleText": "%common.title%",
         "navigationStyle":"custom",
         "app-plus":{
           "titleNView":false,
