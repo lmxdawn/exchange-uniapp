@@ -488,12 +488,16 @@
               xAxisIndex: [0, 1],
               start: 50,
               end: 100,
+              // 是否阻止 mousemove 事件的默认行为。
+              preventDefaultMouseMove: false,
             },
             {
               type: 'inside',
               xAxisIndex: [0, 1],
               start: 50,
               end: 100,
+              // 是否阻止 mousemove 事件的默认行为。
+              preventDefaultMouseMove: false,
             }
           ],
           series: [
