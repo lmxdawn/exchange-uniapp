@@ -164,6 +164,10 @@
   ];
   export default {
     props: {
+      timeType: {
+        type: String,
+        default: ""
+      },
       loadingStatus: {
         type: String,
         default: "loading"
@@ -322,9 +326,7 @@
                 margin: 6,
                 fontSize: 10,
                 color: '#9197A3',
-                formatter: function (value) {
-                  return echarts.format.formatTime('MM-dd', value);
-                }
+                // formatter: this.formatterTime()
               },
               splitNumber: 20,
               splitLine: {
@@ -351,9 +353,7 @@
                 fontSize: 10,
                 margin: 75,
                 align: 'right',
-                formatter: function (value) {
-                  return Number(value).toFixed(2)
-                }
+                // formatter: this.formatterToFixed(2)
               },
               splitLine: {
                 show: false,
@@ -848,7 +848,7 @@
       formatterNum(value, precision) {
         let reg = new RegExp('^\\d+(?:\\.\\d{0,' + precision + '})?')
         return value.toString().match(reg)
-      }
+      },
     }
   }
 </script>
@@ -898,6 +898,12 @@
             newValue.tooltip.formatter = this.tooltipFormatter(ownerInstance)
             // 设置tooltip的位置
             newValue.tooltip.position = this.tooltipPosition()
+          }
+          if (newValue.xAxis && newValue.xAxis.length > 1) {
+            newValue.xAxis[1].axisLabel.formatter = this.formatterTime()
+          }
+          if (newValue.yAxis && newValue.yAxis.length > 0) {
+            newValue.yAxis[0].axisLabel.formatter = this.formatterToFixed(2)
           }
           myChart.setOption(newValue)
         }
@@ -989,7 +995,31 @@
           return tooltip;
         }
       },
-
+      // 格式化时间
+      formatterTime() {
+        return value => {
+          let formatText = ""
+          // 分秒格式
+          if (this.timeType === 'm') {
+            formatText = "hh:mm"
+          }
+          // 小时格式
+          if (this.timeType === 'h') {
+            formatText = "yyyy-MM-dd hh:mm"
+          }
+          // 天格式
+          if (this.timeType === 'd') {
+            formatText = "yyyy-MM-dd"
+          }
+          return echarts.format.formatTime(formatText, new Date(value));
+        }
+      },
+      // 保留位数
+      formatterToFixed(fixed) {
+        return value => {
+          return Number(value).toFixed(fixed)
+        }
+      },
 			/**
 			 * tooltip格式化
 			 */
@@ -1002,7 +1032,7 @@
       formatterNum(value, precision) {
         let reg = new RegExp('^\\d+(?:\\.\\d{0,' + precision + '})?')
         return value.toString().match(reg)
-      }
+      },
 		}
 	}
 </script>

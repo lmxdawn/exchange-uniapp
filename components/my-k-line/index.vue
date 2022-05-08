@@ -30,7 +30,7 @@
         <view class="k-line-tab-item-under" :class="[index === tabIndex ? 'selected' : '']"></view>
       </view>
     </view>
-    <k-echart ref="kEcharts" :loading-status="loadingStatus" :depth-loading-status="depthLoadingStatus"></k-echart>
+    <k-echart ref="kEcharts" :time-type="timeType" :loading-status="loadingStatus" :depth-loading-status="depthLoadingStatus"></k-echart>
   </view>
 </template>
 
@@ -64,22 +64,27 @@ export default {
       tabList: [
         {
           id: 'time-sharing',
+          timeType: 'm',
           name: '分时',
         },
         {
           id: '15min',
+          timeType: 'h',
           name: '15分钟',
         },
         {
           id: '1h',
+          timeType: 'h',
           name: '1小时',
         },
         {
           id: '4h',
+          timeType: 'h',
           name: '4小时',
         },
         {
           id: 'one-day',
+          timeType: 'd',
           name: '日K',
         },
         {
@@ -87,12 +92,14 @@ export default {
           name: '更多',
         },
       ],
-      tabIndex: 0,
+      tabIndex: 1,
+      timeType: 'h'
     }
   },
   methods: {
     tabClick(index,item) {
       this.tabIndex = index
+      this.timeType = item.timeType
       this.$emit('tabSelected', item)
     },
     init(kLineData, buyData, sellData) {
