@@ -30,7 +30,7 @@
         <view class="k-line-tab-item-under" :class="[index === tabIndex ? 'selected' : '']"></view>
       </view>
     </view>
-    <k-echart ref="kEcharts" :time-type="timeType" :loading-status="loadingStatus" :depth-loading-status="depthLoadingStatus"></k-echart>
+    <k-echart ref="kEcharts" :tab-id="tabId" :time-type="timeType" :loading-status="loadingStatus" :depth-loading-status="depthLoadingStatus"></k-echart>
   </view>
 </template>
 
@@ -93,17 +93,28 @@ export default {
         },
       ],
       tabIndex: 1,
-      timeType: 'h'
+      tabId: 'time-sharing',
+      timeType: 'h',
     }
   },
   methods: {
     tabClick(index,item) {
       this.tabIndex = index
+      this.tabId = item.id
       this.timeType = item.timeType
       this.$emit('tabSelected', item)
     },
     init(kLineData, buyData, sellData) {
       this.$refs.kEcharts.init(kLineData, buyData, sellData)
+    },
+    addData(oo) {
+      this.$refs.kEcharts.addData(oo)
+    },
+    createKline(optionData) {
+      this.$refs.kEcharts.createKline(optionData)
+    },
+    createDepth(buy, sell) {
+      this.$refs.kEcharts.createDepth(buy, sell)
     },
     // 调用 webview 内部逻辑
     evalJs() {

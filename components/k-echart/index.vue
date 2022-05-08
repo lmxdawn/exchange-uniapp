@@ -93,15 +93,18 @@
     let categoryData = [];
     let values = [];
     let volumes = [];
+    let time = []; // 分时图
     for (let i = 0; i < raw.length; i++) {
       categoryData.push(raw[i][0]);
       values.push([+raw[i][1], +raw[i][2], raw[i][3], raw[i][4], raw[i][5]]);
       volumes.push([i, raw[i][5], raw[i][1] > raw[i][2] ? 1 : -1]);
+      time.push([raw[i][0], raw[i][2], raw[i][1], raw[i][3], raw[i][4], raw[i][5]])
     }
     return {
       categoryData: categoryData,
       values: values,
-      volumes: volumes
+      volumes: volumes,
+      time: time,
     };
   }
 
@@ -164,6 +167,10 @@
   ];
   export default {
     props: {
+      tabId: {
+        type: String,
+        default: ""
+      },
       timeType: {
         type: String,
         default: ""
@@ -229,7 +236,7 @@
         let dataMA30 = calculateMA(30, data.values);
         let volumeMA5 = calculateMA(5, data.volumes);
         let volumeMA10 = calculateMA(10, data.volumes);
-        this.option = {
+        let option = {
           backgroundColor: 'transparent',
           title: {
             show: false
@@ -310,7 +317,7 @@
               gridIndex: 1, //x 轴所在的 grid 的索引，默认位于第一个 grid。
               data: data.categoryData, //类目数据，在类目轴（type: 'category'）中有效。
               scale: true,
-              boundaryGap: true, //坐标轴两边留白策略，类目轴和非类目轴的设置和表现不一样。
+              boundaryGap: false, //坐标轴两边留白策略，类目轴和非类目轴的设置和表现不一样。
               axisLine: {
                 show: false,
                 lineStyle: {
@@ -479,7 +486,7 @@
           series: [
             {
               type: 'candlestick',
-              name: '日K',
+              name: 'k',
               data: data.values,
               markLine: {
                 symbol: 'none', //去掉警戒线最后面的箭头
@@ -522,9 +529,7 @@
                   offset: [10, 0],
                   fontSize: 10,
                   align: 'left',
-                  formatter: function (params) {
-                    return Number(params.value).toFixed(2)
-                  }
+                  // formatter: this.formatterToFixed(2),
                 },
                 data: [{
                   name: 'max',
@@ -597,69 +602,65 @@
             },
           ]
         }
-        // this.option = {
-        //   xAxis: [
-        //     {
-        //       data: data.categoryData
-        //     },
-        //     {
-        //       data: data.categoryData
-        //     },
-        //   ],
-        //   series: [
-        //     {
-        //       name: '日K',
-        //       data: data.values,
-        //       markLine: {
-        //         symbol: 'none', //去掉警戒线最后面的箭头
-        //         data: [
-        //           {
-        //             silent: false,//鼠标悬停事件  true没有，false有
-        //             yAxis: data.values[data.values.length - 1][1],// 这里收盘价作为警戒线的标注值，可以有多个yAxis,多条警示线   或者采用   {type : 'average', name: '平均值'}，type值有  max  min  average，分为最大，最小，平均值
-        //             lineStyle: {               //警戒线的样式  ，虚实  颜色
-        //               type: "dotted",
-        //               color: '#5A96E8',
-        //               dashOffset: 10,
-        //             },
-        //             label: {
-        //               position: "end",//将警示值放在哪个位置，三个值“start”,"middle","end"  开始  中点 结束
-        //               distance: 5,
-        //               color: '#5A96E8',
-        //               // backgroundColor:"#00b6ff",
-        //               fontSize: "12px",
-        //               formatter: ['{c}'].join('\n'),
-        //               // formatter:"{c}\n最新价",
-        //             },
-        //           }
-        //         ]
-        //       }
-        //     },
-        //     {
-        //       name: 'MA5',
-        //       data: dataMA5
-        //     },
-        //     {
-        //       name: 'MA10',
-        //       data: dataMA10
-        //     },
-        //     {
-        //       name: 'MA30',
-        //       data: dataMA30
-        //     },
-        //     {
-        //       name: 'Volume',
-        //       data: data.volumes
-        //     },
-        //     {
-        //       name: 'VolumeMA5',
-        //       data: volumeMA5
-        //     },
-        //     {
-        //       name: 'VolumeMA10',
-        //       data: volumeMA10
-        //     },
-        //   ]
-        // }
+
+        // 分时图
+        if (this.tabId === 'time-sharing') {
+          option.grid = [
+            {
+              left: 0,
+              right: 80,
+              bottom: 0,
+              height: '100%',
+            },
+            {
+              top: '80%',
+              left: 0,
+              right: 80,
+              height: '16%',
+            },
+          ]
+          if (option.xAxis && option.xAxis.length > 0) {
+            option.xAxis[0].type = 'time'
+          }
+          option.series[0] = {
+            name: '分时',
+            type: 'line',
+            symbol: 'none',
+            lineStyle: {
+              width: 1,
+              color: '#5A96E8'
+            },
+            areaStyle: {
+              // #5A96E8
+              color: 'rgba(90,150,232,0.2)'
+            },
+            data: data.time,
+            markLine: {
+              symbol: 'none', //去掉警戒线最后面的箭头
+              data: [
+                {
+                  silent: false,//鼠标悬停事件  true没有，false有
+                  yAxis: data.time[data.time.length - 1][1],// 这里收盘价作为警戒线的标注值，可以有多个yAxis,多条警示线   或者采用   {type : 'average', name: '平均值'}，type值有  max  min  average，分为最大，最小，平均值
+                  lineStyle: {               //警戒线的样式  ，虚实  颜色
+                    type: "dotted",
+                    color: '#5A96E8',
+                    dashOffset: 10,
+                  },
+                  label: {
+                    position: "end",//将警示值放在哪个位置，三个值“start”,"middle","end"  开始  中点 结束
+                    distance: 5,
+                    color: '#5A96E8',
+                    // backgroundColor:"#00b6ff",
+                    fontSize: "12px",
+                    formatter: ['{c}'].join('\n'),
+                    // formatter:"{c}\n最新价",
+                  },
+                }
+              ]
+            },
+          }
+        }
+        this.option = option
       },
       createDepth(buy, sell) {
         // 买盘数据
@@ -905,6 +906,9 @@
           if (newValue.yAxis && newValue.yAxis.length > 0) {
             newValue.yAxis[0].axisLabel.formatter = this.formatterToFixed(2)
           }
+          if (newValue.series && newValue.series.length > 0 && newValue.series[0].markPoint && newValue.series[0].markPoint.label) {
+            newValue.series[0].markPoint.label.formatter = this.formatterToFixed(2)
+          }
           myChart.setOption(newValue)
         }
 			},
@@ -951,13 +955,18 @@
           let tooltip = '';
           let time = '', open = 0, high = 0, low = 0, close = 0, amount = 0;
           for (let i = 0; i < params.length; i++) {
-            if (params[i].seriesName === '日K') {
-              time = params[i].name;
+            if (params[i].seriesName === 'k' || params[i].seriesName === '分时') {
+              time = this.formatterTime()(params[i].data[0]);
               open = params[i].data.length > 1 ? Number(this.formatterNum(params[i].data[1], 2)) : 0;
               close = params[i].data.length > 1 ? Number(this.formatterNum(params[i].data[2], 2)) : 0;
               low = params[i].data.length > 1 ? Number(this.formatterNum(params[i].data[3], 2)) : 0;
               high = params[i].data.length > 1 ? Number(this.formatterNum(params[i].data[4], 2)) : 0;
               amount = params[i].data.length > 1 ? Number(this.formatterNum(params[i].data[5], 2)) : 0;
+              // 分时另外做处理
+              if (params[i].seriesName === '分时') {
+                open = params[i].data.length > 1 ? Number(this.formatterNum(params[i].data[2], 2)) : 0;
+                close = params[i].data.length > 1 ? Number(this.formatterNum(params[i].data[1], 2)) : 0;
+              }
               tooltip = '<view>' +
                   '<view style="display: flex;flex-direction: row;align-items: center;justify-content: space-between;padding: 5px 0;"><view style="color: #51617b;">' + '时间' + '</view><view style="color: #acbadf;margin-left: 30px">' + time + '</view></view>' +
                   '<view style="display: flex;flex-direction: row;align-items: center;justify-content: space-between;padding: 5px 0;"><view style="color: #51617b;">' + '开' + '</view><view style="color: #acbadf;margin-left: 30px">' + open + '</view></view>' +
