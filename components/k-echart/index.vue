@@ -1011,6 +1011,10 @@
           if (this.timeType === 'd') {
             formatText = "yyyy-MM-dd"
           }
+          // 如果是秒单位的就乘1000
+          if ((value + "").length === 10) {
+            value *= 1000
+          }
           return echarts.format.formatTime(formatText, new Date(value));
         }
       },
