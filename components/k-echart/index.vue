@@ -615,7 +615,6 @@
           ]
         }
 
-        console.log("类型：", this.tabId)
         // 分时图
         if (this.tabId === 'time-sharing') {
           option.grid = [
@@ -924,9 +923,6 @@
           }
           if (newValue.yAxis && newValue.yAxis.length > 0) {
             newValue.yAxis[0].axisLabel.formatter = this.formatterToFixed(2)
-          }
-          if (newValue.series && newValue.series.length > 0 && newValue.series[0].markPoint && newValue.series[0].markPoint.label) {
-            newValue.series[0].markPoint.label.formatter = this.formatterToFixed(2)
           }
           myChart.setOption(newValue)
         }
