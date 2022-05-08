@@ -167,14 +167,6 @@
   ];
   export default {
     props: {
-      tabId: {
-        type: String,
-        default: ""
-      },
-      timeType: {
-        type: String,
-        default: ""
-      },
       loadingStatus: {
         type: String,
         default: "loading"
@@ -198,21 +190,23 @@
         volMA5: 0,
         volMA10: 0,
         depthOption: {},
+        tabId: '15min',
+        timeType: 'h',
       }
     },
     mounted() {
     },
     methods: {
       // 初始化数据
-      init(kLineData, buyData, sellData) {
+      init(kLineData, buyData, sellData, tabItem) {
         this.kLineData = kLineData;
-
-
-        this.createKline(this.kLineData)
-        this.createDepth(buyData.reverse(), sellData)
+        this.createKline(this.kLineData, tabItem)
+        this.createDepth(buyData.reverse(), sellData, tabItem)
       },
       // 追加数据
-      addData(oo) {
+      addData(oo, tabItem) {
+        this.tabId = tabItem.id
+        this.timeType = tabItem.timeType
         let isUp = false;
         let isUpIndex = -1;
         for (let i = 0; i < this.kLineData.length; i++) {
@@ -229,7 +223,9 @@
         this.createKline(this.kLineData)
       },
       // 获取k线数据,生成k线
-      createKline(optionData) {
+      createKline(optionData, tabItem) {
+        this.tabId = tabItem.id
+        this.timeType = tabItem.timeType
         const data = splitData(optionData)
         let dataMA5 = calculateMA(5, data.values);
         let dataMA10 = calculateMA(10, data.values);
@@ -317,7 +313,7 @@
               gridIndex: 1, //x 轴所在的 grid 的索引，默认位于第一个 grid。
               data: data.categoryData, //类目数据，在类目轴（type: 'category'）中有效。
               scale: true,
-              boundaryGap: false, //坐标轴两边留白策略，类目轴和非类目轴的设置和表现不一样。
+              boundaryGap: true, //坐标轴两边留白策略，类目轴和非类目轴的设置和表现不一样。
               axisLine: {
                 show: false,
                 lineStyle: {
@@ -456,13 +452,23 @@
                 borderColor: "rgba(99, 117, 139, 1.0)",
                 shadowBlur: 0,
                 borderWidth: 1,
-                padding: [5, 3, 5, 3],
+                padding: [5, 3, 3, 3],
+                // formatter: this.tooltipAxisPointer()
+                // formatter(params) {
+                //   if (params.axisDimension === 'x') {
+                //     return this.formatDate(this.timeType, params.value)
+                //   }
+                //   if (params.axisDimension === 'y') {
+                //     return Number(params.value).toFixed(2)
+                //   }
+                //   return params.value
+                // }
               },
               animation: false,
               type: 'cross',
               lineStyle: {
                 type: 'solid',
-                color: 'rgba(30, 42, 66, 0.2)',
+                color: 'rgba(30, 42, 66, 0.5)',
                 width: 10,
                 shadowColor: 'rgba(30, 42, 66, 1)',
                 shadowBlur: 0,
@@ -475,13 +481,20 @@
               }
             }
           },
-          dataZoom: [{ //用于区域缩放
-            type: 'inside',
-            xAxisIndex: [0, 1],
-            realtime: false,
-            start: 50,
-            end: 100,
-          }
+          //用于区域缩放
+          dataZoom: [
+            {
+              type: 'inside',
+              xAxisIndex: [0, 1],
+              start: 50,
+              end: 100,
+            },
+            {
+              type: 'inside',
+              xAxisIndex: [0, 1],
+              start: 50,
+              end: 100,
+            }
           ],
           series: [
             {
@@ -497,7 +510,6 @@
                     lineStyle: {               //警戒线的样式  ，虚实  颜色
                       type: "dotted",
                       color: '#5A96E8',
-                      dashOffset: 10,
                     },
                     label: {
                       position: "end",//将警示值放在哪个位置，三个值“start”,"middle","end"  开始  中点 结束
@@ -603,13 +615,14 @@
           ]
         }
 
+        console.log("类型：", this.tabId)
         // 分时图
         if (this.tabId === 'time-sharing') {
           option.grid = [
             {
               left: 0,
               right: 80,
-              bottom: 0,
+              bottom: 18,
               height: '100%',
             },
             {
@@ -628,11 +641,11 @@
             symbol: 'none',
             lineStyle: {
               width: 1,
-              color: '#5A96E8'
+              color: 'rgba(90,150,232,0.5)'
             },
             areaStyle: {
               // #5A96E8
-              color: 'rgba(90,150,232,0.2)'
+              color: 'rgba(90,150,232,0.1)'
             },
             data: data.time,
             markLine: {
@@ -641,7 +654,8 @@
                 {
                   silent: false,//鼠标悬停事件  true没有，false有
                   yAxis: data.time[data.time.length - 1][1],// 这里收盘价作为警戒线的标注值，可以有多个yAxis,多条警示线   或者采用   {type : 'average', name: '平均值'}，type值有  max  min  average，分为最大，最小，平均值
-                  lineStyle: {               //警戒线的样式  ，虚实  颜色
+                  //警戒线的样式  ，虚实  颜色
+                  lineStyle: {
                     type: "dotted",
                     color: '#5A96E8',
                     dashOffset: 10,
@@ -660,9 +674,12 @@
             },
           }
         }
+        option.timeType = this.timeType
         this.option = option
       },
-      createDepth(buy, sell) {
+      createDepth(buy, sell, tabItem) {
+        this.tabId = tabItem.id
+        this.timeType = tabItem.timeType
         // 买盘数据
         let buyDataList = [];
         let buyData = [];
@@ -896,12 +913,14 @@
           // 因App端，回调函数无法从renderjs外传递，故在此自定义设置相关回调函数
           if (newValue.tooltip) {
             // 格式化tooltip
-            newValue.tooltip.formatter = this.tooltipFormatter(ownerInstance)
+            newValue.tooltip.formatter = this.tooltipFormatter(ownerInstance, newValue.timeType)
             // 设置tooltip的位置
             newValue.tooltip.position = this.tooltipPosition()
+            // 设置tooltip的x轴和y轴的显示文字
+            newValue.tooltip.axisPointer.label.formatter = this.tooltipAxisPointer(newValue.timeType, 2)
           }
           if (newValue.xAxis && newValue.xAxis.length > 1) {
-            newValue.xAxis[1].axisLabel.formatter = this.formatterTime()
+            newValue.xAxis[1].axisLabel.formatter = this.formatterTime(newValue.timeType)
           }
           if (newValue.yAxis && newValue.yAxis.length > 0) {
             newValue.yAxis[0].axisLabel.formatter = this.formatterToFixed(2)
@@ -950,13 +969,13 @@
 			/**
 			 * tooltip格式化
 			 */
-			tooltipFormatter(ownerInstance) {
+			tooltipFormatter(ownerInstance, timeType) {
         return params => {
           let tooltip = '';
           let time = '', open = 0, high = 0, low = 0, close = 0, amount = 0;
           for (let i = 0; i < params.length; i++) {
             if (params[i].seriesName === 'k' || params[i].seriesName === '分时') {
-              time = this.formatterTime()(params[i].data[0]);
+              // console.log(params[i])
               open = params[i].data.length > 1 ? Number(this.formatterNum(params[i].data[1], 2)) : 0;
               close = params[i].data.length > 1 ? Number(this.formatterNum(params[i].data[2], 2)) : 0;
               low = params[i].data.length > 1 ? Number(this.formatterNum(params[i].data[3], 2)) : 0;
@@ -964,8 +983,11 @@
               amount = params[i].data.length > 1 ? Number(this.formatterNum(params[i].data[5], 2)) : 0;
               // 分时另外做处理
               if (params[i].seriesName === '分时') {
+                time = this.formatDate(timeType, params[i].data[0]);
                 open = params[i].data.length > 1 ? Number(this.formatterNum(params[i].data[2], 2)) : 0;
                 close = params[i].data.length > 1 ? Number(this.formatterNum(params[i].data[1], 2)) : 0;
+              } else {
+                time = this.formatDate(timeType, params[i].name);
               }
               tooltip = '<view>' +
                   '<view style="display: flex;flex-direction: row;align-items: center;justify-content: space-between;padding: 5px 0;"><view style="color: #51617b;">' + '时间' + '</view><view style="color: #acbadf;margin-left: 30px">' + time + '</view></view>' +
@@ -1004,28 +1026,43 @@
           return tooltip;
         }
       },
-      // 格式化时间
-      formatterTime() {
-        return value => {
-          let formatText = ""
-          // 分秒格式
-          if (this.timeType === 'm') {
-            formatText = "hh:mm"
+      tooltipAxisPointer(timeType, fixed) {
+        return params => {
+          if (params.axisDimension === 'x') {
+            return this.formatDate(timeType, params.value)
           }
-          // 小时格式
-          if (this.timeType === 'h') {
-            formatText = "yyyy-MM-dd hh:mm"
+          if (params.axisDimension === 'y') {
+            return Number(params.value).toFixed(2)
           }
-          // 天格式
-          if (this.timeType === 'd') {
-            formatText = "yyyy-MM-dd"
-          }
-          // 如果是秒单位的就乘1000
-          if ((value + "").length === 10) {
-            value *= 1000
-          }
-          return echarts.format.formatTime(formatText, new Date(value));
+          return params.value
         }
+      },
+      // 格式化时间
+      formatterTime(timeType) {
+        return value => {
+          return this.formatDate(timeType, value);
+        }
+      },
+      // 格式化时间
+      formatDate(timeType, value) {
+        let formatText = ""
+        // 分秒格式
+        if (timeType === 'm') {
+          formatText = "hh:mm"
+        }
+        // 小时格式
+        if (timeType === 'h') {
+          formatText = "yyyy-MM-dd hh:mm"
+        }
+        // 天格式
+        if (timeType === 'd') {
+          formatText = "yyyy-MM-dd"
+        }
+        // 如果是秒单位的就乘1000
+        if ((value + "").length === 10) {
+          value *= 1000
+        }
+        return echarts.format.formatTime(formatText, new Date(value));
       },
       // 保留位数
       formatterToFixed(fixed) {

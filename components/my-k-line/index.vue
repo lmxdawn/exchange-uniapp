@@ -93,7 +93,7 @@ export default {
         },
       ],
       tabIndex: 1,
-      tabId: 'time-sharing',
+      tabId: '15min',
       timeType: 'h',
     }
   },
@@ -105,16 +105,32 @@ export default {
       this.$emit('tabSelected', item)
     },
     init(kLineData, buyData, sellData) {
-      this.$refs.kEcharts.init(kLineData, buyData, sellData)
+      let tabItem = {
+        id: this.tabId,
+        timeType: this.timeType,
+      }
+      this.$refs.kEcharts.init(kLineData, buyData, sellData, tabItem)
     },
     addData(oo) {
-      this.$refs.kEcharts.addData(oo)
+      let tabItem = {
+        id: this.tabId,
+        timeType: this.timeType,
+      }
+      this.$refs.kEcharts.addData(oo, tabItem)
     },
     createKline(optionData) {
-      this.$refs.kEcharts.createKline(optionData)
+      let tabItem = {
+        id: this.tabId,
+        timeType: this.timeType,
+      }
+      this.$refs.kEcharts.createKline(optionData, tabItem)
     },
     createDepth(buy, sell) {
-      this.$refs.kEcharts.createDepth(buy, sell)
+      let tabItem = {
+        id: this.tabId,
+        timeType: this.timeType,
+      }
+      this.$refs.kEcharts.createDepth(buy, sell, tabItem)
     },
     // 调用 webview 内部逻辑
     evalJs() {
