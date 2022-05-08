@@ -25,32 +25,12 @@
       </view>
     </view>
     <view class="k-line-tab">
-      <view class="k-line-tab-item">
-        <text class="k-line-tab-item-text selected">分时</text>
-        <view class="k-line-tab-item-under selected"></view>
-      </view>
-      <view class="k-line-tab-item">
-        <text class="k-line-tab-item-text">8小时</text>
-        <view class="k-line-tab-item-under"></view>
-      </view>
-      <view class="k-line-tab-item">
-        <text class="k-line-tab-item-text">日K</text>
-        <view class="k-line-tab-item-under"></view>
-      </view>
-      <view class="k-line-tab-item">
-        <text class="k-line-tab-item-text">周K</text>
-        <view class="k-line-tab-item-under"></view>
-      </view>
-      <view class="k-line-tab-item">
-        <text class="k-line-tab-item-text">更多</text>
-        <view class="k-line-tab-item-under"></view>
-      </view>
-      <view class="k-line-tab-item">
-        <text class="k-line-tab-item-text">指标</text>
-        <view class="k-line-tab-item-under"></view>
+      <view class="k-line-tab-item" v-for="(item, index) in tabList" :key="item.id" @click="tabClick(index,item)">
+        <text class="k-line-tab-item-text" :class="[index === tabIndex ? 'selected' : '']">{{item.name}}</text>
+        <view class="k-line-tab-item-under" :class="[index === tabIndex ? 'selected' : '']"></view>
       </view>
     </view>
-    <k-echart ref="kEcharts"></k-echart>
+    <k-echart ref="kEcharts" :loading-status="loadingStatus" :depth-loading-status="depthLoadingStatus"></k-echart>
   </view>
 </template>
 
@@ -69,17 +49,54 @@ export default {
         return {}
       }
     },
+    loadingStatus: {
+      type: String,
+      default: "loading"
+    },
+    depthLoadingStatus: {
+      type: String,
+      default: "loading"
+    },
   },
   data() {
     return {
       data: [],
+      tabList: [
+        {
+          id: 'time-sharing',
+          name: '分时',
+        },
+        {
+          id: '15min',
+          name: '15分钟',
+        },
+        {
+          id: '1h',
+          name: '1小时',
+        },
+        {
+          id: '4h',
+          name: '4小时',
+        },
+        {
+          id: 'one-day',
+          name: '日K',
+        },
+        {
+          id: 'more',
+          name: '更多',
+        },
+      ],
+      tabIndex: 0,
     }
   },
   methods: {
+    tabClick(index,item) {
+      this.tabIndex = index
+      this.$emit('tabSelected', item)
+    },
     init(kLineData, buyData, sellData) {
-      setTimeout(() => {
-        this.$refs.kEcharts.init(kLineData, buyData, sellData)
-      }, 450)
+      this.$refs.kEcharts.init(kLineData, buyData, sellData)
     },
     // 调用 webview 内部逻辑
     evalJs() {

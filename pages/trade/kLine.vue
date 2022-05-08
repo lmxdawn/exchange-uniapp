@@ -1,5 +1,5 @@
 <template>
-  <my-k-line ref="myKLine" :pair="pair"/>
+  <my-k-line ref="myKLine" @tabSelected="echartsTabSelected" :pair="pair" :loading-status="echartsLoadingStatus" :depth-loading-status="echartsDepthLoadingStatus"/>
 </template>
 <script>
 import myKLine from '../../components/my-k-line/index'
@@ -20,6 +20,8 @@ export default {
         tradeCoinId: "",
         coinId: "",
       },
+      echartsLoadingStatus: 'loading',
+      echartsDepthLoadingStatus: 'loading',
     };
   },
   onReady() {
@@ -379,12 +381,21 @@ export default {
       [29558, 0.3286],
       [29560, 1.013],
     ]
-    this.$refs.myKLine.init(kLineData, buyData, sellData)
+    setTimeout(() => {
+      this.$refs.myKLine.init(kLineData, buyData, sellData)
+    }, 450)
+    setTimeout(() => {
+      this.echartsLoadingStatus = 'more'
+      this.echartsDepthLoadingStatus = 'more'
+    }, 2000)
   },
   methods: {
     ...mapActions({
       setPair: "setPair"
     }),
+    echartsTabSelected(item) {
+      console.log("图表里面的tab点击了", item)
+    }
   }
 };
 </script>

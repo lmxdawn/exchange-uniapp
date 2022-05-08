@@ -1,8 +1,13 @@
 <template>
   <view class="content">
     <!-- #ifdef APP-PLUS || H5 -->
-    <view @click="echarts.onClick" :prop="option" :change:prop="echarts.updateEcharts" id="echarts" class="echarts"></view>
-    <view class="echarts-bar-label">
+    <view class="echarts-box">
+      <view class="echarts-box-loading echarts" v-if="loadingStatus === 'loading'">
+        <uni-load-more color="#2DBD96" iconType="circle" :status="loadingStatus" :contentText="{}"></uni-load-more>
+      </view>
+      <view @click="echarts.onClick" :prop="option" :change:prop="echarts.updateEcharts" id="echarts" class="echarts"></view>
+    </view>
+    <view class="echarts-bar-label" v-if="loadingStatus !== 'loading'">
       <view class="echarts-VOL">
         VOL:
         <text>{{volMA5}}</text>
@@ -32,7 +37,12 @@
         <view class="echarts-middle-tab-item-under w64"></view>
       </view>
     </view>
-    <view :prop="depthOption" :change:prop="echarts.updateDepthEcharts" id="depthEcharts" class="depth-echarts"></view>
+    <view class="depth-echarts-box">
+      <view class="depth-echarts-box-loading depth-echarts" v-if="depthLoadingStatus === 'loading'">
+        <uni-load-more color="#2DBD96" iconType="circle" :status="depthLoadingStatus" :contentText="{}"></uni-load-more>
+      </view>
+      <view :prop="depthOption" :change:prop="echarts.updateDepthEcharts" id="depthEcharts" class="depth-echarts"></view>
+    </view>
     <view class="depth-division">
       <view class="depth-division-item">
         <view class="depth-division-icon buy"></view>
@@ -48,20 +58,25 @@
       <text class="depth-list-header-middle">价格(USDT)</text>
       <text class="depth-list-header-right">累计(TRX)</text>
     </view>
-    <view class="depth-list">
-      <view class="depth-list-box">
-        <view class="depth-list-item" v-for="item in buyData" :key="item[0]">
-          <text class="depth-list-item-buy-amount">{{item[2]}}</text>
-          <text class="depth-list-item-buy-price">{{item[0]}}</text>
-          <view class="depth-list-item-buy-percentage" :style="{width: (item[2] / buySum * 100 + 5) + '%'}"></view>
-        </view>
+    <view class="depth-list-view">
+      <view class="depth-list-view-loading depth-list-view" v-if="depthLoadingStatus === 'loading'">
+        <uni-load-more color="#2DBD96" iconType="circle" :status="depthLoadingStatus" :contentText="{}"></uni-load-more>
       </view>
-      <view class="depth-list-division"></view>
-      <view class="depth-list-box">
-        <view class="depth-list-item" v-for="item in sellData" :key="item[0]">
-          <text class="depth-list-item-sell-price">{{item[0]}}</text>
-          <text class="depth-list-item-sell-amount">{{item[2]}}</text>
-          <view class="depth-list-item-sell-percentage" :style="{width: (item[2] / sellSum * 100 + 5) + '%'}"></view>
+      <view class="depth-list">
+        <view class="depth-list-box">
+          <view class="depth-list-item" v-for="item in buyData" :key="item[0]">
+            <text class="depth-list-item-buy-amount">{{item[2]}}</text>
+            <text class="depth-list-item-buy-price">{{item[0]}}</text>
+            <view class="depth-list-item-buy-percentage" :style="{width: (item[2] / buySum * 100 + 5) + '%'}"></view>
+          </view>
+        </view>
+        <view class="depth-list-division"></view>
+        <view class="depth-list-box">
+          <view class="depth-list-item" v-for="item in sellData" :key="item[0]">
+            <text class="depth-list-item-sell-price">{{item[0]}}</text>
+            <text class="depth-list-item-sell-amount">{{item[2]}}</text>
+            <view class="depth-list-item-sell-percentage" :style="{width: (item[2] / sellSum * 100 + 5) + '%'}"></view>
+          </view>
         </view>
       </view>
     </view>
@@ -74,8 +89,7 @@
 
 <script>
   // 解析数据 数据意义(下标)：[1]开盘(open)，[2]收盘(close)，[3]最低(lowest)，[4]最高(highest)，[5]数量(vol)
-  function splitData(rawData) {
-    let raw = JSON.parse(JSON.stringify(rawData))
+  function splitData(raw) {
     let categoryData = [];
     let values = [];
     let volumes = [];
@@ -149,6 +163,16 @@
     '#546570', '#c4ccd3'
   ];
   export default {
+    props: {
+      loadingStatus: {
+        type: String,
+        default: "loading"
+      },
+      depthLoadingStatus: {
+        type: String,
+        default: "loading"
+      },
+    },
     data() {
       return {
         option: {},
@@ -992,8 +1016,23 @@
   justify-content: center;
 }
 
+.echarts-box {
+  position: relative;
+  width: 750rpx;
+  height: 500px;
+}
+
+.echarts-box-loading {
+  position: absolute;
+  top: 0;
+  left: 0;
+  padding-top: 200px;
+  z-index: 9999;
+  box-sizing: border-box;
+}
+
 .echarts {
-  width: 100vw;
+  width: 750rpx;
   height: 500px;
   overflow: hidden;
   background-color: #121620;
@@ -1082,8 +1121,21 @@
 }
 
 /*深度图*/
+.depth-echarts-box {
+  position: relative;
+  width: 750rpx;
+  height: 260px;
+}
+.depth-echarts-box-loading {
+  position: absolute;
+  top: 0;
+  left: 0;
+  padding-top: 100px;
+  z-index: 9999;
+  box-sizing: border-box;
+}
 .depth-echarts {
-  width: 100vw;
+  width: 750rpx;
   height: 260px;
   background-color: #191E29;
   background-image: linear-gradient(rgba(153, 151, 151, 0.1) 1px, transparent 0),
@@ -1135,6 +1187,20 @@
   border-bottom: 1px solid rgba(153, 151, 151, 0.1);
 }
 
+.depth-list-view {
+  position: relative;
+  width: 750rpx;
+  height: 450px;
+}
+.depth-list-view-loading {
+  position: absolute;
+  top: 0;
+  left: 0;
+  padding-top: 100px;
+  z-index: 9999;
+  box-sizing: border-box;
+  background-color: #191E29;
+}
 .depth-list {
   display: flex;
   flex-direction: row;
