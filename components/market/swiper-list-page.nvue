@@ -45,7 +45,7 @@ import {
 import messages from '../../locale/index';
 import swiperListItem from './swiper-list-item.nvue';
 import {accAdd, accMul, accSub, accDiv} from "../../utils/decimal";
-import {symbolList} from "../../api/trade/symbol";
+import {pairList} from "../../api/trade/pair";
 import myEmpty from "../../components/my-empty/my-empty";
 
 const { t } = initVueI18n(messages)
@@ -138,7 +138,7 @@ export default {
       if (this.nid === 0) {
         this.params.collect = [...this.marketCollect].join(",")
       }
-      symbolList(this.params)
+      pairList(this.params)
         .then(res => {
           this.isNoData = false
           if (res.code > 0) {

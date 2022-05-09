@@ -1,7 +1,7 @@
 import * as types from "../mutation-types";
 import {getStorageSync, setStorageSync} from "../../utils/storage"
 import {usdtRateRead} from "../../api/trade/usdtRate";
-import {symbolRead} from "../../api/trade/symbol";
+import {pairRead} from "../../api/trade/pair";
 
 // 自选
 const marketCollectKey = "marketCollectKey";
@@ -87,7 +87,7 @@ const actions = {
             coinId: data.coinId || state.pair.coin.id,
         }
         return new Promise((resolve, reject) => {
-            symbolRead(params)
+            pairRead(params)
                 .then(res => {
                     if (res.code > 0) {
                         resolve(false)
