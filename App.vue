@@ -2,6 +2,7 @@
 import { checkAppVersion } from "./utils/appUpdate";
 import { mapGetters } from "vuex";
 import {connectionLogin} from "./api/ws/connection";
+import {getToken} from "./utils/userAuth"
 export default {
   computed: {
     ...mapGetters({
@@ -40,11 +41,15 @@ export default {
             if (res.code > 0) {
               this.$tui.toast(this.$t('http.code.' + res.code))
             }
-
             // 登录ws-rule路由
             connectionLogin()
               .then(res => {
+                let memberId = res.data && res.data.memberId ? res.data.memberId : 0
+                let token = getToken()
+                const wsUrl = res.data.url
+                const wsPort = res.data.wsPort
                 // 初始化websocket
+                this.$websocket.setConf(wsUrl, wsPort, memberId, token)
                 this.$websocket.connectSocketInit()
               })
           })

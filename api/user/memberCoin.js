@@ -16,9 +16,9 @@ export function memberCoinBalance(params) {
     });
 }
 // 获取交易对钱包余额
-export function memberCoinSymbolBalance(params) {
+export function memberCoinPairBalance(params) {
     return request({
-        url: "/user/member-coin/symbol-balance",
+        url: "/user/member-coin/pair-balance",
         method: "get",
         params: params
     });

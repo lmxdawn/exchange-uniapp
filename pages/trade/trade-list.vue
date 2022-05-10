@@ -198,7 +198,7 @@ export default {
         return 1
       } else {
         let pow = Math.pow(10, precision)
-        return Number(accDiv(1, pow)).toFixed(precision)
+        return Number(Number(accDiv(1, pow)).toFixed(precision))
       }
     },
     stepAmount() {
@@ -207,7 +207,7 @@ export default {
         return 1
       } else {
         let pow = Math.pow(10, precision)
-        return Number(accDiv(1, pow)).toFixed(precision)
+        return Number(Number(accDiv(1, pow)).toFixed(precision))
       }
     },
     balanceNum() {

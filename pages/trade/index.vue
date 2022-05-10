@@ -26,6 +26,8 @@
               :pair="pair"
               :balance="balance"
               :tradeBalance="tradeBalance"
+              :depth-buy="depthBuy"
+              :depth-sell="depthSell"
               :isNoData="isNoData"
               :loading-status="loadingStatus"
               :orderList="orderList"></trade-list>
@@ -41,6 +43,8 @@
             :pair="pair"
             :balance="balance"
             :tradeBalance="tradeBalance"
+            :depth-buy="depthBuy"
+            :depth-sell="depthSell"
             :isNoData="isNoData"
             :loading-status="loadingStatus"
             :orderList="orderList"></trade-list>
@@ -65,7 +69,7 @@
   import myNavBarTrade from "../../components/my-nav-bar/my-nav-bar-trade"
   import tradeList from "./trade-list"
   import {marketDepthList} from "../../api/market/depth";
-  import {memberCoinSymbolBalance} from "../../api/user/memberCoin";
+  import {memberCoinPairBalance} from "../../api/user/memberCoin";
   import {entrustOrderList} from "../../api/trade/entrustOrder";
 
   const { t } = initVueI18n(messages)
@@ -192,11 +196,11 @@
           tradeCoinId: this.pair.tradeCoin.id,
           coinId: this.pair.coin.id,
         }
-        memberCoinSymbolBalance(params)
+        memberCoinPairBalance(params)
             .then(res => {
               if (res.code > 0) {
-                this.$tui.toast(t('http.code.' + res.code))
-                return false
+                // this.$tui.toast(t('http.code.' + res.code))
+                // return false
               }
               this.tradeBalance = res.data.tradeBalance || 0.00
               this.balance = res.data.balance || 0.00

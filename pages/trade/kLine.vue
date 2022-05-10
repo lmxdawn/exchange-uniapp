@@ -438,8 +438,22 @@ export default {
               this.$tui.toast(t('http.code.' + res.code))
               return false
             }
-            let buyData = res.data.buyList ||[]
-            let sellData = res.data.sellList || []
+            let buyList = res.data.buyList ||[]
+            let buyData = []
+            for (let i = 0; i < buyList.length; i++) {
+              buyData.push([
+                  buyList[i].amount,
+                  buyList[i].price,
+              ])
+            }
+            let sellList = res.data.sellList || []
+            let sellData = []
+            for (let i = 0; i < sellList.length; i++) {
+              sellData.push([
+                sellList[i].amount,
+                sellList[i].price,
+              ])
+            }
             this.$refs.myKLine.createDepth(buyData, sellData)
           })
           .catch(() => {

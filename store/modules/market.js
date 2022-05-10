@@ -39,11 +39,11 @@ const pairKey = "pairKey";
 let pairStr = getStorageSync(pairKey)
 let pair = {
     tradeCoin: {
-        id: 1,
+        id: 3,
         name: "--",
     },
     coin: {
-        id: 3,
+        id: 1,
         name: "--",
         usdtPrice: 1
     },

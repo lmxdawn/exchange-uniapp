@@ -1,11 +1,10 @@
-import {SOCKET_URL} from "../config/app"; // webSocket连接地址
-
 export default class socketIO {
-    constructor(time, url) {
+    constructor(time) {
         this.socketTask = null
+        this.wsUrl = "" // 链接地址
+        this.wsPort = "" // 端口
         this.socketOpen = false //避免重复连接
         this.socketMsgQueue = [] // socket需要发送的消息队列
-        this.url = url ? url : SOCKET_URL  //连接地址
         this.connectNum = 1 // 重连次数
         this.connectMaxNum = 10 // 重连最大次数
         //心跳检测
@@ -13,15 +12,28 @@ export default class socketIO {
         this.heartbeatInterval = null //检测服务器端是否还活着
         this.reconnectTimeOut = null //重连之后多久再次重连
         this.reconnectLock = false // 重连锁，防止重复重连
+
+        // 用户相关
+        this.memberId = 0 // 用户ID
+        this.token = "" // 用户token
+    }
+
+    // 设置配置
+    setConf(wsUrl, wsPort, memberId, token) {
+        this.wsUrl = wsUrl
+        this.wsPort = wsPort
+        this.memberId = memberId
+        this.token = token
     }
 
     // 初始化
-    connectSocketInit(memberId, token) {
+    connectSocketInit() {
+
         // 启动连接
         this.connectSocket()
 
         // 成功连接监听
-        this.onSocketOpen(memberId, token)
+        this.onSocketOpen()
 
         // 监听正常消息
         this.onSocketMessage()
@@ -35,8 +47,9 @@ export default class socketIO {
 
     // 启动连接
     connectSocket() {
+        const wsUrl = `ws://${this.wsUrl}:${this.wsPort}/ws`
         this.socketTask = uni.connectSocket({
-            url: this.url,
+            url: wsUrl,
             success: () => {
                 console.log("正准备建立websocket中...");
                 // 返回实例
@@ -46,7 +59,7 @@ export default class socketIO {
     }
 
     // 监听连接成功的消息
-    onSocketOpen(memberId, token) {
+    onSocketOpen() {
         uni.onSocketOpen((res) => {
             console.log("WebSocket连接正常！");
             // 清除定时器
@@ -64,7 +77,7 @@ export default class socketIO {
             this.Start();
 
             // 发送登录
-            this.SendLogin(memberId, token)
+            this.SendLogin()
         });
     }
 
@@ -139,11 +152,11 @@ export default class socketIO {
     }
 
     //发送登录消息
-    SendLogin(memberId, token, success) {
+    SendLogin(success) {
         let obj = {
-            type: token ? 1 : 2,
-            memberId: memberId,
-            data: token,
+            type: this.token ? 1 : 2,
+            memberId: this.memberId,
+            data: this.token,
         }
         this.Send(obj, success)
     }

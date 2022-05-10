@@ -1,5 +1,4 @@
 let API_URL = "";
-let SOCKET_URL = "";
 // 上传文件的地址
 const UPLOAD_URL = "http://up-z2.qiniu.com";
 // 静态url地址
@@ -11,16 +10,13 @@ const WECHAT_APP_ID = "wx1189ab73b2da38b8";
 // 环境判断
 if (process.env.NODE_ENV === 'development') {
     // 测试
-    API_URL = "http://lmxdawn.vaiwan.com";
-    SOCKET_URL = "ws://47.107.230.123:8080/websocket";
+    API_URL = "http://127.0.0.1:9001";
 } else {
     // 正式
     API_URL = "http://api.zhuanghuatianjiu.com.cn";
-    SOCKET_URL = "ws://47.107.230.123:8080/websocket";
 }
 export {
     API_URL,
-    SOCKET_URL,
     UPLOAD_URL,
     STATIC_URL,
     AM_AP_KEY,

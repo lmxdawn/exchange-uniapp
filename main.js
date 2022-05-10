@@ -42,7 +42,7 @@ Object.keys(filters).forEach(key => {
 Vue.config.productionTip = false;
 
 Vue.prototype.$tui = tui;
-Vue.prototype.$websocket = websocket;
+Vue.prototype.$websocket = new websocket();
 Vue.prototype.$eventHub = Vue.prototype.$eventHub || new Vue();
 Vue.prototype.$store = store;
 
