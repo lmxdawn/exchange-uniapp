@@ -1,4 +1,5 @@
 # exchange-uniapp
+
 交易所APP代码
 
 # 由于uniapp的限制，暂停开发
@@ -6,6 +7,13 @@
 [uni-app切换页面闪屏或者白屏](https://ask.dcloud.net.cn/question/73807)
 
 [服务端代码，点击跳转](https://github.com/lmxdawn/exchange)
+
+# websocket的分布式流程
+
+- 开启websocket的连接
+- 当websocket连接成功时
+    1. 需要定时发送心跳检测
+    2. 需要发送登录的消息，这个时候需要访问 ws-rule 路由服务，通过路由去分配这个用户属于哪个 ws 服务，这样发送消息的时候直接通过路由服务发送，就可以找到这个用户属于哪一个ws服务，从而实现ws的分布式
 
 # 示例图
 

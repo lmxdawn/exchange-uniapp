@@ -1,7 +1,7 @@
 <script>
 import { checkAppVersion } from "./utils/appUpdate";
 import { mapGetters } from "vuex";
-import {setMemberInit} from "./utils/userAuth";
+import {connectionLogin} from "./api/ws/connection";
 export default {
   computed: {
     ...mapGetters({
@@ -40,6 +40,13 @@ export default {
             if (res.code > 0) {
               this.$tui.toast(this.$t('http.code.' + res.code))
             }
+
+            // 登录ws-rule路由
+            connectionLogin()
+              .then(res => {
+                // 初始化websocket
+                this.$websocket.connectSocketInit()
+              })
           })
           .catch(err => {
             console.log(err);

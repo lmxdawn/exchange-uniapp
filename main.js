@@ -27,7 +27,8 @@ Vue.use(uView)
 // uni.$u.config.unit = 'rpx'
 
 // 实用的方法
-import tui from "./tui";
+import tui from "./common/tui";
+import websocket from "./common/websocket";
 
 
 Vue.use(VueI18n)
@@ -41,6 +42,7 @@ Object.keys(filters).forEach(key => {
 Vue.config.productionTip = false;
 
 Vue.prototype.$tui = tui;
+Vue.prototype.$websocket = websocket;
 Vue.prototype.$eventHub = Vue.prototype.$eventHub || new Vue();
 Vue.prototype.$store = store;
 

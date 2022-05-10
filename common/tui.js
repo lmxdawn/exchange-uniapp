@@ -9,9 +9,9 @@ import {
     reLaunch, showLoading,
     switchTab,
     toast
-} from "./utils/common";
-import {STATIC_URL} from "./config/app";
-import {getToken} from "./utils/userAuth";
+} from "../utils/common";
+import {STATIC_URL} from "../config/app";
+import {getToken} from "../utils/userAuth";
 
 export default {
     toast(text, duration, success) {

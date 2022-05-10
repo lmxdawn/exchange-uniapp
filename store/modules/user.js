@@ -59,8 +59,8 @@ const actions = {
                             email: data.email || "",
                         };
                         commit(types.MEMBER_INFO, info);
-                        // 没有绑定手机号
-                        if (!data.mobile) {
+                        // 没有绑定手机号，并且没有绑定邮箱
+                        if (!data.mobile && !data.email) {
                             // 跳转到填写信息页面
                             setTimeout(() => {
                                 dispatch("toBindingTelPage", invite_code);
