@@ -728,6 +728,9 @@
         let buyDataList = [];
         let buyData = [];
         let buySum = 0;
+        if (!buy || buy.length === 0) {
+          buy = this.buyData
+        }
         let buyLen = buy.length > 20 ? 20 : buy.length;
         for (let i = 0; i < buyLen; i++) {
           buySum = accAdd(buySum, buy[i][1]);
@@ -741,6 +744,9 @@
         let sellDataList = [];
         let sellData = [];
         let sellSum = 0;
+        if (!buy || buy.length === 0) {
+          sell = this.sellData
+        }
         let sellLen = sell.length > 20 ? 20 : sell.length;
         for (let i = 0; i < sellLen; i++) {
           sellSum = accAdd(sellSum, sell[i][1]);
