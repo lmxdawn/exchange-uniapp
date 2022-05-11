@@ -89,8 +89,6 @@
 
 <script>
   // 解析数据 数据意义(下标)：[1]开盘(open)，[2]收盘(close)，[3]最低(lowest)，[4]最高(highest)，[5]数量(vol)
-  import {accMul} from "../../utils/decimal";
-
   function splitData(raw) {
     let categoryData = [];
     let values = [];
@@ -918,11 +916,6 @@
       },
       onTooltipVolMA10(value) {
         this.volMA10 = value
-      },
-      // 截取数字字符串 保留precision小数
-      formatterNum(value, precision) {
-        let reg = new RegExp('^\\d+(?:\\.\\d{0,' + precision + '})?')
-        return value.toString().match(reg)
       },
     }
   }
