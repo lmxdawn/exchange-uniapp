@@ -451,16 +451,16 @@ export default {
             let buyData = []
             for (let i = 0; i < buyList.length; i++) {
               buyData.push([
-                  buyList[i].amount,
                   buyList[i].price,
+                  buyList[i].amount,
               ])
             }
             let sellList = res.data.sellList || []
             let sellData = []
             for (let i = 0; i < sellList.length; i++) {
               sellData.push([
-                sellList[i].amount,
                 sellList[i].price,
+                sellList[i].amount,
               ])
             }
             this.$refs.myKLine.createDepth(buyData, sellData)
