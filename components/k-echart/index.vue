@@ -237,6 +237,11 @@
         this.createKline(this.kLineData, tabItem)
         this.createDepth(buyData.reverse(), sellData, tabItem)
       },
+      // 追加历史数据
+      addHistoryData(historyData, tabItem) {
+        this.kLineData = historyData.reverse().concat(this.kLineData)
+        this.createKline(this.kLineData, tabItem)
+      },
       // 追加数据
       addData(oo, tabItem) {
         this.tabId = tabItem.id
@@ -251,7 +256,6 @@
           }
         }
         if (!isUp) {
-          this.kLineData.shift();
           this.kLineData.push(oo)
         }
         this.createKline(this.kLineData)
@@ -520,16 +524,8 @@
             {
               type: 'inside',
               xAxisIndex: [0, 1],
-              start: 50,
-              end: 100,
-              // 是否阻止 mousemove 事件的默认行为。
-              preventDefaultMouseMove: false,
-            },
-            {
-              type: 'inside',
-              xAxisIndex: [0, 1],
-              start: 50,
-              end: 100,
+              startValue: 50,
+              endValue: 100,
               // 是否阻止 mousemove 事件的默认行为。
               preventDefaultMouseMove: false,
             }
@@ -917,6 +913,10 @@
       onTooltipVolMA10(value) {
         this.volMA10 = value
       },
+      // 当K线滑动到最左边
+      dataZoomLeft() {
+        this.$emit('dataZoomLeft')
+      }
     }
   }
 </script>
@@ -946,9 +946,9 @@
 				// 监听左右滑动
 				myChart.on('dataZoom', (params) => {
             let num = params.batch[0]['start'];
-            console.log('NUM为：', num)
             if (num === 0) {
-                console.log('到最左边了')
+                // console.log('到最左边了')
+                this.$ownerInstance.callMethod('dataZoomLeft')
             }
         })
 

@@ -1,5 +1,5 @@
 <template>
-  <my-k-line ref="myKLine" @tabSelected="echartsTabSelected" :pair="pair" :usdt-rate="usdtRate" :loading-status="echartsLoadingStatus" :depth-loading-status="echartsDepthLoadingStatus"/>
+  <my-k-line ref="myKLine" @tabSelected="echartsTabSelected" @dataZoomLeft="echartsDataZoomLeft" :pair="pair" :usdt-rate="usdtRate" :loading-status="echartsLoadingStatus" :depth-loading-status="echartsDepthLoadingStatus"/>
 </template>
 <script>
 import myKLine from '../../components/my-k-line/index'
@@ -31,7 +31,7 @@ export default {
     this.setPair(this.params)
         .then(b => {
           // 获取K线
-          this.getKLine()
+          this.getKLine(false)
           // 获取深度图
           this.getDepth()
         })
@@ -397,10 +397,14 @@ export default {
     }),
     echartsTabSelected(item) {
       this.echartsLoadingStatus = 'loading'
-      this.getKLine()
+      this.getKLine(false)
       console.log("图表里面的tab点击了", item)
     },
-    getKLine() {
+    echartsDataZoomLeft() {
+      console.log("到最左边了")
+      this.getKLine(true)
+    },
+    getKLine(isAdd) {
       const params = {
         tradeCoinId: this.pair.tradeCoin.id,
         coinId: this.pair.coin.id,
@@ -423,6 +427,10 @@ export default {
                 data[i].highest,
                 data[i].vol,
             ])
+          }
+          if (isAdd) {
+            this.$refs.myKLine.addHistoryData(kLineData)
+            return false
           }
           this.$refs.myKLine.createKline(kLineData)
         })

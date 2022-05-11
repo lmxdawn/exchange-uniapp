@@ -30,7 +30,7 @@
         <view class="k-line-tab-item-under" :class="[index === tabIndex ? 'selected' : '']"></view>
       </view>
     </view>
-    <k-echart ref="kEcharts" :price-precision="pair.tradePricePrecision" :total-precision="pair.tradeTotalPrecision" :tab-id="tabId" :time-type="timeType" :loading-status="loadingStatus" :depth-loading-status="depthLoadingStatus"></k-echart>
+    <k-echart ref="kEcharts" :price-precision="pair.tradePricePrecision" :total-precision="pair.tradeTotalPrecision" :tab-id="tabId" :time-type="timeType" :loading-status="loadingStatus" :depth-loading-status="depthLoadingStatus" @dataZoomLeft="dataZoomLeft"></k-echart>
   </view>
 </template>
 
@@ -129,6 +129,13 @@ export default {
       }
       this.$refs.kEcharts.init(kLineData, buyData, sellData, tabItem)
     },
+    addHistoryData(historyData) {
+      let tabItem = {
+        id: this.tabId,
+        timeType: this.timeType,
+      }
+      this.$refs.kEcharts.addHistoryData(historyData, tabItem)
+    },
     addData(oo) {
       let tabItem = {
         id: this.tabId,
@@ -150,15 +157,8 @@ export default {
       }
       this.$refs.kEcharts.createDepth(buy, sell, tabItem)
     },
-    // 调用 webview 内部逻辑
-    evalJs() {
-      let obj = ["2004-02-28", 10583.92, 10985.92, 10519.03, 10689.55, 200050000]
-      // #ifdef APP-PLUS
-      this.$refs.webview.evalJs(`addKline(${JSON.stringify(obj)})`);
-      // #endif
-      // #ifdef H5
-      window.child.window.addKline(obj);
-      // #endif
+    dataZoomLeft() {
+      this.$emit('dataZoomLeft')
     }
   }
 }
