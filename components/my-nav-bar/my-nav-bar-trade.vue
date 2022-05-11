@@ -34,10 +34,6 @@ export default {
         return {}
       }
     },
-    rate24: {
-      type: Number,
-      default: 0
-    },
     statusBar: {
       type: Boolean,
       default: false
@@ -63,7 +59,7 @@ export default {
   },
   computed: {
     rate() {
-      return Number(this.rate24).toFixed(2)
+      return Number(this.pair.rate24).toFixed(2)
     }
   },
   methods: {

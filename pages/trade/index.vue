@@ -129,7 +129,6 @@
 		methods: {
       ...mapActions({
         setPair: "setPair",
-        usdtRateSet: "usdtRateSet",
       }),
       onNavBarTabClickItem(index) {
         this.navBarTabIndex = index

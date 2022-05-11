@@ -86,7 +86,7 @@
             </view>
           </view>
           <view class="depth-list-line">
-            <text class="depth-list-line__price buy">{{pair.price < 0 ? '--' : Number(pair.price).toFixed(pair.tradePricePrecision)}}</text>
+            <text class="depth-list-line__price" :class="[pair.rate24 >= 0 ? 'buy' : 'sell']">{{pair.price < 0 ? '--' : Number(pair.price).toFixed(pair.tradePricePrecision)}}</text>
             <text class="depth-list-line__rate">≈{{pair.price < 0 ? '--' : priceRate(pair.price)}} {{usdtRate.name}}</text>
           </view>
           <view class="depth-list-body">
@@ -597,7 +597,7 @@ export default {
   }
 }
 .depth-btn-type {
-  height: 30px;
+  height: 20px;
   margin-left: 10px;
   display: flex;
   flex-direction: column;

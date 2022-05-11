@@ -89,6 +89,8 @@
 
 <script>
   // 解析数据 数据意义(下标)：[1]开盘(open)，[2]收盘(close)，[3]最低(lowest)，[4]最高(highest)，[5]数量(vol)
+  import {accMul} from "../../utils/decimal";
+
   function splitData(raw) {
     let categoryData = [];
     let values = [];
@@ -167,6 +169,14 @@
   ];
   export default {
     props: {
+      pricePrecision: {
+        type: Number,
+        default: 2
+      },
+      totalPrecision: {
+        type: Number,
+        default: 2
+      },
       loadingStatus: {
         type: String,
         default: "loading"
@@ -174,6 +184,32 @@
       depthLoadingStatus: {
         type: String,
         default: "loading"
+      },
+    },
+    computed: {
+      tooltipTime() {
+        return this.$t('trade.kline.tooltip.time')
+      },
+      tooltipOpen() {
+        return this.$t('trade.kline.tooltip.open')
+      },
+      tooltipHighest() {
+        return this.$t('trade.kline.tooltip.highest')
+      },
+      tooltipLowest() {
+        return this.$t('trade.kline.tooltip.lowest')
+      },
+      tooltipClose() {
+        return this.$t('trade.kline.tooltip.close')
+      },
+      tooltipVol() {
+        return this.$t('trade.kline.tooltip.vol')
+      },
+      depthTooltipPrice() {
+        return this.$t('trade.depth.tooltip.price')
+      },
+      depthTooltipTotal() {
+        return this.$t('trade.depth.tooltip.total')
       },
     },
     data() {
@@ -547,11 +583,12 @@
                   align: 'left',
                   // formatter: this.formatterToFixed(2),
                 },
-                data: [{
-                  name: 'max',
-                  type: 'max',
-                  valueDim: 'highest'
-                },
+                data: [
+                  {
+                    name: 'max',
+                    type: 'max',
+                    valueDim: 'highest'
+                  },
                   {
                     name: 'min',
                     type: 'min',
@@ -678,6 +715,16 @@
           }
         }
         option.timeType = this.timeType
+        option.pricePrecision = this.pricePrecision
+        option.totalPrecision = this.totalPrecision
+        option.i18n = {
+          tooltipTime: this.tooltipTime,
+          tooltipOpen: this.tooltipOpen,
+          tooltipHighest: this.tooltipHighest,
+          tooltipLowest: this.tooltipLowest,
+          tooltipClose: this.tooltipClose,
+          tooltipVol: this.tooltipVol,
+        }
         this.option = option
       },
       createDepth(buy, sell, tabItem) {
@@ -709,7 +756,7 @@
         this.sellSum = sellSum;
         this.sellData = sellDataList;
 
-        this.depthOption = {
+        let depthOption = {
           animation: false,
           grid: [
             {
@@ -846,6 +893,13 @@
             },
           ]
         }
+        depthOption.pricePrecision = this.pricePrecision
+        depthOption.totalPrecision = this.totalPrecision
+        depthOption.i18n = {
+          depthTooltipPrice: this.depthTooltipPrice,
+          depthTooltipTotal: this.depthTooltipTotal,
+        }
+        this.depthOption = depthOption
       },
       onViewClick(options) {
         console.log(options)
@@ -916,17 +970,26 @@
           // 因App端，回调函数无法从renderjs外传递，故在此自定义设置相关回调函数
           if (newValue.tooltip) {
             // 格式化tooltip
-            newValue.tooltip.formatter = this.tooltipFormatter(ownerInstance, newValue.timeType)
+            let conf = {
+              timeType: newValue.timeType,
+              pricePrecision: newValue.pricePrecision,
+              totalPrecision: newValue.totalPrecision,
+            }
+            newValue.tooltip.formatter = this.tooltipFormatter(ownerInstance, conf, newValue.i18n)
             // 设置tooltip的位置
             newValue.tooltip.position = this.tooltipPosition()
             // 设置tooltip的x轴和y轴的显示文字
-            newValue.tooltip.axisPointer.label.formatter = this.tooltipAxisPointer(newValue.timeType, 2)
+            newValue.tooltip.axisPointer.label.formatter = this.tooltipAxisPointer(newValue.timeType, newValue.pricePrecision)
           }
           if (newValue.xAxis && newValue.xAxis.length > 1) {
             newValue.xAxis[1].axisLabel.formatter = this.formatterTime(newValue.timeType)
           }
           if (newValue.yAxis && newValue.yAxis.length > 0) {
-            newValue.yAxis[0].axisLabel.formatter = this.formatterToFixed(2)
+            newValue.yAxis[0].axisLabel.formatter = this.formatterToFixed(newValue.pricePrecision)
+          }
+          // K线的最高最低标识
+          if(newValue.series && newValue.series.length > 0 && newValue.series[0].markPoint && newValue.series[0].markPoint.label) {
+            newValue.series[0].markPoint.label.formatter = this.markPointFormatterToFixed(newValue.pricePrecision)
           }
           myChart.setOption(newValue)
         }
@@ -939,11 +1002,15 @@
 			updateDepthEcharts(newValue, oldValue, ownerInstance, instance) {
 				// 监听 service 层数据变更
         if (depthMyChart) {
+          let conf = {
+            pricePrecision: newValue.pricePrecision,
+            totalPrecision: newValue.totalPrecision,
+          }
           if(newValue.series && newValue.series.length > 0) {
-            newValue.series[0].label.formatter = this.depthTooltipFormatter()
+            newValue.series[0].label.formatter = this.depthTooltipFormatter(conf, newValue.i18n)
           }
           if(newValue.series && newValue.series.length > 1) {
-            newValue.series[1].label.formatter = this.depthTooltipFormatter()
+            newValue.series[1].label.formatter = this.depthTooltipFormatter(conf, newValue.i18n)
           }
           depthMyChart.setOption(newValue)
         }
@@ -969,56 +1036,56 @@
 			/**
 			 * tooltip格式化
 			 */
-			tooltipFormatter(ownerInstance, timeType) {
+			tooltipFormatter(ownerInstance, conf, i18n) {
         return params => {
           let tooltip = '';
           let time = '', open = 0, high = 0, low = 0, close = 0, amount = 0;
           for (let i = 0; i < params.length; i++) {
             if (params[i].seriesName === 'k' || params[i].seriesName === '分时') {
               // console.log(params[i])
-              open = params[i].data.length > 1 ? Number(this.formatterNum(params[i].data[1], 2)) : 0;
-              close = params[i].data.length > 1 ? Number(this.formatterNum(params[i].data[2], 2)) : 0;
-              low = params[i].data.length > 1 ? Number(this.formatterNum(params[i].data[3], 2)) : 0;
-              high = params[i].data.length > 1 ? Number(this.formatterNum(params[i].data[4], 2)) : 0;
-              amount = params[i].data.length > 1 ? Number(this.formatterNum(params[i].data[5], 2)) : 0;
+              open = params[i].data.length > 1 ? Number(params[i].data[1]).toFixed(conf.pricePrecision) : 0;
+              close = params[i].data.length > 1 ? Number(params[i].data[2]).toFixed(conf.pricePrecision) : 0;
+              low = params[i].data.length > 1 ? Number(params[i].data[3]).toFixed(conf.pricePrecision) : 0;
+              high = params[i].data.length > 1 ? Number(params[i].data[4]).toFixed(conf.pricePrecision) : 0;
+              amount = params[i].data.length > 1 ? Number(params[i].data[5]).toFixed(conf.totalPrecision) : 0;
               // 分时另外做处理
               if (params[i].seriesName === '分时') {
-                time = this.formatDate(timeType, params[i].data[0]);
-                open = params[i].data.length > 1 ? Number(this.formatterNum(params[i].data[2], 2)) : 0;
-                close = params[i].data.length > 1 ? Number(this.formatterNum(params[i].data[1], 2)) : 0;
+                time = this.formatDate(conf.timeType, params[i].data[0]);
+                open = params[i].data.length > 1 ? Number(params[i].data[2]).toFixed(conf.pricePrecision) : 0;
+                close = params[i].data.length > 1 ? Number(params[i].data[1]).toFixed(conf.pricePrecision) : 0;
               } else {
-                time = this.formatDate(timeType, params[i].name);
+                time = this.formatDate(conf.timeType, params[i].name);
               }
               tooltip = '<view>' +
-                  '<view style="display: flex;flex-direction: row;align-items: center;justify-content: space-between;padding: 5px 0;"><view style="color: #51617b;">' + '时间' + '</view><view style="color: #acbadf;margin-left: 30px">' + time + '</view></view>' +
-                  '<view style="display: flex;flex-direction: row;align-items: center;justify-content: space-between;padding: 5px 0;"><view style="color: #51617b;">' + '开' + '</view><view style="color: #acbadf;margin-left: 30px">' + open + '</view></view>' +
-                  '<view style="display: flex;flex-direction: row;align-items: center;justify-content: space-between;padding: 5px 0;"><view style="color: #51617b;">' + '高' + '</view><view style="color: #acbadf;margin-left: 30px">' + high + '</view></view>' +
-                  '<view style="display: flex;flex-direction: row;align-items: center;justify-content: space-between;padding: 5px 0;"><view style="color: #51617b;">' + '低' + '</view><view style="color: #acbadf;margin-left: 30px">' + low + '</view></view>' +
-                  '<view style="display: flex;flex-direction: row;align-items: center;justify-content: space-between;padding: 5px 0;"><view style="color: #51617b;">' + '收' + '</view><view style="color: #acbadf;margin-left: 30px">' + close + '</view></view>' +
-                  '<view style="display: flex;flex-direction: row;align-items: center;justify-content: space-between;padding: 5px 0;"><view style="color: #51617b;">' + '数量' + '</view><view style="color: #acbadf;margin-left: 30px">' + amount + '</view></view></view>';
+                  '<view style="display: flex;flex-direction: row;align-items: center;justify-content: space-between;padding: 5px 0;"><view style="color: #51617b;">' + i18n.tooltipTime + '</view><view style="color: #acbadf;margin-left: 30px">' + time + '</view></view>' +
+                  '<view style="display: flex;flex-direction: row;align-items: center;justify-content: space-between;padding: 5px 0;"><view style="color: #51617b;">' + i18n.tooltipOpen + '</view><view style="color: #acbadf;margin-left: 30px">' + open + '</view></view>' +
+                  '<view style="display: flex;flex-direction: row;align-items: center;justify-content: space-between;padding: 5px 0;"><view style="color: #51617b;">' + i18n.tooltipHighest + '</view><view style="color: #acbadf;margin-left: 30px">' + high + '</view></view>' +
+                  '<view style="display: flex;flex-direction: row;align-items: center;justify-content: space-between;padding: 5px 0;"><view style="color: #51617b;">' + i18n.tooltipLowest + '</view><view style="color: #acbadf;margin-left: 30px">' + low + '</view></view>' +
+                  '<view style="display: flex;flex-direction: row;align-items: center;justify-content: space-between;padding: 5px 0;"><view style="color: #51617b;">' + i18n.tooltipClose + '</view><view style="color: #acbadf;margin-left: 30px">' + close + '</view></view>' +
+                  '<view style="display: flex;flex-direction: row;align-items: center;justify-content: space-between;padding: 5px 0;"><view style="color: #51617b;">' + i18n.tooltipVol + '</view><view style="color: #acbadf;margin-left: 30px">' + amount + '</view></view></view>';
             }
             if (params[i].seriesName === 'MA5') {
-              let MA5 = params[i].data !== 'NAN' ? Number(this.formatterNum(params[i].data, 2)) : 0
+              let MA5 = params[i].data !== 'NAN' ? Number(params[i].data).toFixed(2) : 0
               // 调用 service 层的方法
               ownerInstance.callMethod('onTooltipMA5', MA5)
             }
             if (params[i].seriesName === 'MA10') {
-              let MA10 = params[i].data !== 'NAN' ? Number(this.formatterNum(params[i].data, 2)) : 0
+              let MA10 = params[i].data !== 'NAN' ? Number(params[i].data).toFixed(2) : 0
               // 调用 service 层的方法
               ownerInstance.callMethod('onTooltipMA10', MA10)
             }
             if (params[i].seriesName === 'MA30') {
-              let MA30 = params[i].data !== 'NAN' ? Number(this.formatterNum(params[i].data, 2)) : 0
+              let MA30 = params[i].data !== 'NAN' ? Number(params[i].data).toFixed(2) : 0
               // 调用 service 层的方法
               ownerInstance.callMethod('onTooltipMA30', MA30)
             }
             if (params[i].seriesName === 'VolumeMA5') {
-              let volMA5 = params[i].data !== 'NAN' ? Number(this.formatterNum(params[i].data, 2)) : 0
+              let volMA5 = params[i].data !== 'NAN' ? Number(params[i].data).toFixed(2) : 0
               // 调用 service 层的方法
               ownerInstance.callMethod('onTooltipVolMA5', volMA5)
             }
             if (params[i].seriesName === 'VolumeMA10') {
-              let volMA10 = params[i].data !== 'NAN' ? Number(this.formatterNum(params[i].data, 2)) : 0
+              let volMA10 = params[i].data !== 'NAN' ? Number(params[i].data).toFixed(2) : 0
               // 调用 service 层的方法
               ownerInstance.callMethod('onTooltipVolMA10', volMA10)
             }
@@ -1026,13 +1093,13 @@
           return tooltip;
         }
       },
-      tooltipAxisPointer(timeType, fixed) {
+      tooltipAxisPointer(timeType, precision) {
         return params => {
           if (params.axisDimension === 'x') {
             return this.formatDate(timeType, params.value)
           }
           if (params.axisDimension === 'y') {
-            return Number(params.value).toFixed(2)
+            return Number(params.value).toFixed(precision)
           }
           return params.value
         }
@@ -1041,6 +1108,12 @@
       formatterTime(timeType) {
         return value => {
           return this.formatDate(timeType, value);
+        }
+      },
+      // markPoint保留位数
+      markPointFormatterToFixed(precision) {
+        return param => {
+          return Number(param.value).toFixed(precision)
         }
       },
       // 格式化时间
@@ -1065,23 +1138,26 @@
         return echarts.format.formatTime(formatText, new Date(value));
       },
       // 保留位数
-      formatterToFixed(fixed) {
+      formatterToFixed(precision) {
         return value => {
-          return Number(value).toFixed(fixed)
+          return Number(value).toFixed(precision)
         }
       },
 			/**
 			 * tooltip格式化
 			 */
-			depthTooltipFormatter() {
+			depthTooltipFormatter(conf, i18n) {
 			  return params => {
-			    return [`价格 ：{a|${params.data[0]}}`, `总量 ：{a|${Math.round(params.data[1])}}`].join('\n')
+			    let price = Number(params.data[0]).toFixed(conf.pricePrecision)
+			    let total = Number(params.data[1]).toFixed(conf.totalPrecision)
+			    return [`${i18n.depthTooltipPrice} ：{a|${price}}`, `${i18n.depthTooltipTotal} ：{a|${total}}`].join('\n')
 			  }
 			},
       // 截取数字字符串 保留precision小数
       formatterNum(value, precision) {
-        let reg = new RegExp('^\\d+(?:\\.\\d{0,' + precision + '})?')
-        return value.toString().match(reg)
+        // let reg = new RegExp('^\\d+(?:\\.\\d{0,' + precision + '})?')
+        // return value.toString().match(reg)
+        return Number(value).toFixed(precision)
       },
 		}
 	}

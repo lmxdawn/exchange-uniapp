@@ -151,12 +151,7 @@ export default {
             }
             return false
           }
-          const dataList = res.data.map((item) => {
-            let difference = accSub(item.price, item.price24)
-            // 计算涨跌幅 涨跌幅=涨跌值/昨收盘*100%
-            item.rate24 = Number(accMul(accDiv(difference, item.price24 === 0 ? 1 : item.price24), 100)).toFixed(2)
-            return item;
-          });
+          const dataList = res.data;
           // 请求的值小于每页数量
           this.isNoData = (dataList.length === 0 && this.dataList.length === 0);
           this.loadingStatus = "more";

@@ -1,5 +1,5 @@
 <template>
-  <my-k-line ref="myKLine" @tabSelected="echartsTabSelected" :pair="pair" :loading-status="echartsLoadingStatus" :depth-loading-status="echartsDepthLoadingStatus"/>
+  <my-k-line ref="myKLine" @tabSelected="echartsTabSelected" :pair="pair" :usdt-rate="usdtRate" :loading-status="echartsLoadingStatus" :depth-loading-status="echartsDepthLoadingStatus"/>
 </template>
 <script>
 import myKLine from '../../components/my-k-line/index'
@@ -11,6 +11,7 @@ export default {
   computed: {
     ...mapGetters({
       pair: "pair",
+      usdtRate: "usdtRate",
     }),
   },
   components: {

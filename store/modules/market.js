@@ -48,6 +48,12 @@ let pair = {
         usdtPrice: 1
     },
     price: -1,
+    price24: -1,
+    rate24: -1,
+    tradeTotal24: -1,
+    tradeAmount24: -1,
+    highest24: -1,
+    lowest24: -1,
     tradeTotalPrecision: 0,
     tradePricePrecision: 0,
     tradeAmountPrecision: 0,
@@ -58,6 +64,12 @@ if (pairStr) {
         pair.tradeCoin = obj.tradeCoin || {} // 交易币种
         pair.coin = obj.coin || {} // 对标币种
         pair.price = obj.price || -1 // 价格
+        pair.price24 = obj.price24 || -1 // 24小时价格
+        pair.rate24 = obj.rate24 || -1 // 24小时涨跌幅
+        pair.tradeTotal24 = obj.tradeTotal24 || -1 // 24小时交易额
+        pair.tradeAmount24 = obj.tradeAmount24 || -1 // 24小时交易量
+        pair.highest24 = obj.highest24 || -1 // 24小时最高
+        pair.lowest24 = obj.lowest24 || -1 // 24小时最低
         pair.tradeTotalPrecision = obj.tradeTotalPrecision || 0 // 总量精度
         pair.tradePricePrecision = obj.tradePricePrecision || 0 // 价格精度
         pair.tradeAmountPrecision = obj.tradeAmountPrecision || 0 // 数量精度
@@ -155,6 +167,12 @@ const mutations = {
         state.pair.tradeCoin = obj.tradeCoin || {} // 交易币种
         state.pair.coin = obj.coin || {} // 对标币种
         state.pair.price = obj.price || -1 // 价格
+        state.pair.price24 = obj.price24 || -1 // 24小时价格
+        state.pair.rate24 = obj.rate24 || -1 // 24小时涨跌幅
+        state.pair.tradeTotal24 = obj.tradeTotal24 || -1 // 24小时交易额
+        state.pair.tradeAmount24 = obj.tradeAmount24 || -1 // 24小时交易量
+        state.pair.highest24 = obj.highest24 || -1 // 24小时最高
+        state.pair.lowest24 = obj.lowest24 || -1 // 24小时最低
         state.pair.tradeTotalPrecision = obj.tradeTotalPrecision || 0 // 总量精度
         state.pair.tradePricePrecision = obj.tradePricePrecision || 0 // 价格精度
         state.pair.tradeAmountPrecision = obj.tradeAmountPrecision || 0 // 数量精度
