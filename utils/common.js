@@ -3,7 +3,7 @@ export function navigateTo(path, animationType = "") {
     let obj = {
         url: "/pages/" + path,
     }
-    // #ifndef APP-PLUS
+    // ifndef APP-PLUS
     animationType = ""
     // endif
     if (animationType) {

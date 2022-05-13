@@ -9,10 +9,9 @@ import App from './App'
 
 // 国际化
 import messages from './locale/index'
-import {getLang} from "./utils/lang";
 
 let i18nConfig = {
-    locale: getLang,
+    locale: uni.getLocale(),
     messages
 }
 
