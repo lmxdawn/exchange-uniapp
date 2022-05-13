@@ -10,7 +10,7 @@
         <my-input class="login-form-item"></my-input>
         <my-input class="login-form-item">
           <template #prefix>
-            <my-area-code></my-area-code>
+            <my-area-code @selected="areaCodeSelected"></my-area-code>
           </template>
         </my-input>
         <my-input class="login-form-item" v-model="form.password" :input-type="passwordInputType">
@@ -47,6 +47,7 @@ export default {
       passwordInputType: "password",
       buttonType: "default",
       form: {
+        areaCode: "",
         password: ""
       }
     }
@@ -60,6 +61,9 @@ export default {
     },
     passwordEyeClick() {
       this.passwordInputType = this.passwordInputType === 'password' ? 'text' : 'password'
+    },
+    areaCodeSelected(item) {
+      this.form.areaCode = item.code
     }
   }
 }
