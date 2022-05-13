@@ -1,10 +1,13 @@
 // 跳转
-export function navigateTo(path, isRight = false) {
+export function navigateTo(path, animationType = "") {
     let obj = {
         url: "/pages/" + path,
     }
-    if (isRight) {
-        obj.animationType = 'slide-in-right'
+    // #ifndef APP-PLUS
+    animationType = ""
+    // endif
+    if (animationType) {
+        obj.animationType = animationType
     }
     uni.navigateTo(obj);
 }

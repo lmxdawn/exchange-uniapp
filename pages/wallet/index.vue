@@ -10,7 +10,9 @@
 </template>
 
 <script>
-	export default {
+	import {setLang} from "../../utils/lang";
+
+  export default {
 		data() {
 			return {
 
@@ -27,7 +29,7 @@
 		methods: {
       charge(lang) {
         console.log(lang)
-        uni.setLocale(lang)
+        setLang(lang)
         this.$i18n.locale = lang
       }
 		}

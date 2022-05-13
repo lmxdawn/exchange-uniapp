@@ -99,6 +99,8 @@
         params: {
           tradeCoinId: 3,
           coinId: 1,
+          page: 1,
+          limit: 20,
         },
         refreshStatusText: {
           initial: t('common.refresh.initial'),
@@ -121,10 +123,16 @@
       }
 		},
 		onLoad() {
+
+      // 设置参数
+      this.params.tradeCoinId = this.pair.tradeCoin.id
+      this.params.coinId = this.pair.coin.id
+
       this.init()
 		},
     onUnload() {
-
+      // 移除深度图数据监听事件
+      uni.$off('depthWs');
     },
 		methods: {
       ...mapActions({
@@ -189,13 +197,20 @@
             this.getDepth(refresh)
             this.getOrderList();
           })
+
+        // 监听深度图数据事件
+        uni.$on('depthWs',(res)=>{
+          // 判断是不是当前交易对
+          if (res.tradeCoinId !== this.pair.tradeCoinId || res.coinId !== this.pair.coinId) {
+            return false
+          }
+          let sellList = res.sellList || []
+          this.depthSell = sellList.reverse()
+          this.depthBuy = res.buyList || []
+        })
       },
       getBalance() {
-        const params = {
-          tradeCoinId: this.pair.tradeCoin.id,
-          coinId: this.pair.coin.id,
-        }
-        memberCoinPairBalance(params)
+        memberCoinPairBalance(this.params)
             .then(res => {
               if (res.code > 0) {
                 // this.$tui.toast(t('http.code.' + res.code))
@@ -206,11 +221,7 @@
             })
       },
       getDepth(refresh) {
-        const params = {
-          tradeCoinId: this.pair.tradeCoin.id,
-          coinId: this.pair.coin.id,
-        }
-        marketDepthList(params)
+        marketDepthList(this.params)
             .then(res => {
               if (refresh) {
                 this.refreshStatus()
@@ -230,24 +241,27 @@
             })
       },
       getOrderList() {
-        let params = {
-          tradeCoinId: this.pair.tradeCoin.id,
-          coinId: this.pair.coin.id,
-          page: 1,
-          limit: 20
+        if (this.loadingStatus !== "more") {
+          return false
         }
-        entrustOrderList(params)
+        this.loadingStatus = "loading";
+        entrustOrderList(this.params)
           .then(res => {
-            this.loadingStatus = "noMore";
             if (res.code > 0) {
+              this.loadingStatus = "noMore";
               if (this.orderList.length === 0) {
                 this.isNoData = true;
               }
               return false
             }
+            this.loadingStatus = "more";
             let dataList = res.data || []
             this.isNoData = (dataList.length === 0 && this.orderList.length === 0);
-            this.orderList = dataList;
+            this.orderList = this.orderList.concat(dataList);
+            this.params.page++
+            if (dataList.length < this.params.limit) {
+              this.loadingStatus = "noMore";
+            }
           })
           .catch(() => {
             this.isNoData = false

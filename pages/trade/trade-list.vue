@@ -68,7 +68,7 @@
         </view>
 
         <view class="trade-sub-btn" :class="[tradeForm.direction === 1 ? 'buy' : 'sell']" @click="orderSub">
-          <text class="trade-sub-btn__text">{{ tradeDirectionArr[tradeForm.direction - 1] }} {{ pair.tradeCoin.name }}</text>
+          <text class="trade-sub-btn__text">{{ memberInfo.memberId <= 0 ? loginText : tradeDirectionArr[tradeForm.direction - 1] + " " + pair.tradeCoin.name }}</text>
         </view>
 
       </view>
@@ -136,6 +136,7 @@ import myPopup from "../../components/my-popup/my-popup"
 import myEmpty from "../../components/my-empty/my-empty";
 import {accMul,accDiv} from "../../utils/decimal";
 import {entrustOrderCreate} from "../../api/trade/entrustOrder";
+import {navigateTo} from "../../utils/common";
 
 const { t } = initVueI18n(messages)
 
@@ -243,6 +244,9 @@ export default {
       }
       return list
     },
+    loginText() {
+      return t('common.login')
+    },
     cancelText() {
       return t('common.cancel')
     },
@@ -312,9 +316,9 @@ export default {
       this.depthType = index
     },
     orderSub() {
-      if (this.memberInfo.id <= 0) {
-        // TODO 未登录
-        // return false
+      if (this.memberInfo.memberId <= 0) {
+        navigateTo("other/login", "slide-out-bottom")
+        return false
       }
       if (this.tradeFormLoading) {
         return false
@@ -586,7 +590,7 @@ export default {
   flex: 1;
   padding: 6px 0;
   text-align: center;
-  border: solid 1px rgba(184,198,216,.08);
+  border: solid 1px #292E39;
   display: flex;
   justify-content: center;
   align-items: center;

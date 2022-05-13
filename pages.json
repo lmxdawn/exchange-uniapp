@@ -66,6 +66,16 @@
           "background":"#191E29"
         }
       }
+    },
+    {
+      "path": "pages/other/login",
+      "style": {
+        "navigationBarTitleText": "%common.login%",
+        "navigationStyle":"custom",
+        "app-plus":{
+          "background":"#191E29"
+        }
+      }
     }
   ],
   "tabBar": {
@@ -111,7 +121,7 @@
     ]
   },
   "globalStyle": {
-    "navigationBarTextStyle": "black",
+    "navigationBarTextStyle": "white",
     "navigationBarTitleText": "uni-app",
     "navigationBarBackgroundColor": "#191E29",
     "backgroundColor": "black",

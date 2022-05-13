@@ -28,13 +28,8 @@ export default {
     };
   },
   onReady() {
-    this.setPair(this.params)
-        .then(b => {
-          // 获取K线
-          this.getKLine(false)
-          // 获取深度图
-          this.getDepth()
-        })
+    // 初始化
+    this.init()
     let kLineData = [
       [1073260800, 10411.85, 10544.07, 10411.85, 10575.92, 221290000],
       [1073347200, 10543.85, 10538.66, 10454.37, 10584.07, 191460000],
@@ -391,10 +386,34 @@ export default {
     // setTimeout(() => {
     // }, 2000)
   },
+  onUnload() {
+    // 移除深度图数据监听事件
+    uni.$off('depthWs');
+  },
   methods: {
     ...mapActions({
       setPair: "setPair"
     }),
+    init() {
+      // 获取交易对信息
+      this.setPair(this.params)
+          .then(b => {
+            // 获取K线
+            this.getKLine(false)
+            // 获取深度图
+            this.getDepth()
+          })
+      // 监听深度图数据事件
+      uni.$on('depthWs',(res)=>{
+        // 判断是不是当前交易对
+        if (res.tradeCoinId !== this.pair.tradeCoinId || res.coinId !== this.pair.coinId) {
+          return false
+        }
+        let sellData = res.sellList || []
+        let buyData = res.buyList || []
+        this.$refs.myKLine.createDepth(buyData, sellData)
+      })
+    },
     echartsTabSelected(item) {
       this.echartsLoadingStatus = 'loading'
       this.getKLine(false)

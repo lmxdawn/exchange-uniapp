@@ -69,7 +69,7 @@ export default {
       }
     },
     kLineClick() {
-      navigateTo("trade/kLine", true)
+      navigateTo("trade/kLine", "slide-in-right")
     }
   }
 }
