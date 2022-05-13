@@ -4,24 +4,28 @@
     <view class="login-body">
       <view class="login-title">
         <image class="login-title-logo" src="/static/logo.png"></image>
-        <text class="login-title-text">邮箱登录</text>
+        <text class="login-title-text">{{title(false)}}</text>
       </view>
       <view class="login-form">
-        <my-input class="login-form-item"></my-input>
-        <my-input class="login-form-item">
-          <template #prefix>
+        <my-input v-if="type === 'email'" v-model="form.email" class="login-form-item" :placeholder="emailPlaceholder"></my-input>
+        <my-input v-else class="login-form-item" v-model="form.mobile" :placeholder="mobilePlaceholder">
+          <template slot="prefix">
             <my-area-code @selected="areaCodeSelected"></my-area-code>
           </template>
         </my-input>
-        <my-input class="login-form-item" v-model="form.password" :input-type="passwordInputType">
-          <template #suffix>
+        <my-input class="login-form-item" v-model="form.password" :input-type="passwordInputType" :placeholder="pwdPlaceholder">
+          <template slot="suffix">
             <view class="login-form-item-pwd-suffix">
               <uni-icons class="login-form-item-pwd-close" @click="passwordCloseClick" v-if="form.password.length > 0" custom-prefix="custom-icon" type="closeempty" color="#c1cdde" size="20"></uni-icons>
               <uni-icons @click="passwordEyeClick" custom-prefix="custom-icon" :type="passwordInputType === 'password' ? 'eye-slash' : 'eye'" color="#c1cdde" size="20"></uni-icons>
             </view>
           </template>
         </my-input>
-        <my-button class="login-form-item" :type="buttonType">登录</my-button>
+        <my-button class="login-form-item" :type="buttonType">{{$t('common.login')}}</my-button>
+      </view>
+      <view class="login-user">
+        <text class="login-user-text" @click="forgetPasswordClick">{{$t('common.forgetPassword')}}?</text>
+        <text class="login-user-text" @click="typeClick">{{title(true)}}</text>
       </view>
     </view>
   </view>
@@ -31,7 +35,7 @@
 import myInput from "../../components/my-input/input"
 import myButton from "../../components/my-button/button"
 import myAreaCode from "../../components/my-area-code/index"
-import {navigateBack} from "../../utils/common";
+import {navigateBack, navigateTo} from "../../utils/common";
 
 export default {
   components: {
@@ -40,14 +44,32 @@ export default {
     myAreaCode
   },
   computed: {
-
+    title() {
+      return isF => {
+        let email = this.$t('common.login.email')
+        let mobile = this.$t('common.login.mobile')
+        return this.type === "email" ? (!isF ? email : mobile) : (!isF ? mobile : email);
+      }
+    },
+    emailPlaceholder() {
+      return this.$t('common.email.placeholder')
+    },
+    mobilePlaceholder() {
+      return this.$t('common.mobile.placeholder')
+    },
+    pwdPlaceholder() {
+      return this.$t('common.login.pwd.placeholder')
+    },
   },
   data() {
     return {
+      type: 'email',
       passwordInputType: "password",
       buttonType: "default",
       form: {
         areaCode: "",
+        email: "",
+        mobile: "",
         password: ""
       }
     }
@@ -55,6 +77,9 @@ export default {
   methods: {
     back() {
       navigateBack()
+    },
+    typeClick() {
+      this.type = this.type === "email" ? "mobile" : "email";
     },
     passwordCloseClick() {
       this.form.password = ""
@@ -64,6 +89,9 @@ export default {
     },
     areaCodeSelected(item) {
       this.form.areaCode = item.code
+    },
+    forgetPasswordClick() {
+      navigateTo("other/forgetPassword")
     }
   }
 }
@@ -88,12 +116,12 @@ export default {
 }
 
 .login-title-logo {
-  width: 240rpx;
-  height: 80rpx;
+  width: 120px;
+  height: 40px;
 }
 
 .login-title-text {
-  font-size: 60rpx;
+  font-size: 30px;
   color: #E1E8F5;
 }
 .login-form-item {
@@ -104,5 +132,16 @@ export default {
 }
 .login-form-item-pwd-close {
   margin-right: 10px;
+}
+.login-user {
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  align-items: center;
+  margin-top: 10px;
+}
+.login-user-text {
+  font-size: 12px;
+  color: #4F5460;
 }
 </style>

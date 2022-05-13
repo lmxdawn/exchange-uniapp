@@ -76,6 +76,16 @@
           "background":"#191E29"
         }
       }
+    },
+    {
+      "path": "pages/other/forgetPassword",
+      "style": {
+        "navigationBarTitleText": "%common.forgetPassword%",
+        "navigationStyle":"custom",
+        "app-plus":{
+          "background":"#191E29"
+        }
+      }
     }
   ],
   "tabBar": {
