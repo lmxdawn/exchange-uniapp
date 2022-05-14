@@ -7,10 +7,10 @@
         <text class="login-title-text">{{title(false)}}</text>
       </view>
       <view class="login-form">
-        <my-input v-if="type === 'email'" v-model="form.email" class="login-form-item" :placeholder="emailPlaceholder"></my-input>
-        <my-input v-else class="login-form-item" v-model="form.mobile" :placeholder="mobilePlaceholder">
+        <my-input v-show="type === 'email'" v-model="form.email" class="login-form-item" :placeholder="emailPlaceholder"></my-input>
+        <my-input v-show="type === 'tel'" class="login-form-item" v-model="form.tel" :placeholder="telPlaceholder">
           <template slot="prefix">
-            <my-area-code @selected="areaCodeSelected"></my-area-code>
+            <my-area-code :code="form.areaCode" @selected="areaCodeSelected"></my-area-code>
           </template>
         </my-input>
         <my-input class="login-form-item" v-model="form.password" :input-type="passwordInputType" :placeholder="pwdPlaceholder">
@@ -21,12 +21,17 @@
             </view>
           </template>
         </my-input>
-        <my-button class="login-form-item" :type="buttonType">{{$t('common.login')}}</my-button>
+        <my-button class="login-form-item" @click="loginClick" :type="loginType" :loading="loading">{{$t('common.login')}}</my-button>
       </view>
       <view class="login-user">
         <text class="login-user-text" @click="forgetPasswordClick">{{$t('common.forgetPassword')}}?</text>
         <text class="login-user-text" @click="typeClick">{{title(true)}}</text>
       </view>
+    </view>
+
+    <view class="login-register">
+      <text class="login-register-tip">{{$t('common.register.tip')}}</text>
+      <text class="login-register-btn" @click="registerTo">{{$t('common.register')}}</text>
     </view>
   </view>
 </template>
@@ -35,7 +40,11 @@
 import myInput from "../../components/my-input/input"
 import myButton from "../../components/my-button/button"
 import myAreaCode from "../../components/my-area-code/index"
-import {navigateBack, navigateTo} from "../../utils/common";
+import {isBackNavigateBack, navigateBack, navigateTo} from "../../utils/common";
+import {loginByPwd} from "../../api/other/auth";
+import { mapActions } from "vuex";
+import {connectionLogin} from "../../api/ws/connection";
+import {getToken, setToken} from "../../utils/userAuth";
 
 export default {
   components: {
@@ -47,39 +56,51 @@ export default {
     title() {
       return isF => {
         let email = this.$t('common.login.email')
-        let mobile = this.$t('common.login.mobile')
-        return this.type === "email" ? (!isF ? email : mobile) : (!isF ? mobile : email);
+        let tel = this.$t('common.login.tel')
+        return this.type === "email" ? (!isF ? email : tel) : (!isF ? tel : email);
       }
     },
     emailPlaceholder() {
       return this.$t('common.email.placeholder')
     },
-    mobilePlaceholder() {
-      return this.$t('common.mobile.placeholder')
+    telPlaceholder() {
+      return this.$t('common.tel.placeholder')
     },
     pwdPlaceholder() {
       return this.$t('common.login.pwd.placeholder')
     },
+    loginType() {
+      return ((this.type === 'email' && this.form.email.length > 0) || (this.type === 'tel' && this.form.tel.length > 0)) && this.form.password.length > 0 ? 'success' : 'default'
+    }
   },
   data() {
     return {
       type: 'email',
       passwordInputType: "password",
-      buttonType: "default",
+      loading: false,
       form: {
-        areaCode: "",
+        areaCode: 0,
         email: "",
-        mobile: "",
+        tel: "",
         password: ""
-      }
+      },
+      redirect: "", // 登录成功的回调地址
+    }
+  },
+  onLoad(option) {
+    if (option.redirect) {
+      this.redirect = decodeURIComponent(option.redirect)
     }
   },
   methods: {
+    ...mapActions({
+      getUserInfo: "getUserInfo",
+    }),
     back() {
       navigateBack()
     },
     typeClick() {
-      this.type = this.type === "email" ? "mobile" : "email";
+      this.type = this.type === "email" ? "tel" : "email";
     },
     passwordCloseClick() {
       this.form.password = ""
@@ -91,7 +112,81 @@ export default {
       this.form.areaCode = item.code
     },
     forgetPasswordClick() {
-      navigateTo("other/forgetPassword")
+      navigateTo("other/forgetPassword?type=" + this.type)
+    },
+    registerTo() {
+      navigateTo("other/register?type=" + this.type)
+    },
+    loginClick() {
+      if (this.loading) {
+        return false;
+      }
+      this.loading = true
+      const data = {
+        type: this.type,
+        ...this.form
+      }
+      loginByPwd(data)
+          .then(res => {
+            if (res.code !== 0) {
+              this.loading = false
+              this.$tui.toast(this.$t('http.code.' + res.code))
+              return false;
+            }
+
+            // 设置token
+            setToken(res.data.token)
+
+            // 获取用户信息
+            this.userInfo();
+
+          })
+          .catch(() => {
+            this.loading = false
+            this.$tui.toast(this.$t('http.code.1'))
+          })
+    },
+    backRedirect() {
+      // 登录成功
+      this.$tui.toast(this.$t('common.login.success'))
+      setTimeout(() => {
+        const path = this.redirect ? this.redirect : "home/index"
+        isBackNavigateBack(path)
+      }, 1000)
+    },
+    userInfo() {
+      this.getUserInfo()
+          .then(res => {
+            if (res.code > 0) {
+              this.loading = false
+              this.$tui.toast(this.$t('http.code.' + res.code))
+              return false
+            }
+            // 登录ws-rule路由
+            connectionLogin()
+                .then(res => {
+                  this.loading = false
+                  let memberId = res.data && res.data.memberId ? res.data.memberId : 0
+                  let token = getToken()
+                  const wsUrl = res.data.url
+                  const wsPort = res.data.wsPort
+                  // 先关闭
+                  this.$websocket.Close()
+                  // 重新初始化websocket
+                  this.$websocket.setConf(wsUrl, wsPort, memberId, token)
+                  this.$websocket.connectSocketInit()
+                  this.backRedirect()
+                })
+                .catch(() => {
+                  this.loading = false
+                  this.$tui.toast(this.$t('http.code.1'))
+                })
+          })
+          .catch(err => {
+            console.log(err);
+            this.loading = false
+            this.$tui.toast(this.$t('http.code.1'))
+          })
     }
   }
 }
@@ -143,5 +238,18 @@ export default {
 .login-user-text {
   font-size: 12px;
   color: #4F5460;
+}
+.login-register {
+  position: absolute;
+  bottom: 50px;
+  left: 30px;
+}
+.login-register-tip {
+  font-size: 16px;
+  color: #E1E8F5;
+}
+.login-register-btn {
+  font-size: 16px;
+  color: #2DBD96;
 }
 </style>

@@ -10,7 +10,8 @@ const WECHAT_APP_ID = "wx1189ab73b2da38b8";
 // 环境判断
 if (process.env.NODE_ENV === 'development') {
     // 测试
-    API_URL = "http://127.0.0.1:9001";
+    // API_URL = "http://127.0.0.1:9001";
+    API_URL = "http://lmxdawn-test.vaiwan.com";
 } else {
     // 正式
     API_URL = "http://api.zhuanghuatianjiu.com.cn";

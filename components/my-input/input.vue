@@ -71,11 +71,6 @@ export default {
 </script>
 
 <style lang="scss" scoped>
-uni-input {
-  line-height: normal;
-  height: auto;
-  min-height: auto;
-}
 
 .m-input {
   position: relative;
@@ -92,7 +87,7 @@ uni-input {
     flex: auto;
     align-items: center;
     white-space: nowrap;
-    padding: 14px;
+    padding: 10px 14px;
   }
 
   &.m-input-plain {

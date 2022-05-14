@@ -15,7 +15,12 @@ const request = (obj) => {
         obj.header['appName'] = process.env.VUE_APP_PLATFORM
     }
     obj.params = obj.params || {};
-    obj.params.lang = uni.getLocale()
+    if (!obj.params.lang) {
+        obj.params.lang = uni.getLocale()
+    }
+    if (obj.data && !obj.data.lang) {
+        obj.data.lang = uni.getLocale()
+    }
     if (obj.params) {
         obj.url = obj.url + queryParams(obj.params, true);
     }

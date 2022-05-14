@@ -58,7 +58,7 @@ export default {
 <style lang="scss" scoped>
 .m-button {
   color: #E1E8F5;
-  font-size: 35rpx;
+  font-size: 18px;
   border-radius: 4px;
   &__default {
     background-color: #202530;

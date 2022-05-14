@@ -317,7 +317,8 @@ export default {
     },
     orderSub() {
       if (this.memberInfo.memberId <= 0) {
-        navigateTo("other/login", "slide-out-bottom")
+        let redirect = encodeURIComponent("trade/index")
+        navigateTo("other/login?redirect=" + redirect, "slide-out-bottom")
         return false
       }
       if (this.tradeFormLoading) {

@@ -10,7 +10,7 @@ const state = {
         memberId: parseInt(member.memberId) || 0,
         name: member.name || "",
         avatar: member.avatar || "",
-        mobile: member.mobile || "",
+        tel: member.tel || "",
         email: member.email || "",
     },
     memberBindingPageStatus: false,

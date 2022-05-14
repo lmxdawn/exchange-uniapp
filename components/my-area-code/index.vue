@@ -1,7 +1,7 @@
 <template>
   <view class="my-area-code">
     <view class="my-area-code-value" @click="valueClick">
-      <text class="my-area-code-value-text" :style="{color: color}">+{{selectedItem.code}}</text>
+      <text class="my-area-code-value-text" :style="{color: color}">+{{code}}</text>
       <uni-icons custom-prefix="custom-icon" type="bottom" color="#4F5460" size="12"></uni-icons>
     </view>
     <uni-popup ref="myAreaCodePopup" background-color="#191E29">
@@ -35,6 +35,10 @@ export default {
       type: String,
       default: "NOT DATA"
     },
+    code: {
+      type: Number,
+      default: 0
+    }
   },
   computed: {
     color() {
@@ -46,9 +50,6 @@ export default {
   },
   data() {
     return {
-      selectedItem: {
-        code: 0
-      },
       dataList: [],
       isNoData: true,
       loadingStatus: "more",
@@ -65,7 +66,6 @@ export default {
     },
     itemCLick(item) {
       this.$refs.myAreaCodePopup.close()
-      this.selectedItem = item
       this.$emit("selected", item)
     },
     loadData(refresh) {
@@ -93,7 +93,7 @@ export default {
           } else {
             this.dataList = this.dataList.concat(dataList);
           }
-          console.log(dataList)
+          // console.log(dataList)
           this.params.page++
           if (dataList.length < this.params.limit) {
             this.loadingStatus = "noMore";

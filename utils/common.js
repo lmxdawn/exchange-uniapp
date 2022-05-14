@@ -57,6 +57,17 @@ export function navigateBack(delta, type, duration) {
     });
 }
 
+// 如果可以返回，则返回，否则刷新
+export function isBackNavigateBack(path) {
+    // 获取当前路由栈深度
+    let pages = getCurrentPages()
+    if (pages.length === 1) {
+        reLaunch(path)
+        return false
+    }
+    navigateBack()
+}
+
 // 设置标题栏
 export function setNavigationBarTitle(title) {
     uni.setNavigationBarTitle({
