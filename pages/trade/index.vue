@@ -12,33 +12,7 @@
     <view class="page-line"></view>
 
     <view class="page-body">
-      <!-- #ifdef APP-NVUE -->
-      <list ref="list" class="listview" @loadmore="loadMore">
-        <refresh class="refresh" :display="refreshing ? 'show' : 'hide'" @refresh="onrefresh" @pullingdown="onpullingdown">
-          <div class="refresh-view">
-            <image class="refresh-icon" :src="refreshIcon" :style="{width: (refreshing || pulling) ? 0: '30px'}" :class="{'refresh-icon-active': refreshFlag}"></image>
-            <loading-indicator class="loading-icon" animating="true" v-if="refreshing || pulling"></loading-indicator>
-            <text class="loading-text">{{refreshText}}</text>
-          </div>
-        </refresh>
-        <cell class="cell">
-          <trade-list
-              :pair="pair"
-              :balance="balance"
-              :tradeBalance="tradeBalance"
-              :depth-buy="depthBuy"
-              :depth-sell="depthSell"
-              :isNoData="isNoData"
-              :loading-status="loadingStatus"
-              :orderList="orderList"></trade-list>
-        </cell>
-        <cell class="load-more" v-if="loadingStatus !== 'noMore' || params.page > 1">
-          <uni-load-more :status="loadingStatus" color="#2DBD96" iconType="circle" :contentText="loadingMoreText"></uni-load-more>
-        </cell>
-      </list>
-      <!-- #endif -->
-      <!-- #ifndef APP-NVUE -->
-      <scroll-view class="listview" style="flex: 1;" enableBackToTop="true" scroll-y @scrolltolower="loadMore()">
+      <view class="listview">
         <trade-list
             :pair="pair"
             :balance="balance"
@@ -48,12 +22,10 @@
             :isNoData="isNoData"
             :loading-status="loadingStatus"
             :orderList="orderList"></trade-list>
-        <view class="load-more" v-if="loadingStatus !== 'noMore' || params.page > 1">
-          <view v-if="params.page === 1" style="height: 20px"></view>
+        <view class="load-more" v-if="!isNoData && (loadingStatus !== 'noMore' || params.page > 1)">
           <uni-load-more :status="loadingStatus" color="#2DBD96" iconType="circle" :contentText="loadingMoreText"></uni-load-more>
         </view>
-      </scroll-view>
-      <!-- #endif -->
+      </view>
     </view>
 
   </view>
@@ -86,28 +58,17 @@
         marketCollect: "marketCollect",
       }),
       tabBars() {
-        return [t('trade.coin2coin'),t('market.contract')]
+        return [t('trade.coin2coin'),t('trade.lever')]
       },
     },
 		data() {
 			return {
         navBarTabIndex: 0,
-        refreshing: false,
-        refreshFlag: false,
-        refreshText: "",
-        refreshIcon: "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAIAAAACABAMAAAAxEHz4AAAABGdBTUEAALGPC/xhBQAAAAFzUkdCAK7OHOkAAAAVUExURUxpcSKtjyOtjyOtkCGujyOujyOtjyVq54MAAAAGdFJOUwCBq1Ms2KeJoRYAAAETSURBVGje7de9DoIwFAXgqrgzKLMOOhMTnZmcndwB4f0fQbHclj+Tnt7E6ZyFpAknHy3hBmMYhmEYhmGgbPbVTlWQtW2TKu5ft5+UioJzV9CmOoCGYAHxhB4QTxBALMEBYgkeEEcYAOIIQ0AMYQSIIYwBOGECwAlTAEqYAVDCHIARFgAYYQmAECaADCYIoLaXFUpwN+T2YoTwCiy4CcD0BdJYhX/LLUAK3Aq2BbVxBUIoIEHuC2SpQPbgA/AFltAEPsJdAL7AEkrkGDvAoOC7dkBGaj4uMFfkTUxOjR3qw8O7HHP8wwqdPgtYwAIWsCBgSlaKgkz7z7TtCh6KggQYyT/G5FP129gZCsMwDMMwDMP8PW8Th/WSXjS8nAAAAABJRU5ErkJggg==",
-        pulling: false,
         params: {
           tradeCoinId: 3,
           coinId: 1,
           page: 1,
           limit: 20,
-        },
-        refreshStatusText: {
-          initial: t('common.refresh.initial'),
-          complete: t('common.refresh.complete'),
-          pull: t('common.refresh.pull'),
-          freed: t('common.refresh.freed'),
         },
         loadingMoreText: {
           contentdown: t('common.more.down'),
@@ -118,7 +79,7 @@
         balance: -1,
         depthSell: [],
         depthBuy: [],
-        isNoData: false,
+        isNoData: true,
         loadingStatus: "more",
         orderList: [],
       }
@@ -130,10 +91,27 @@
       this.params.coinId = this.pair.coin.id
 
       this.init()
+
+      // 监听深度图数据事件
+      uni.$on('depthWs',(res)=>{
+        // 判断是不是当前交易对
+        if (res.tradeCoinId !== this.pair.tradeCoinId || res.coinId !== this.pair.coinId) {
+          return false
+        }
+        let sellList = res.sellList || []
+        this.depthSell = sellList.reverse()
+        this.depthBuy = res.buyList || []
+      })
 		},
     onUnload() {
       // 移除深度图数据监听事件
       uni.$off('depthWs');
+    },
+    onReachBottom() {
+      this.loadMore()
+    },
+    onPullDownRefresh() {
+      this.init()
     },
 		methods: {
       ...mapActions({
@@ -142,73 +120,20 @@
       onNavBarTabClickItem(index) {
         this.navBarTabIndex = index
       },
-      loadData(refresh) {
-        this.init(refresh)
-      },
-      loadMore(e) {
+      loadMore() {
         this.getOrderList();
       },
-      refreshStatus() {
-        setTimeout(() => {
-          this.pulling = true;
-          this.refreshing = false;
-          this.refreshFlag = false;
-          this.refreshText = this.refreshStatusText.complete;
-          setTimeout(() => { // TODO fix ios和Android 动画时间相反问题
-            this.pulling = false;
-          }, 500);
-        }, 500);
-      },
-      refreshData() {
-        this.refreshing = true;
-        this.refreshText = this.refreshStatusText.initial;
-        this.params.page = 1
-        this.loadData(true);
-      },
-      onrefresh(e) {
-        if (!this.refreshFlag) {
-          return;
-        }
-        this.refreshData();
-        // #ifdef APP-NVUE
-        this.$refs.list.resetLoadmore();
-        // #endif
-
-      },
-      onpullingdown(e) {
-        if (this.refreshing || this.pulling) {
-          return;
-        }
-
-        if (Math.abs(e.pullingDistance) > Math.abs(e.viewHeight)) {
-          this.refreshFlag = true;
-          this.refreshText = this.refreshStatusText.freed;
-        } else {
-          this.refreshFlag = false;
-          this.refreshText = this.refreshStatusText.pull;
-        }
-      },
-      init(refresh) {
+      init() {
         this.setPair(this.params)
           .then(b => {
+            uni.stopPullDownRefresh()
             if (!b) {
               this.$tui.toast("error")
             }
             this.getBalance()
-            this.getDepth(refresh)
+            this.getDepth()
             this.getOrderList();
           })
-
-        // 监听深度图数据事件
-        uni.$on('depthWs',(res)=>{
-          // 判断是不是当前交易对
-          if (res.tradeCoinId !== this.pair.tradeCoinId || res.coinId !== this.pair.coinId) {
-            return false
-          }
-          let sellList = res.sellList || []
-          this.depthSell = sellList.reverse()
-          this.depthBuy = res.buyList || []
-        })
       },
       getBalance() {
         memberCoinPairBalance(this.params)
@@ -221,12 +146,9 @@
               this.balance = res.data.balance || 0.00
             })
       },
-      getDepth(refresh) {
+      getDepth() {
         marketDepthList(this.params)
             .then(res => {
-              if (refresh) {
-                this.refreshStatus()
-              }
               if (res.code > 0) {
                 this.$tui.toast(t('http.code.' + res.code))
                 return false
@@ -236,9 +158,6 @@
               this.depthBuy = res.data.buyList ||[]
             })
             .catch(() => {
-              if (refresh) {
-                this.refreshStatus()
-              }
             })
       },
       getOrderList() {
@@ -258,6 +177,7 @@
             this.loadingStatus = "more";
             let dataList = res.data || []
             this.isNoData = (dataList.length === 0 && this.orderList.length === 0);
+            console.log(dataList.length, this.orderList.length)
             this.orderList = this.orderList.concat(dataList);
             this.params.page++
             if (dataList.length < this.params.limit) {
@@ -265,6 +185,7 @@
             }
           })
           .catch(() => {
+            console.log(123456)
             this.isNoData = false
             this.loadingStatus = "noMore";
             if (this.orderList.length === 0) {
@@ -280,66 +201,18 @@
   .page-header {
   }
   .page-box {
-    flex: 1;
-    /* #ifndef APP-PLUS */
-    display: flex;
-    /* #endif */
-    flex-direction: column;
     background-color: #11151F;
   }
   .page-line {
     height: 3px;
   }
   .page-body {
-    flex: 1;
-    display: flex;
-    flex-direction: column;
-    /* #ifndef APP-NVUE */
-    overflow: hidden auto;
-    /* #endif */
   }
   .listview {
-    flex: 1;
-    /* #ifndef APP-NVUE */
-    display: flex;
-    flex-direction: column;
-    overflow: hidden auto;
-    /* #endif */
-    /* #ifndef MP-ALIPAY */
-    flex-direction: column;
-    /* #endif */
   }
 
   .load-more {
     background-color: #191E29;
-  }
-
-  .refresh {
-    height: 64px;
-    flex-direction: row;
-    justify-content: center;
-  }
-
-  .refresh-view {
-    width: 750rpx;
-    flex-direction: row;
-    flex-wrap: nowrap;
-    align-items: center;
-    justify-content: center;
-  }
-
-  .refresh-icon {
-    margin-top: 1px;
-    width: 35px;
-    height: 35px;
-    transition-duration: .5s;
-    transition-property: transform;
-    transform: rotate(0deg);
-    transform-origin: 16px 17px;
-  }
-
-  .refresh-icon-active {
-    transform: rotate(180deg);
   }
 
   .loading-icon {

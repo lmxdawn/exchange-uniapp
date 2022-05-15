@@ -28,9 +28,21 @@
       "style": {
         "navigationBarTitleText": "%common.title%",
         "navigationStyle":"custom",
+        "enablePullDownRefresh": true,
         "app-plus": {
           "titleNView":false,
           "background":"#11151F"
+        }
+      }
+    },
+    {
+      "path": "pages/trade/kLine",
+      "style": {
+        "navigationBarTitleText": "%common.title%",
+        "navigationStyle":"custom",
+        "app-plus":{
+          "titleNView":false,
+          "background":"#191E29"
         }
       }
     },
@@ -47,17 +59,6 @@
     },
     {
       "path": "pages/wallet/index",
-      "style": {
-        "navigationBarTitleText": "%common.title%",
-        "navigationStyle":"custom",
-        "app-plus":{
-          "titleNView":false,
-          "background":"#191E29"
-        }
-      }
-    },
-    {
-      "path": "pages/trade/kLine",
       "style": {
         "navigationBarTitleText": "%common.title%",
         "navigationStyle":"custom",

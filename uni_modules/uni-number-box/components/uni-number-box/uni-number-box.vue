@@ -155,7 +155,6 @@
 				}
 				const scale = this._getDecimalScale();
 				this.inputValue = value.toFixed(String(scale).length - 1);
-        console.log("值", this.inputValue)
 				this.$emit("change", +this.inputValue);
 				this.$emit("input", +this.inputValue);
 			},

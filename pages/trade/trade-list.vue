@@ -123,8 +123,13 @@
       <uni-icons color="#E1E8F5" type="list" size="28"></uni-icons>
     </view>
 
-    <view class="trade-order-list" :style="[{height: isNoData ? '200px' : ''}]">
-      <my-empty v-if="isNoData" :text="emptyText" height="80px" width="80px" :loadingStatus="loadingStatus"></my-empty>
+    <view class="trade-order-box">
+      <view class="trade-order-empty" v-if="isNoData">
+        <my-empty :text="emptyText" height="80px" width="80px" :loadingStatus="loadingStatus"></my-empty>
+      </view>
+      <view class="trade-order-list" v-else>
+        <view class="trade-order-item" v-for="item in orderList" :key="item.id">{{item.name}}</view>
+      </view>
     </view>
   </view>
 </template>
@@ -300,9 +305,9 @@ export default {
         coinId: 0,
         type: 1,
         direction: 1,
-        price: "",
-        amount: "",
-        total: "",
+        price: 0,
+        amount: 0,
+        total: 0,
       },
       depthType: 0,
     }
@@ -344,6 +349,8 @@ export default {
         this.tradeForm.total = this.tradeForm.amount
       }
       this.tradeFormLoading = true
+      this.tradeForm.coinId = this.pair.coin.id
+      this.tradeForm.tradeCoinId = this.pair.tradeCoin.id
       entrustOrderCreate(this.tradeForm)
         .then(res => {
           this.tradeFormLoading = false
@@ -363,12 +370,10 @@ export default {
 
 <style lang="scss" scoped>
 .list-box {
-  flex: 1;
   width: 750rpx;
   background-color: #191E29;
   border-top-left-radius: 20px;
   border-top-right-radius: 20px;
-  overflow: hidden auto;
 }
 .operation-part {
   display: flex;
@@ -650,7 +655,11 @@ export default {
     color: #E1E8F5;
   }
 }
-.trade-order-list {
+.trade-order-box {
+}
+.trade-order-empty {
   position: relative;
+  width: 750rpx;
+  height: 170px;
 }
 </style>
