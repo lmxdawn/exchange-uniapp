@@ -301,7 +301,7 @@
           tradeCoinId: 3,
           coinId: 1,
           page: 1,
-          limit: 20,
+          limit: 10,
         },
         loadingMoreText: {
           contentdown: t('common.more.down'),
@@ -323,18 +323,14 @@
           coinId: 0,
           type: 1,
           direction: 1,
-          price: 0,
-          amount: 0,
-          total: 0,
+          price: "",
+          amount: "",
+          total: "",
         },
         depthType: 0,
       }
 		},
 		onLoad() {
-      // 设置参数
-      this.params.tradeCoinId = this.pair.tradeCoin.id
-      this.params.coinId = this.pair.coin.id
-
       this.init()
 
       // 监听深度图数据事件
@@ -384,9 +380,12 @@
             }
             this.tradeForm.coinId = this.pair.coin.id
             this.tradeForm.tradeCoinId = this.pair.tradeCoin.id
+            this.tradeForm.price = ""
+            this.tradeForm.amount = ""
+            this.tradeForm.total = ""
             this.getBalance()
             this.getDepth()
-            this.getOrderList();
+            this.getOrderList(true);
           })
       },
       getBalance() {
@@ -414,7 +413,11 @@
             .catch(() => {
             })
       },
-      getOrderList() {
+      getOrderList(refresh) {
+        if (refresh) {
+          this.params.page = 1
+          this.loadingStatus = "more"
+        }
         if (this.loadingStatus !== "more") {
           return false
         }
@@ -431,8 +434,11 @@
             this.loadingStatus = "more";
             let dataList = res.data || []
             this.isNoData = (dataList.length === 0 && this.orderList.length === 0);
-            console.log(dataList.length, this.orderList.length)
-            this.orderList = this.orderList.concat(dataList);
+            if (refresh) {
+              this.orderList = dataList;
+            } else {
+              this.orderList = this.orderList.concat(dataList);
+            }
             this.params.page++
             if (dataList.length < this.params.limit) {
               this.loadingStatus = "noMore";
@@ -492,6 +498,9 @@
                 this.$tui.toast(t('http.code.' + res.code))
                 return false
               }
+              let msg = this.tradeForm.direction === 1 ? t('trade.order.sub.buy.success') : t('trade.order.sub.sell.success')
+              this.$tui.toast(msg)
+              this.init()
             })
             .catch(() => {
               this.tradeFormLoading = false
