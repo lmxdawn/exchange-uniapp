@@ -68,8 +68,14 @@
           </view>
         </view>
 
-        <view class="trade-sub-btn" :class="[tradeForm.direction === 1 ? 'buy' : 'sell']" @click="orderSub">
-          <text class="trade-sub-btn__text">{{ memberInfo.memberId <= 0 ? loginText : tradeDirectionArr[tradeForm.direction - 1] + " " + pair.tradeCoin.name }}</text>
+
+        <view class="trade-sub-btn-box">
+          <my-button class="trade-sub-btn"
+                     :class="[tradeForm.direction === 1 ? 'buy' : 'sell']"
+                     @click="orderSub" type="success"
+                     :loading="tradeFormLoading">
+            <text class="trade-sub-btn__text">{{ memberInfo.memberId <= 0 ? loginText : tradeDirectionArr[tradeForm.direction - 1] + " " + pair.tradeCoin.name }}</text>
+          </my-button>
         </view>
 
       </view>
@@ -128,7 +134,7 @@
         <my-empty :text="emptyText" height="80px" width="80px" :loadingStatus="loadingStatus"></my-empty>
       </view>
       <view class="trade-order-list" v-else>
-        <view class="trade-order-item" v-for="item in orderList" :key="item.id">{{item.name}}</view>
+        <view class="trade-order-item" v-for="item in orderList" :key="item.id">{{item.modifiedTime}}</view>
       </view>
     </view>
   </view>
@@ -140,6 +146,7 @@ import messages from '../../locale/index';
 import {mapGetters} from "vuex";
 import myPopup from "../../components/my-popup/my-popup"
 import myEmpty from "../../components/my-empty/my-empty";
+import myButton from "../../components/my-button/button"
 import {accMul,accDiv} from "../../utils/decimal";
 import {entrustOrderCreate} from "../../api/trade/entrustOrder";
 import {navigateTo} from "../../utils/common";
@@ -192,7 +199,8 @@ export default {
   },
   components: {
     myPopup,
-    myEmpty
+    myEmpty,
+    myButton,
   },
   computed: {
     ...mapGetters({
@@ -521,21 +529,16 @@ export default {
     color: #c1cdde;
   }
 }
+.trade-sub-btn-box {
+
+}
 .trade-sub-btn {
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  padding: 10px 0;
-  border-radius: 3px;
+  font-size: 16px;
   &.buy {
     background-color: #2DBD96
   }
   &.sell {
     background-color: #ED6666
-  }
-  &__text {
-    font-size: 13px;
-    color: #FFFFFF;
   }
 }
 

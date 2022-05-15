@@ -14,9 +14,7 @@
       }
     ]"
   >
-    <text v-if="isSlot">
-      <slot></slot>
-    </text>
+    <slot></slot>
   </button>
 </template>
 
@@ -37,10 +35,6 @@ export default {
     disabled: Boolean,
     round: Boolean,
     circle: Boolean,
-    isSlot: {
-      type: Boolean,
-      default: true
-    }
   },
   computed: {
     buttonDisabled() {
@@ -57,8 +51,8 @@ export default {
 
 <style lang="scss" scoped>
 .m-button {
-  color: #E1E8F5;
   font-size: 18px;
+  color: #E1E8F5;
   border-radius: 4px;
   &__default {
     background-color: #202530;

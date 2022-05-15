@@ -82,10 +82,10 @@
         isNoData: true,
         loadingStatus: "more",
         orderList: [],
+        isShowInit: false, // 是否在页面显示的时候重新加载
       }
 		},
 		onLoad() {
-
       // 设置参数
       this.params.tradeCoinId = this.pair.tradeCoin.id
       this.params.coinId = this.pair.coin.id
@@ -103,6 +103,12 @@
         this.depthBuy = res.buyList || []
       })
 		},
+    onShow() {
+      if (this.isShowInit) {
+        this.isShowInit = false
+        this.init()
+      }
+    },
     onUnload() {
       // 移除深度图数据监听事件
       uni.$off('depthWs');
