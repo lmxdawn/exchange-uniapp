@@ -339,7 +339,7 @@ export default {
     orderSub() {
       if (this.memberInfo.memberId <= 0) {
         let redirect = encodeURIComponent("trade/index")
-        navigateTo("other/login?redirect=" + redirect, "slide-in-bottom")
+        navigateTo("mine/login?redirect=" + redirect, "slide-in-bottom")
         return false
       }
       if (this.tradeFormLoading) {

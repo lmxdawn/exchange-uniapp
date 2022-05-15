@@ -473,7 +473,7 @@
           // 打开显示页面时重新加载数据的开关
           this.isShowInit = true
           let redirect = encodeURIComponent("trade/index")
-          navigateTo("other/login?redirect=" + redirect, "slide-in-bottom")
+          navigateTo("mine/login?redirect=" + redirect, "slide-in-bottom")
           return false
         }
         if (this.tradeFormLoading) {

@@ -1,54 +1,49 @@
 <template>
-  <view class="register-box">
-    <uni-nav-bar @clickLeft="back" class="register-nav-bar" leftIcon="back" color="#E1E8F5" :border="false" background-color="#191E29" :statusBar="true"></uni-nav-bar>
-    <view class="register-body">
-      <view class="register-title">
-        <text class="register-title-text">{{title(false)}}</text>
+  <view class="forget-password-box">
+    <uni-nav-bar @clickLeft="back" class="forget-password-nav-bar" leftIcon="back" color="#E1E8F5" :border="false" background-color="#191E29" :statusBar="true"></uni-nav-bar>
+    <view class="forget-password-body">
+      <view class="forget-password-title">
+        <text class="forget-password-title-text">{{$t('common.forgetPassword')}}</text>
       </view>
-      <view class="register-form">
-        <my-input v-show="type === 'email'" v-model="form.email" class="register-form-item" :placeholder="emailPlaceholder"></my-input>
-        <my-input v-show="type === 'tel'" class="register-form-item" v-model="form.tel" :placeholder="telPlaceholder">
+      <view class="forget-password-form">
+        <my-input v-show="type === 'email'" v-model="form.email" class="forget-password-form-item" :placeholder="emailPlaceholder"></my-input>
+        <my-input v-show="type === 'tel'" class="forget-password-form-item" v-model="form.tel" :placeholder="telPlaceholder">
           <template slot="prefix">
             <my-area-code :code="form.areaCode" @selected="areaCodeSelected"></my-area-code>
           </template>
         </my-input>
-        <my-input class="register-form-item" v-model="form.code" :placeholder="codePlaceholder">
+        <my-input class="forget-password-form-item" v-model="form.code" input-type="number" :placeholder="codePlaceholder">
           <template slot="suffix">
-            <view class="register-form-item-code-suffix" @click="sendCode">
-              <text class="register-form-item-code-suffix-text" :style="{color: codeButtonColor}">{{codeCount < codeCountMax ? codeCount + " S" : $t('common.send')}}</text>
+            <view class="forget-password-form-item-code-suffix" @click="sendCode">
+              <text class="forget-password-form-item-code-suffix-text" :style="{color: codeButtonColor}">{{codeCount < codeCountMax ? codeCount + " S" : $t('common.send')}}</text>
             </view>
           </template>
         </my-input>
 
-        <my-input class="register-form-item" v-model="form.password" :input-type="newPwdInputType" :placeholder="newPwdPlaceholder">
+        <my-input class="forget-password-form-item" v-model="form.password" :input-type="newPwdInputType" :placeholder="newPwdPlaceholder">
           <template slot="suffix">
-            <view class="register-form-item-pwd-suffix">
-              <uni-icons class="register-form-item-pwd-close" @click="newPwdCloseClick" v-if="form.password.length > 0" custom-prefix="custom-icon" type="closeempty" color="#c1cdde" size="20"></uni-icons>
+            <view class="forget-password-form-item-pwd-suffix">
+              <uni-icons class="forget-password-form-item-pwd-close" @click="newPwdCloseClick" v-if="form.password.length > 0" custom-prefix="custom-icon" type="closeempty" color="#c1cdde" size="20"></uni-icons>
               <uni-icons @click="newPwdEyeClick" custom-prefix="custom-icon" :type="newPwdInputType === 'password' ? 'eye-slash' : 'eye'" color="#c1cdde" size="20"></uni-icons>
             </view>
           </template>
         </my-input>
 
-        <my-input class="register-form-item" v-model="form.okPassword" :input-type="okNewPwdInputType" :placeholder="okNewPwdPlaceholder">
+        <my-input class="forget-password-form-item" v-model="form.okPassword" :input-type="okNewPwdInputType" :placeholder="okNewPwdPlaceholder">
           <template slot="suffix">
-            <view class="register-form-item-pwd-suffix">
-              <uni-icons class="register-form-item-pwd-close" @click="okNewPwdCloseClick" v-if="form.okPassword.length > 0" custom-prefix="custom-icon" type="closeempty" color="#c1cdde" size="20"></uni-icons>
+            <view class="forget-password-form-item-pwd-suffix">
+              <uni-icons class="forget-password-form-item-pwd-close" @click="okNewPwdCloseClick" v-if="form.okPassword.length > 0" custom-prefix="custom-icon" type="closeempty" color="#c1cdde" size="20"></uni-icons>
               <uni-icons @click="okNewPwdEyeClick" custom-prefix="custom-icon" :type="okNewPwdInputType === 'password' ? 'eye-slash' : 'eye'" color="#c1cdde" size="20"></uni-icons>
             </view>
           </template>
         </my-input>
 
-        <my-button class="register-form-item" @click="registerClick" :loading="loading" :type="registerType">{{$t('common.register')}}</my-button>
+        <my-button class="forget-password-form-item" @click="ok" :type="okType">{{$t('common.ok')}}</my-button>
       </view>
-      <view class="register-user">
-        <text class="register-user-text"></text>
-        <text class="register-user-text" @click="typeClick">{{title(true)}}</text>
+      <view class="forget-password-user">
+        <text class="forget-password-user-text"></text>
+        <text class="forget-password-user-text" @click="typeClick">{{title}}</text>
       </view>
-    </view>
-
-    <view class="register-login">
-      <text class="register-login-tip">{{$t('common.login.tip')}}</text>
-      <text class="register-login-btn" @click="loginTo">{{$t('common.login')}}</text>
     </view>
   </view>
 </template>
@@ -60,7 +55,6 @@ import myAreaCode from "../../components/my-area-code/index"
 import {isBackNavigateBack, navigateBack} from "../../utils/common";
 import {emailSend} from "../../api/other/email";
 import {smsSend} from "../../api/other/sms";
-import {registerByEmail, registerByTel} from "../../api/other/auth";
 
 export default {
   components: {
@@ -70,11 +64,7 @@ export default {
   },
   computed: {
     title() {
-      return isF => {
-        let email = this.$t('common.register.email')
-        let tel = this.$t('common.register.tel')
-        return this.type === "email" ? (!isF ? email : tel) : (!isF ? tel : email);
-      }
+      return this.type === "email" ? this.$t('common.tel.forgetPassword') : this.$t('common.email.forgetPassword');
     },
     emailPlaceholder() {
       return this.$t('common.email.placeholder')
@@ -94,7 +84,7 @@ export default {
     okNewPwdPlaceholder() {
       return this.$t('common.ok.new.pwd.placeholder')
     },
-    registerType() {
+    okType() {
       return this.form.code.length > 0 && this.form.password.length >= 8 && this.form.password.length <= 20 && this.form.okPassword.length > 0 ? 'success' : 'default'
     }
   },
@@ -116,7 +106,7 @@ export default {
         code: "",
         password: "",
         okPassword: "",
-        scene: 1, // 场景为注册
+        scene: 5, // 场景为找回密码
       }
     }
   },
@@ -144,9 +134,6 @@ export default {
     },
     okNewPwdEyeClick() {
       this.okNewPwdInputType = this.okNewPwdInputType === 'password' ? 'text' : 'password'
-    },
-    loginTo() {
-      isBackNavigateBack("other/login")
     },
     // 发送验证码
     sendCode() {
@@ -187,8 +174,8 @@ export default {
             this.$tui.toast(this.$t('http.code.1'))
           });
     },
-    registerClick() {
-      if (this.registerType === 'default') {
+    ok() {
+      if (this.okType === 'default') {
         return false
       }
       if (this.form.password !== this.form.okPassword) {
@@ -198,93 +185,67 @@ export default {
       if (this.loading) {
         return false;
       }
-      this.loading = true
-      let register = this.type === "email" ? registerByEmail : registerByTel
-      register(this.form)
-        .then(res => {
-          this.loading = false
-          if (res.code !== 0) {
-            this.$tui.toast(this.$t('http.code.' + res.code))
-            return false;
-          }
-          // 确认
-          this.$tui.toast(this.$t('common.register.success'))
-          setTimeout(() => {
-            isBackNavigateBack("other/login")
-          }, 1000)
-        })
-        .catch(() => {
-          this.loading = false
-          this.$tui.toast(this.$t('http.code.1'))
-        })
+
+      // 确认
+      this.$tui.toast(this.$t('common.forget.pwd'))
+      setTimeout(() => {
+        isBackNavigateBack("mine/login")
+      }, 1000)
     }
   }
 }
 </script>
 
 <style scoped>
-.register-box {
+.forget-password-box {
 }
-.register-nav-bar {
+.forget-password-nav-bar {
   padding: 0 10px;
 }
-.register-body {
+.forget-password-body {
   padding-top: 50rpx;
   padding-left: 30px;
   padding-right: 30px;
   box-sizing: border-box;
 }
 
-.register-title {
+.forget-password-title {
   display: flex;
   flex-direction: column;
 }
 
-.register-title-text {
+.forget-password-title-text {
   font-size: 30px;
   color: #E1E8F5;
 }
-.register-form-item {
+.forget-password-form-item {
   margin-top: 25px;
 }
-.register-form-item-pwd-suffix {
+.forget-password-form-item-pwd-suffix {
   padding: 0 14px;
 }
-.register-form-item-pwd-close {
+.forget-password-form-item-pwd-close {
   margin-right: 10px;
 }
-.register-form-item-code-suffix {
+.forget-password-form-item-code-suffix {
   padding: 10px 25px;
   background-color: #4F5460;
   border-bottom: 1px solid #4F5460;
   border-top: 1px solid #4F5460;
 }
-.register-form-item-code-suffix-text {
+.forget-password-form-item-code-suffix-text {
   font-size: 15px;
   color: #A7ADB9;
 }
-.register-user {
+.forget-password-user {
   display: flex;
   flex-direction: row;
-  justify-content: end;
+  justify-content: space-between;
   align-items: center;
   margin-top: 10px;
 }
-.register-user-text {
+.forget-password-user-text {
   font-size: 12px;
   color: #E1E8F5;
-}
-.register-login {
-   position: absolute;
-   bottom: 50px;
-   left: 30px;
- }
-.register-login-tip {
-  font-size: 16px;
-  color: #E1E8F5;
-}
-.register-login-btn {
-  font-size: 16px;
-  color: #2DBD96;
 }
 </style>

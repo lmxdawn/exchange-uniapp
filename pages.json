@@ -69,7 +69,7 @@
       }
     },
     {
-      "path": "pages/other/login",
+      "path": "pages/mine/login",
       "style": {
         "navigationBarTitleText": "%common.login%",
         "navigationStyle":"custom",
@@ -79,7 +79,7 @@
       }
     },
     {
-      "path": "pages/other/register",
+      "path": "pages/mine/register",
       "style": {
         "navigationBarTitleText": "%common.register%",
         "navigationStyle":"custom",
@@ -89,7 +89,7 @@
       }
     },
     {
-      "path": "pages/other/forgetPassword",
+      "path": "pages/mine/forgetPassword",
       "style": {
         "navigationBarTitleText": "%common.forgetPassword%",
         "navigationStyle":"custom",

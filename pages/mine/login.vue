@@ -41,7 +41,7 @@ import myInput from "../../components/my-input/input"
 import myButton from "../../components/my-button/button"
 import myAreaCode from "../../components/my-area-code/index"
 import {isBackNavigateBack, navigateBack, navigateTo} from "../../utils/common";
-import {loginByPwd} from "../../api/other/auth";
+import {loginByPwd} from "../../api/mine/auth";
 import { mapActions } from "vuex";
 import {connectionLogin} from "../../api/ws/connection";
 import {getToken, setToken} from "../../utils/userAuth";
@@ -112,10 +112,10 @@ export default {
       this.form.areaCode = item.code
     },
     forgetPasswordClick() {
-      navigateTo("other/forgetPassword?type=" + this.type)
+      navigateTo("mine/forgetPassword?type=" + this.type)
     },
     registerTo() {
-      navigateTo("other/register?type=" + this.type)
+      navigateTo("mine/register?type=" + this.type)
     },
     loginClick() {
       if (this.loading) {
