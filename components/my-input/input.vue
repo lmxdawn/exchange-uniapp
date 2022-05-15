@@ -87,7 +87,7 @@ export default {
     flex: auto;
     align-items: center;
     white-space: nowrap;
-    padding: 10px 14px;
+    padding: 14px 14px;
   }
 
   &.m-input-plain {

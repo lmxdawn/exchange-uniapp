@@ -33,7 +33,7 @@
               :orderList="orderList"></trade-list>
         </cell>
         <cell class="load-more" v-if="loadingStatus !== 'noMore' || params.page > 1">
-          <uni-load-more :status="loadingStatus" iconType="circle" :contentText="loadingMoreText"></uni-load-more>
+          <uni-load-more :status="loadingStatus" color="#2DBD96" iconType="circle" :contentText="loadingMoreText"></uni-load-more>
         </cell>
       </list>
       <!-- #endif -->
@@ -49,7 +49,8 @@
             :loading-status="loadingStatus"
             :orderList="orderList"></trade-list>
         <view class="load-more" v-if="loadingStatus !== 'noMore' || params.page > 1">
-          <uni-load-more :status="loadingStatus" iconType="circle" :contentText="loadingMoreText"></uni-load-more>
+          <view v-if="params.page === 1" style="height: 20px"></view>
+          <uni-load-more :status="loadingStatus" color="#2DBD96" iconType="circle" :contentText="loadingMoreText"></uni-load-more>
         </view>
       </scroll-view>
       <!-- #endif -->

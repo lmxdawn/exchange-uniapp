@@ -196,7 +196,7 @@ export default {
 .login-box {
 }
 .login-nav-bar {
-  padding: 0 10px;
+  padding: 0 15px;
 }
 .login-body {
   padding-top: 50rpx;

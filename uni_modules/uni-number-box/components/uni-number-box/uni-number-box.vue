@@ -155,6 +155,7 @@
 				}
 				const scale = this._getDecimalScale();
 				this.inputValue = value.toFixed(String(scale).length - 1);
+        console.log("值", this.inputValue)
 				this.$emit("change", +this.inputValue);
 				this.$emit("input", +this.inputValue);
 			},
@@ -184,7 +185,7 @@
 		flex-direction: row;
 		align-items: center;
 		justify-content: center;
-		padding: 0 8px;
+		//padding: 0 8px;
 		background-color: $bg;
 		/* #ifdef H5 */
 		cursor: pointer;
@@ -194,7 +195,7 @@
 	}
 
 	.uni-numbox__value {
-		margin: 0 2px;
+		//margin: 0 2px;
 		background-color: $bg;
 		flex: 1;
 		height: $box-height;

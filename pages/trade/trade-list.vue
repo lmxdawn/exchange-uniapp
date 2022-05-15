@@ -21,20 +21,21 @@
             </view>
           </my-popup>
 
+
           <view class="trade-dotted-box" v-if="tradeForm.type === 2">
-            <text class="trade-dotted">{{tradeMarketArr[tradeForm.type - 1]}}</text>
+            <text class="trade-dotted">{{tradeMarketArr[tradeForm.direction - 1]}}</text>
             <view class="trade-line"></view>
           </view>
 
           <view class="trade-input-box" v-else>
-            <uni-number-box class="trade-input" background="rgba(184,198,216,.08)" color="#9197A3" :placeholder="pair.coin.name" placeholderColor="#4F5460" v-model="tradeForm.price" :step="stepPrice"></uni-number-box>
+            <uni-number-box class="trade-input" background="rgba(184,198,216,.08)" color="#9197A3" :placeholder="limitPricePlaceholder" placeholderColor="#4F5460" v-model="tradeForm.price" :step="stepPrice" :max="999999999999"></uni-number-box>
             <view class="trade-line">
               <text class="trade-line__text">≈{{priceRate(tradeForm.price)}} {{usdtRate.name}}</text>
             </view>
           </view>
 
           <view class="trade-input-box">
-            <uni-number-box class="trade-input" background="rgba(184,198,216,.08)" color="#9197A3" :placeholder="amountPlaceholder" placeholderColor="#4F5460" v-model="tradeForm.amount" :step="stepAmount"></uni-number-box>
+            <uni-number-box class="trade-input" background="rgba(184,198,216,.08)" color="#9197A3" :placeholder="amountPlaceholder" placeholderColor="#4F5460" v-model="tradeForm.amount" :step="stepAmount" :max="999999999999"></uni-number-box>
           </view>
 
           <view class="trade-balance">
@@ -220,8 +221,15 @@ export default {
         return Number(accMul(accMul(this.usdtRate.price, usdtPrice), price)).toFixed(this.usdtRate.precision)
       }
     },
+    limitPricePlaceholder() {
+      return t('trade.limit.text') + `(${this.pair.coin.name})`
+    },
     amountPlaceholder() {
-      return this.tradeForm.type === 2 && this.tradeForm.direction === 1 ? this.pair.coin.name : this.pair.tradeCoin.name
+      // 如果是市价单，并且是买入的情况
+      if (this.tradeForm.type === 2 && this.tradeForm.direction === 1) {
+        return t('common.money') + `(${this.pair.coin.name})`
+      }
+      return t('common.amount') + `(${this.pair.tradeCoin.name})`
     },
     money() {
       return accMul(this.tradeForm.amount, this.tradeForm.price)
@@ -272,7 +280,7 @@ export default {
       return t('common.usable')
     },
     moneyTitle() {
-      return t('common.money')
+      return t('trade.limit.money')
     },
     decimalTitle() {
       return t('common.decimal')
@@ -318,7 +326,7 @@ export default {
     orderSub() {
       if (this.memberInfo.memberId <= 0) {
         let redirect = encodeURIComponent("trade/index")
-        navigateTo("other/login?redirect=" + redirect, "slide-out-bottom")
+        navigateTo("other/login?redirect=" + redirect, "slide-in-bottom")
         return false
       }
       if (this.tradeFormLoading) {
@@ -444,11 +452,13 @@ export default {
 }
 
 .trade-dotted-box {
+  display: flex;
+  flex-direction: column;
 }
 .trade-dotted {
+  flex: 1;
+  padding: 7px 20px;
   text-align: center;
-  height: 35px;
-  line-height: 35px;
   border-top: dotted 1px #9197A3;
   border-bottom: dotted 1px #9197A3;
   border-left: dotted 1px #9197A3;
