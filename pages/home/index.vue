@@ -15,8 +15,8 @@
         icon1Color="#b8c6d8"
         icon2Color="#b8c6d8"
         :icon2Value="value"
-        @onClickInput="onNavBarClickInput"
-        @onClickIcon="onNavBarClickIcon"
+        @clickInput="onNavBarClickInput"
+        @clickIcon="onNavBarClickIcon"
     >
 
     </my-nav-bar-search>
@@ -52,6 +52,7 @@
 <script>
 
   import myNavBarSearch from "../../components/my-nav-bar/my-nav-bar-search";
+  import {navigateTo} from "../../utils/common";
 
   export default {
     components: {
@@ -102,7 +103,7 @@
 
       },
       asset() {
-
+        navigateTo("mine/mine", "slide-in-left")
       },
       scan() {
 

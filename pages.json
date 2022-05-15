@@ -69,9 +69,29 @@
       }
     },
     {
+      "path": "pages/mine/mine",
+      "style": {
+        "navigationBarTitleText": "%common.title%",
+        "navigationStyle":"custom",
+        "app-plus":{
+          "background":"#191E29"
+        }
+      }
+    },
+    {
+      "path": "pages/mine/setting",
+      "style": {
+        "navigationBarTitleText": "%mine.setting%",
+        "navigationBarBackgroundColor": "#212631",
+        "app-plus":{
+          "background":"#191E29"
+        }
+      }
+    },
+    {
       "path": "pages/mine/login",
       "style": {
-        "navigationBarTitleText": "%common.login%",
+        "navigationBarTitleText": "%common.title%",
         "navigationStyle":"custom",
         "app-plus":{
           "background":"#191E29"
@@ -81,7 +101,7 @@
     {
       "path": "pages/mine/register",
       "style": {
-        "navigationBarTitleText": "%common.register%",
+        "navigationBarTitleText": "%common.title%",
         "navigationStyle":"custom",
         "app-plus":{
           "background":"#191E29"
@@ -91,7 +111,7 @@
     {
       "path": "pages/mine/forgetPassword",
       "style": {
-        "navigationBarTitleText": "%common.forgetPassword%",
+        "navigationBarTitleText": "%common.title%",
         "navigationStyle":"custom",
         "app-plus":{
           "background":"#191E29"
@@ -143,7 +163,7 @@
   },
   "globalStyle": {
     "navigationBarTextStyle": "white",
-    "navigationBarTitleText": "uni-app",
+    "navigationBarTitleText": "Exchange",
     "navigationBarBackgroundColor": "#191E29",
     "backgroundColor": "black",
     "app-plus": {
