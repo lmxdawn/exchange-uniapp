@@ -89,6 +89,52 @@
       }
     },
     {
+      "path": "pages/mine/securitySetting",
+      "style": {
+        "navigationBarTitleText": "%mine.security.setting%",
+        "navigationBarBackgroundColor": "#212631",
+        "app-plus":{
+          "background":"#191E29"
+        }
+      }
+    },
+    {
+      "path": "pages/mine/reviseLoginPwd",
+      "style": {
+        "navigationBarTitleText": "%mine.revise.login.pwd%",
+        "app-plus":{
+          "background":"#212631"
+        }
+      }
+    },
+    {
+      "path": "pages/mine/revisePayPwd",
+      "style": {
+        "navigationBarTitleText": "%mine.revise.pay.pwd%",
+        "app-plus":{
+          "background":"#212631"
+        }
+      }
+    },
+    {
+      "path": "pages/mine/forgetPayPwd",
+      "style": {
+        "navigationBarTitleText": "%mine.forget.pay.pwd%",
+        "app-plus":{
+          "background":"#212631"
+        }
+      }
+    },
+    {
+      "path": "pages/mine/setPayPwd",
+      "style": {
+        "navigationBarTitleText": "%mine.set.pay.pwd%",
+        "app-plus":{
+          "background":"#212631"
+        }
+      }
+    },
+    {
       "path": "pages/mine/login",
       "style": {
         "navigationBarTitleText": "%common.title%",

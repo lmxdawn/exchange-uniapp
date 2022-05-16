@@ -91,6 +91,11 @@ export default {
       this.getUserInfo().then()
     },
     securitySettingTo() {
+      if (this.memberInfo.memberId <= 0) {
+        this.isShowInit = true
+        navigateToLogin("mine/mine")
+        return false
+      }
       navigateTo("mine/securitySetting")
     },
     settingTo() {

@@ -4,14 +4,18 @@ import {getToken, delToken, getMemberInit, delMemberInit, weChatLogin, setMember
 import {reLaunch, isWeChatWebView} from "../../utils/common";
 
 const member = getMemberInit();
-
 const state = {
     memberInfo: {
         memberId: parseInt(member.memberId) || 0,
         name: member.name || "",
         avatar: member.avatar || "",
         tel: member.tel || "",
+        telAreaCode: member.telAreaCode || 0,
         email: member.email || "",
+        remark: member.remark || "",
+        isPwd: member.isPwd || 0,
+        isPayPwd: member.isPayPwd || 0,
+        isGoogleKey: member.isGoogleKey || 0,
     },
     memberBindingPageStatus: false,
     memberLoginPageStatus: false,
@@ -31,8 +35,13 @@ const actions = {
             memberId: 0,
             name: "",
             avatar: "",
-            mobile: "",
+            tel: "",
+            telAreaCode: 0,
             email: "",
+            remark: "",
+            isPwd: 0,
+            isPayPwd: 0,
+            isGoogleKey: 0,
         };
         commit(types.MEMBER_INFO, info);
         commit(types.MEMBER_CLEAR_LOGIN);
@@ -52,15 +61,20 @@ const actions = {
                     if (res.code === 0) {
                         let data = res.data || {};
                         let info = {
-                            memberId: data.memberId || 0,
+                            memberId: parseInt(data.memberId) || 0,
                             name: data.name || "",
                             avatar: data.avatar || "",
-                            mobile: data.mobile || "",
+                            tel: data.tel || "",
+                            telAreaCode: data.telAreaCode || 0,
                             email: data.email || "",
+                            remark: data.remark || "",
+                            isPwd: data.isPwd || 0,
+                            isPayPwd: data.isPayPwd || 0,
+                            isGoogleKey: data.isGoogleKey || 0,
                         };
                         commit(types.MEMBER_INFO, info);
                         // 没有绑定手机号，并且没有绑定邮箱
-                        if (!data.mobile && !data.email) {
+                        if (!data.tel && !data.email) {
                             // 跳转到填写信息页面
                             setTimeout(() => {
                                 dispatch("toBindingTelPage", invite_code);

@@ -14,9 +14,7 @@
         </my-input>
         <my-input class="register-form-item" v-model="form.code" input-type="number" :placeholder="codePlaceholder">
           <template slot="suffix">
-            <view class="register-form-item-code-suffix" @click="sendCode">
-              <text class="register-form-item-code-suffix-text" :style="{color: codeButtonColor}">{{codeCount < codeCountMax ? codeCount + " S" : $t('common.send')}}</text>
-            </view>
+            <my-code :type="type" :form="form" @sendCodeSuccess="sendCodeSuccess"></my-code>
           </template>
         </my-input>
 
@@ -57,16 +55,17 @@
 import myInput from "../../components/my-input/input"
 import myButton from "../../components/my-button/button"
 import myAreaCode from "../../components/my-area-code/index"
+import myCode from "../../components/my-code/index"
 import {isBackNavigateBack, navigateBack} from "../../utils/common";
-import {emailSend} from "../../api/other/email";
-import {smsSend} from "../../api/other/sms";
 import {registerByEmail, registerByTel} from "../../api/mine/auth";
+import {REGISTER} from "../../constant/codeScene";
 
 export default {
   components: {
     myButton,
     myInput,
-    myAreaCode
+    myAreaCode,
+    myCode,
   },
   computed: {
     title() {
@@ -85,9 +84,6 @@ export default {
     codePlaceholder() {
       return this.type === "email" ? this.$t('common.email.code.placeholder') : this.$t('common.tel.code.placeholder');
     },
-    codeButtonColor() {
-      return this.type === "email" ? (this.form.email.length > 0 && this.codeCount === this.codeCountMax ? "#2DBD96" : "#A7ADB9") : (this.form.tel.length > 0 && this.codeCount === this.codeCountMax ? "#2DBD96" : "#A7ADB9")
-    },
     newPwdPlaceholder() {
       return this.$t('common.new.pwd.placeholder')
     },
@@ -104,11 +100,6 @@ export default {
       newPwdInputType: "password",
       okNewPwdInputType: "password",
       loading: false,
-      codeReload: false,
-      codeLoading: false,
-      codeTimer: null,
-      codeCount: 60,
-      codeCountMax: 60,
       form: {
         areaCode: 0,
         email: "",
@@ -116,7 +107,7 @@ export default {
         code: "",
         password: "",
         okPassword: "",
-        scene: 1, // 场景为注册
+        scene: REGISTER,
       }
     }
   },
@@ -148,44 +139,9 @@ export default {
     loginTo() {
       isBackNavigateBack("mine/login")
     },
-    // 发送验证码
-    sendCode() {
-      if (this.type === 'email' && this.form.email.length === 0) {
-        return;
-      }
-      if (this.type === 'tel' && (this.form.tel.length === 0 || this.form.areaCode <= 0)) {
-        return;
-      }
-      if (this.codeLoading || this.codeReload) {
-        return;
-      }
-      this.codeLoading = true;
-      let sendCode = this.type === "email" ? emailSend : smsSend
-      sendCode(this.form)
-          .then(res => {
-            this.codeLoading = false;
-            if (res.code !== 0) {
-              this.$tui.toast(this.$t('http.code.' + res.code))
-              return false;
-            }
-            this.form.code = res.data;
-            this.codeCount--;
-            this.codeReload = true;
-            this.codeTimer = setInterval(() => {
-              if (this.codeCount > 0) {
-                this.codeCount--;
-              } else {
-                clearInterval(this.codeTimer);
-                this.codeTimer = null;
-                this.codeCount = this.codeCountMax;
-                this.codeReload = false;
-              }
-            }, 1000);
-          })
-          .catch(() => {
-            this.codeLoading = false;
-            this.$tui.toast(this.$t('http.code.1'))
-          });
+    // 发送验证码成功
+    sendCodeSuccess(code) {
+      this.form.code = code
     },
     registerClick() {
       if (this.registerType === 'default') {

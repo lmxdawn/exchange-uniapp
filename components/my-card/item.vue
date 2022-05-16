@@ -47,7 +47,7 @@ export default {
 }
 .my-card-item-left-text {
   color: #E1E8F5;
-  font-size: 16px;
+  font-size: 15px;
   font-weight: 500;
 }
 .my-card-item-right {
@@ -61,5 +61,6 @@ export default {
 .my-card-item-right-text {
   color: #9197A3;
   font-size: 12px;
+  font-weight: 500;
 }
 </style>

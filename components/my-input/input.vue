@@ -1,10 +1,10 @@
 <template>
-  <view class="m-input" :class="[type ? 'm-input-' + type : '', {'m-input-plain': plain}]">
+  <view class="m-input" :class="[type ? 'm-input-' + type : '', size ? size : '', {'m-input-plain': plain}]">
     <!-- 前置元素 -->
     <view class="m-input__prefix-inner">
       <slot name="prefix"></slot>
     </view>
-    <view class="m-input__box">
+    <view class="m-input__box" :class="[size ? size : '']">
       {{ label }}
       <input type="text"
              :type="inputType"
@@ -55,6 +55,10 @@ export default {
       type: Boolean,
       default: false
     },
+    size: {
+      type: String,
+      default: "default"
+    },
   },
   methods: {
     handleInput(event) {
@@ -82,12 +86,19 @@ export default {
   justify-content: space-between;
   caret-color: #2DBD96;
 
+  &.mini {
+    font-size: 12px;
+  }
+
   .m-input__box {
     display: flex;
     flex: auto;
     align-items: center;
     white-space: nowrap;
     padding: 14px 14px;
+    &.mini {
+      padding: 10px 10px;
+    }
   }
 
   &.m-input-plain {
