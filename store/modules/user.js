@@ -90,6 +90,9 @@ const actions = {
 
         });
     },
+    setMemberIsPayPwd({ commit }, isPayPwd) {
+        commit("setMemberIsPayPwd", isPayPwd);
+    },
     toBindingTelPage({ commit }, invite_code) {
         commit(types.MEMBER_BINDING_TEL_PAGE, invite_code);
     },
@@ -118,6 +121,11 @@ const mutations = {
     [types.MEMBER_INFO](state, memberInfo) {
         state.memberInfo = memberInfo;
         setMemberInit(memberInfo);
+    },
+    //设置用户是否设置了支付密码
+    ["setMemberIsPayPwd"](state, isPayPwd) {
+        state.memberInfo.isPayPwd = isPayPwd;
+        setMemberInit(state.memberInfo);
     },
     //当前是否在绑定手机号的页面
     [types.MEMBER_BINDING_TEL_PAGE](state, invite_code) {

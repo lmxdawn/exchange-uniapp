@@ -37,7 +37,7 @@ import myButton from "../../components/my-button/button"
 import myCode from "../../components/my-code/index"
 import {isBackNavigateBack, navigateBack} from "../../utils/common";
 import {FORGET_PWD} from "../../constant/codeScene";
-import { mapGetters } from "vuex";
+import { mapActions, mapGetters } from "vuex";
 import {setPayPwd} from "../../api/mine/member";
 
 export default {
@@ -94,6 +94,9 @@ export default {
     }
   },
   methods: {
+    ...mapActions({
+      setMemberIsPayPwd: "setMemberIsPayPwd"
+    }),
     back() {
       navigateBack()
     },
@@ -143,6 +146,7 @@ export default {
             this.$tui.toast(this.$t('http.code.' + res.code))
             return false
           }
+          this.setMemberIsPayPwd(1)
           // 确认
           this.$tui.toast(this.$t('mine.set.pay.pwd.success'))
           setTimeout(() => {

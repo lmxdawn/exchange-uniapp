@@ -176,7 +176,7 @@
   import {entrustOrderList} from "../../api/trade/entrustOrder";
   import {accMul,accDiv} from "../../utils/decimal";
   import {entrustOrderCreate} from "../../api/trade/entrustOrder";
-  import {navigateToLogin} from "../../utils/common";
+  import {navigateTo, navigateToLogin} from "../../utils/common";
 
   const { t } = initVueI18n(messages)
 
@@ -316,6 +316,7 @@
         loadingStatus: "more",
         orderList: [],
         isShowInit: false, // 是否在页面显示的时候重新加载
+        isShowOrderSub: false, // 是否在页面显示的时候重新提交订单
         // 交易数据
         tradeFormLoading: false,
         tradeForm: {
@@ -348,6 +349,10 @@
       if (this.isShowInit) {
         this.isShowInit = false
         this.init()
+      }
+      if (this.isShowOrderSub) {
+        this.isShowOrderSub = false
+        this.orderSub()
       }
     },
     onUnload() {
@@ -472,8 +477,15 @@
         if (this.memberInfo.memberId <= 0) {
           // 打开显示页面时重新加载数据的开关
           this.isShowInit = true
-          let redirect = encodeURIComponent("trade/index")
+          const redirect = encodeURIComponent("trade/index")
           navigateToLogin(redirect)
+          return false
+        } else if (this.memberInfo.isPayPwd !== 1) {
+          this.isShowOrderSub = true
+          // 未设置支付密码
+          const redirect = encodeURIComponent("trade/index")
+          const setPayPwdUrl = "mine/setPayPwd?redirect=" + redirect
+          navigateTo(setPayPwdUrl)
           return false
         }
         if (this.tradeFormLoading) {
