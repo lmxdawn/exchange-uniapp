@@ -11,6 +11,7 @@
 
 <script>
 	import {navigateTo} from "../../utils/common";
+  import {setLang} from "../../utils/lang";
 
   export default {
 		data() {
@@ -28,7 +29,7 @@
 		methods: {
       charge(lang) {
         console.log(lang)
-        uni.setLocale(lang)
+        setLang(lang)
         this.$i18n.locale = lang
       },
       kLineClick() {

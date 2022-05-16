@@ -1,25 +1,6 @@
 <template>
   <view>
-    <my-nav-bar-search
-        statusBar
-        :placeholder="$t('common.search.placeholder')"
-        color="#b8c6d8"
-        backgroundColor="#212631"
-        icon0Name="contact"
-        icon1Name="scan"
-        icon2Name="notification"
-        :icon0Size="43"
-        :icon1Size="23"
-        :icon2Size="28"
-        icon0Color="#717C8A"
-        icon1Color="#b8c6d8"
-        icon2Color="#b8c6d8"
-        :icon2Value="value"
-        @clickInput="onNavBarClickInput"
-        @clickIcon="onNavBarClickIcon"
-    >
-
-    </my-nav-bar-search>
+    <my-nav-bar-search-home :msg-num="value"></my-nav-bar-search-home>
 
     <view class="content">
 
@@ -51,12 +32,11 @@
 
 <script>
 
-  import myNavBarSearch from "../../components/my-nav-bar/my-nav-bar-search";
-  import {navigateTo} from "../../utils/common";
+  import myNavBarSearchHome from "../../components/my-nav-bar/my-nav-bar-search-home";
 
   export default {
     components: {
-      myNavBarSearch
+      myNavBarSearchHome
     },
     computed: {
       noticeText() {
@@ -87,28 +67,7 @@
       adChange(e) {
         this.adCurrent = e.detail.current;
       },
-      onNavBarClickInput() {
-
-      },
-      onNavBarClickIcon(index) {
-        if (index === 0) {
-          this.asset()
-        } else if (index === 1) {
-          this.scan()
-        } else if (index === 2) {
-          this.message()
-        }
-      },
       getMore() {
-
-      },
-      asset() {
-        navigateTo("mine/mine", "slide-in-left")
-      },
-      scan() {
-
-      },
-      message() {
 
       },
 		}

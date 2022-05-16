@@ -131,7 +131,7 @@ export default {
       this.type = this.type === "email" ? "tel" : "email";
     },
     areaCodeSelected(item) {
-      this.form.areaCode = item.code
+      this.form.areaCode = item.value
     },
     newPwdCloseClick() {
       this.form.password = ""

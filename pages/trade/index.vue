@@ -176,7 +176,7 @@
   import {entrustOrderList} from "../../api/trade/entrustOrder";
   import {accMul,accDiv} from "../../utils/decimal";
   import {entrustOrderCreate} from "../../api/trade/entrustOrder";
-  import {navigateTo} from "../../utils/common";
+  import {navigateToLogin} from "../../utils/common";
 
   const { t } = initVueI18n(messages)
 
@@ -473,7 +473,7 @@
           // 打开显示页面时重新加载数据的开关
           this.isShowInit = true
           let redirect = encodeURIComponent("trade/index")
-          navigateTo("mine/login?redirect=" + redirect, "slide-in-bottom")
+          navigateToLogin(redirect)
           return false
         }
         if (this.tradeFormLoading) {

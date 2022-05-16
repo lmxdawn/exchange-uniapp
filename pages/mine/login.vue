@@ -109,7 +109,7 @@ export default {
       this.passwordInputType = this.passwordInputType === 'password' ? 'text' : 'password'
     },
     areaCodeSelected(item) {
-      this.form.areaCode = item.code
+      this.form.areaCode = item.value
     },
     forgetPasswordClick() {
       navigateTo("mine/forgetPassword?type=" + this.type)

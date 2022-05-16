@@ -1,52 +1,26 @@
 <template>
   <view class="my-area-code">
-    <view class="my-area-code-value" @click="valueClick">
-      <text class="my-area-code-value-text" :style="{color: color}">+{{code}}</text>
-      <uni-icons custom-prefix="custom-icon" type="bottom" color="#4F5460" size="12"></uni-icons>
-    </view>
-    <uni-popup ref="myAreaCodePopup" background-color="#191E29">
-      <scroll-view scroll-y class="my-area-code-popup-content">
-        <my-empty class="my-area-code-popup-content-empty" v-if="isNoData" :text="emptyText" :loadingStatus="loadingStatus"></my-empty>
-        <view class="my-area-code-popup-content-list">
-          <view class="my-area-code-popup-content-item" v-for="item in dataList" :key="item.id" @click="itemCLick(item)">
-            <text class="my-area-code-popup-content-item-text" :style="{color: color}">{{item.name}}</text>
-            <text class="my-area-code-popup-content-item-text" :style="{color: color}">+{{item.code}}</text>
-          </view>
-        </view>
-      </scroll-view>
-    </uni-popup>
+    <my-select-list
+        :data-list="dataList"
+        :selected-value="selectedValue"
+        :loading-status="loadingStatus"
+        :is-no-data="isNoData"
+        @selected="selected">
+      <view class="my-area-code-value">
+        <text class="my-area-code-value-text">+{{selectedValue}}</text>
+        <uni-icons custom-prefix="custom-icon" type="bottom" color="#4F5460" size="12"></uni-icons>
+      </view>
+    </my-select-list>
   </view>
 </template>
 
 <script>
-import myEmpty from "../../components/my-empty/my-empty";
+import MySelectList from "../my-select-list";
 import {areaCodeList} from "../../api/other/areaCode";
 export default {
   name: "index",
   components: {
-    myEmpty
-  },
-  props: {
-    type: {
-      type: String,
-      default: "default"
-    },
-    emptyText: {
-      type: String,
-      default: "NOT DATA"
-    },
-    code: {
-      type: Number,
-      default: 0
-    }
-  },
-  computed: {
-    color() {
-      const colors = {
-        default: "#E1E8F5"
-      }
-      return colors[this.type];
-    }
+    MySelectList,
   },
   data() {
     return {
@@ -56,16 +30,16 @@ export default {
       params: {
         page: 1,
         limit: 100,
-      }
+      },
+      selectedValue: 0
     }
   },
+  mounted() {
+    this.loadData()
+  },
   methods: {
-    valueClick() {
-      this.$refs.myAreaCodePopup.open("right")
-      this.loadData()
-    },
-    itemCLick(item) {
-      this.$refs.myAreaCodePopup.close()
+    selected(item) {
+      this.selectedValue = item.value
       this.$emit("selected", item)
     },
     loadData(refresh) {
@@ -86,16 +60,20 @@ export default {
           const dataList = res.data;
           // 请求的值小于每页数量
           this.isNoData = (dataList.length === 0 && this.dataList.length === 0);
+          let dataListA = []
+          for (let i = 0; i < dataList.length; i++) {
+            dataListA[i] = {id: dataList[i].id, value: dataList[i].code, name: dataList[i].name}
+          }
           this.loadingStatus = "more";
           if (refresh) {
-            this.dataList = dataList;
+            this.dataList = dataListA;
             this.refreshStatus()
           } else {
-            this.dataList = this.dataList.concat(dataList);
+            this.dataList = this.dataList.concat(dataListA);
           }
           // console.log(dataList)
           this.params.page++
-          if (dataList.length < this.params.limit) {
+          if (dataListA.length < this.params.limit) {
             this.loadingStatus = "noMore";
           }
         })
@@ -124,33 +102,9 @@ export default {
 .my-area-code-value {
   padding: 14px;
 }
-.my-area-code-popup-content {
-  position: relative;
-  /* #ifndef APP-NVUE */
-  height: 100vh;
-  /* #endif */
-  /* #ifdef APP-NVUE */
-  flex: 1;
-  /* #endif */
-  width: 500rpx;
-}
-.my-area-code-popup-content-empty {
-  top: 50%;
-  left: 50%;
-  transform: translate(-50%, -50%);
-  width: 500rpx;
-}
 .my-area-code-value-text {
   margin-right: 5px;
+  color: #E1E8F5;
 }
-.my-area-code-popup-content-item {
-  display: flex;
-  flex-direction: row;
-  justify-content: space-between;
-  align-items: center;
-  padding: 14px;
-}
-.my-area-code-popup-content-item-text {
-  font-size: 25rpx;
-}
+
 </style>

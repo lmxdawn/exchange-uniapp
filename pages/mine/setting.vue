@@ -1,11 +1,8 @@
 <template>
   <view class="setting-box">
     <my-card>
-      <my-card-item :left-text="this.$t('mine.security.setting')"
-                    :right-text="this.$t('mine.security.setting.text')"
-                    right-icon="forward">
-      </my-card-item>
-      <my-card-item :left-text="this.$t('mine.setting')"
+      <my-lang></my-lang>
+      <my-card-item :left-text="settingRateText"
                     right-icon="forward">
       </my-card-item>
     </my-card>
@@ -15,13 +12,18 @@
 <script>
 import myCard from "../../components/my-card/index"
 import myCardItem from "../../components/my-card/item"
+import MyLang from "../../components/my-lang";
 
 export default {
   components: {
+    MyLang,
     myCard,
     myCardItem,
   },
   computed: {
+    settingRateText() {
+      return this.$t('mine.setting.rate')
+    }
   },
   data() {
     return {

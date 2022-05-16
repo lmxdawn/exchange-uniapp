@@ -2,28 +2,30 @@
   <view class="mine-box">
     <uni-nav-bar @clickLeft="back" class="mine-nav-bar" leftIcon="closeempty" color="#E1E8F5" :border="false" background-color="#191E29" :statusBar="true"></uni-nav-bar>
     <view class="mine-body">
-      <view class="mine-header">
-        <view class="mine-avatar">
-          <text class="mine-avatar-text">{{memberInfo.name.slice(0,2)}}</text>
-        </view>
+      <view class="mine-header" @click="headerClick">
+        <my-avatar :member-info="memberInfo" size="big"></my-avatar>
         <view class="mine-user">
-          <text class="mine-username">{{memberInfo.name}}</text>
+          <text class="mine-username">{{memberInfo.memberId > 0 ? memberInfo.name : loginText}}{{memberInfo.name}}</text>
           <view class="mine-uid-box">
-            <text class="mine-uid">UID: {{memberInfo.memberId}}</text>
-            <uni-icons class="mine-icon" custom-prefix="custom-icon" type="compose" color="#c1cdde" size="12"></uni-icons>
+            <template v-if="memberInfo.memberId > 0">
+              <text class="mine-uid">UID: {{memberInfo.memberId}}</text>
+              <uni-icons class="mine-icon" custom-prefix="custom-icon" type="compose" color="#c1cdde" size="12"></uni-icons>
+            </template>
+            <text class="mine-uid" v-else>{{welcomeText}}</text>
           </view>
         </view>
+        <uni-icons custom-prefix="custom-icon" type="forward" color="#c1cdde" size="12"></uni-icons>
       </view>
 
       <my-card round>
         <my-card-item left-icon="compose"
                       @click="securitySettingTo"
-                      :left-text="this.$t('mine.security.setting')"
-                      :right-text="this.$t('mine.security.setting.text')">
+                      :left-text="securitySettingText"
+                      :right-text="securitySettingTextText">
         </my-card-item>
         <my-card-item left-icon="compose"
                       @click="settingTo"
-                      :left-text="this.$t('mine.setting')">
+                      :left-text="settingText">
         </my-card-item>
       </my-card>
 
@@ -34,25 +36,49 @@
 <script>
 import myCard from "../../components/my-card/index"
 import myCardItem from "../../components/my-card/item"
-import {navigateBack, navigateTo} from "../../utils/common";
+import myAvatar from "../../components/my-avatar/index"
+import {navigateBack, navigateTo, navigateToLogin} from "../../utils/common";
 import { mapActions, mapGetters } from "vuex";
 
 export default {
   components: {
     myCard,
     myCardItem,
+    myAvatar,
   },
   computed: {
     ...mapGetters({
       memberInfo: "memberInfo",
     }),
+    welcomeText() {
+      return this.$t('mine.welcome')
+    },
+    loginText() {
+      return this.$t('mine.login')
+    },
+    securitySettingText() {
+      return this.$t('mine.security.setting')
+    },
+    securitySettingTextText() {
+      return this.$t('mine.security.setting.text')
+    },
+    settingText() {
+      return this.$t('mine.setting')
+    }
   },
   data() {
     return {
+      isShowInit: false, // 是否在页面显示的时候重新加载
     }
   },
   onLoad() {
 
+  },
+  onShow() {
+    if (this.isShowInit) {
+      this.isShowInit = false
+      this.init()
+    }
   },
   methods: {
     ...mapActions({
@@ -61,13 +87,22 @@ export default {
     back() {
       navigateBack()
     },
+    init() {
+      this.getUserInfo().then()
+    },
     securitySettingTo() {
       navigateTo("mine/securitySetting")
     },
     settingTo() {
-      console.log(123465)
       navigateTo("mine/setting")
     },
+    headerClick() {
+      if (this.memberInfo.memberId <= 0) {
+        this.isShowInit = true
+        navigateToLogin("mine/mine")
+        return false
+      }
+    }
   }
 }
 </script>
@@ -91,27 +126,13 @@ export default {
   align-items: center;
   margin-bottom: 20px;
 }
-.mine-avatar {
-  width: 60px;
-  height: 60px;
-  border-radius: 50%;
-  margin-right: 10px;
-  border: 1px solid #E1E8F5;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-}
-.mine-avatar-text {
-  color: #E1E8F5;
-  font-size: 22px;
-  font-weight: 500;
-}
 .mine-user {
   flex: 1;
   display: flex;
   flex-direction: column;
   justify-content: center;
   overflow: hidden;
+  margin-left: 10px;
 }
 .mine-username {
   flex: 1;

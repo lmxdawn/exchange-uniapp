@@ -1,7 +1,6 @@
 
 // 解决renderjs在h5端鼠标移动监听不了的问题，实现echart的dataZoom方法可以使用
 //#ifdef H5
-
 window.wx = {}
 //#endif
 
@@ -9,9 +8,10 @@ import App from './App'
 
 // 国际化
 import messages from './locale/index'
+import {getLang} from "./utils/lang";
 
 let i18nConfig = {
-    locale: uni.getLocale(),
+    locale: getLang(),
     messages
 }
 

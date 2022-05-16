@@ -13,18 +13,8 @@ export function navigateTo(path, animationType = "") {
 }
 
 // 跳转到登录页面
-export function navigateToLogin() {
-    uni.getProvider({
-        service: 'oauth',
-        success: (res) => {
-            if (~res.provider.indexOf('weixin')) {
-                navigateTo("login/wxMiniApp");
-            }
-        },
-        fail: () => {
-            toast("未支持的平台")
-        }
-    });
+export function navigateToLogin(redirect) {
+    navigateTo("mine/login?redirect=" + redirect, "slide-in-bottom")
 }
 
 // 跳转
