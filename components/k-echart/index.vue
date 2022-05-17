@@ -558,6 +558,7 @@
                 borderColor: upColor,
                 borderColor0: downColor
               },
+              clip: false, // 是否裁剪超出坐标系部分的图形，关掉滑动效果好一些
               markPoint: {
                 symbol: 'rect',
                 symbolSize: [-10, 0.5],
@@ -684,6 +685,7 @@
               shadowBlur: 10
             },
             data: data.time,
+            clip: false, // 是否裁剪超出坐标系部分的图形，关掉滑动效果好一些
             markLine: {
               symbol: 'none', //去掉警戒线最后面的箭头
               data: [
