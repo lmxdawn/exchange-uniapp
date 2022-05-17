@@ -381,7 +381,8 @@ export default {
       [29560, 1.013],
     ]
     // setTimeout(() => {
-    //   this.$refs.myKLine.init(kLineData, buyData, sellData)
+    //   this.$refs.myKLine.createKline(kLineData)
+    //   this.$refs.myKLine.createDepth(buyData, sellData)
     // }, 450)
     // setTimeout(() => {
     // }, 2000)

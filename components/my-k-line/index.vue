@@ -122,13 +122,6 @@ export default {
       this.timeType = item.timeType
       this.$emit('tabSelected', item)
     },
-    init(kLineData, buyData, sellData) {
-      let tabItem = {
-        id: this.tabId,
-        timeType: this.timeType,
-      }
-      this.$refs.kEcharts.init(kLineData, buyData, sellData, tabItem)
-    },
     addHistoryData(historyData) {
       let tabItem = {
         id: this.tabId,

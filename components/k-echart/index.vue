@@ -98,7 +98,7 @@
       categoryData.push(raw[i][0]);
       values.push([+raw[i][1], +raw[i][2], raw[i][3], raw[i][4], raw[i][5]]);
       volumes.push([i, raw[i][5], raw[i][1] > raw[i][2] ? 1 : -1]);
-      time.push([raw[i][0], raw[i][2], raw[i][1], raw[i][3], raw[i][4], raw[i][5]])
+      time.push(raw[i][2])
     }
     return {
       categoryData: categoryData,
@@ -231,12 +231,6 @@
     mounted() {
     },
     methods: {
-      // 初始化数据
-      init(kLineData, buyData, sellData, tabItem) {
-        this.kLineData = kLineData;
-        this.createKline(this.kLineData, tabItem)
-        this.createDepth(buyData.reverse(), sellData, tabItem)
-      },
       // 追加历史数据
       addHistoryData(historyData, tabItem) {
         this.kLineData = historyData.reverse().concat(this.kLineData)
@@ -261,10 +255,11 @@
         this.createKline(this.kLineData)
       },
       // 获取k线数据,生成k线
-      createKline(optionData, tabItem) {
+      createKline(kLineData, tabItem) {
+        this.kLineData = kLineData;
         this.tabId = tabItem.id
         this.timeType = tabItem.timeType
-        const data = splitData(optionData)
+        const data = splitData(kLineData)
         let dataMA5 = calculateMA(5, data.values);
         let dataMA10 = calculateMA(10, data.values);
         let dataMA30 = calculateMA(30, data.values);
@@ -507,7 +502,7 @@
               lineStyle: {
                 type: 'solid',
                 color: 'rgba(30, 42, 66, 0.5)',
-                width: 10,
+                width: 6,
                 shadowColor: 'rgba(30, 42, 66, 1)',
                 shadowBlur: 0,
                 shadowOffsetY: 68,
@@ -524,7 +519,7 @@
             {
               type: 'inside',
               xAxisIndex: [0, 1],
-              startValue: 50,
+              startValue: 70,
               endValue: 100,
               // 是否阻止 mousemove 事件的默认行为。
               preventDefaultMouseMove: false,
@@ -666,12 +661,10 @@
               height: '16%',
             },
           ]
-          if (option.xAxis && option.xAxis.length > 0) {
-            option.xAxis[0].type = 'time'
-          }
           option.series[0] = {
             name: '分时',
             type: 'line',
+            smooth: true,
             symbol: 'none',
             lineStyle: {
               width: 1,
@@ -679,7 +672,16 @@
             },
             areaStyle: {
               // #5A96E8
-              color: 'rgba(90,150,232,0.1)'
+              // color: 'rgba(90,150,232,0.1)',
+              // color: new echarts.graphic.LinearGradient(0, 0, 0, 1, [{
+              //   offset: 0,
+              //   color: 'rgba(90,150,232, 0.7)'
+              // }, {
+              //   offset: 0.8,
+              //   color: 'rgba(90,150,232, 0.02)'
+              // }], false),
+              shadowColor: 'rgba(0, 0, 0, 0.1)',
+              shadowBlur: 10
             },
             data: data.time,
             markLine: {
@@ -687,7 +689,7 @@
               data: [
                 {
                   silent: false,//鼠标悬停事件  true没有，false有
-                  yAxis: data.time[data.time.length - 1][1],// 这里收盘价作为警戒线的标注值，可以有多个yAxis,多条警示线   或者采用   {type : 'average', name: '平均值'}，type值有  max  min  average，分为最大，最小，平均值
+                  yAxis: data.time[data.time.length - 1],// 这里收盘价作为警戒线的标注值，可以有多个yAxis,多条警示线   或者采用   {type : 'average', name: '平均值'}，type值有  max  min  average，分为最大，最小，平均值
                   //警戒线的样式  ，虚实  颜色
                   lineStyle: {
                     type: "dotted",
@@ -719,6 +721,7 @@
           tooltipClose: this.tooltipClose,
           tooltipVol: this.tooltipVol,
         }
+        option.kLineData = this.kLineData
         this.option = option
       },
       createDepth(buy, sell, tabItem) {
@@ -974,7 +977,7 @@
               pricePrecision: newValue.pricePrecision,
               totalPrecision: newValue.totalPrecision,
             }
-            newValue.tooltip.formatter = this.tooltipFormatter(ownerInstance, conf, newValue.i18n)
+            newValue.tooltip.formatter = this.tooltipFormatter(ownerInstance, conf, newValue.i18n, newValue.kLineData)
             // 设置tooltip的位置
             newValue.tooltip.position = this.tooltipPosition()
             // 设置tooltip的x轴和y轴的显示文字
@@ -989,6 +992,16 @@
           // K线的最高最低标识
           if(newValue.series && newValue.series.length > 0 && newValue.series[0].markPoint && newValue.series[0].markPoint.label) {
             newValue.series[0].markPoint.label.formatter = this.markPointFormatterToFixed(newValue.pricePrecision)
+          }
+          // 分时图的渐变
+          if(newValue.series && newValue.series.length > 0 && newValue.series[0].areaStyle) {
+            newValue.series[0].areaStyle.color = new echarts.graphic.LinearGradient(0, 0, 0, 1, [{
+              offset: 0,
+              color: 'rgba(90,150,232, 0.7)'
+            }, {
+              offset: 0.8,
+              color: 'rgba(90,150,232, 0.02)'
+            }], false)
           }
           myChart.setOption(newValue)
         }
@@ -1035,26 +1048,21 @@
 			/**
 			 * tooltip格式化
 			 */
-			tooltipFormatter(ownerInstance, conf, i18n) {
+			tooltipFormatter(ownerInstance, conf, i18n, kLineData) {
         return params => {
           let tooltip = '';
           let time = '', open = 0, high = 0, low = 0, close = 0, amount = 0;
           for (let i = 0; i < params.length; i++) {
             if (params[i].seriesName === 'k' || params[i].seriesName === '分时') {
               // console.log(params[i])
-              open = params[i].data.length > 1 ? Number(params[i].data[1]).toFixed(conf.pricePrecision) : 0;
-              close = params[i].data.length > 1 ? Number(params[i].data[2]).toFixed(conf.pricePrecision) : 0;
-              low = params[i].data.length > 1 ? Number(params[i].data[3]).toFixed(conf.pricePrecision) : 0;
-              high = params[i].data.length > 1 ? Number(params[i].data[4]).toFixed(conf.pricePrecision) : 0;
-              amount = params[i].data.length > 1 ? Number(params[i].data[5]).toFixed(conf.totalPrecision) : 0;
-              // 分时另外做处理
-              if (params[i].seriesName === '分时') {
-                time = this.formatDate(conf.timeType, params[i].data[0]);
-                open = params[i].data.length > 1 ? Number(params[i].data[2]).toFixed(conf.pricePrecision) : 0;
-                close = params[i].data.length > 1 ? Number(params[i].data[1]).toFixed(conf.pricePrecision) : 0;
-              } else {
-                time = this.formatDate(conf.timeType, params[i].name);
-              }
+              const dataIndex = params[i].dataIndex;
+              const kItem = kLineData[dataIndex];
+              time = this.formatDate(conf.timeType, kItem[0]);
+              open = kItem.length > 1 ? Number(kItem[1]).toFixed(conf.pricePrecision) : 0;
+              close = kItem.length > 2 ? Number(kItem[2]).toFixed(conf.pricePrecision) : 0;
+              low = kItem.length > 3 ? Number(kItem[3]).toFixed(conf.pricePrecision) : 0;
+              high = kItem.length > 4 ? Number(kItem[4]).toFixed(conf.pricePrecision) : 0;
+              amount = kItem.length > 5 ? Number(kItem[5]).toFixed(conf.totalPrecision) : 0;
               tooltip = '<view>' +
                   '<view style="display: flex;flex-direction: row;align-items: center;justify-content: space-between;padding: 5px 0;"><view style="color: #51617b;">' + i18n.tooltipTime + '</view><view style="color: #acbadf;margin-left: 30px">' + time + '</view></view>' +
                   '<view style="display: flex;flex-direction: row;align-items: center;justify-content: space-between;padding: 5px 0;"><view style="color: #51617b;">' + i18n.tooltipOpen + '</view><view style="color: #acbadf;margin-left: 30px">' + open + '</view></view>' +
@@ -1134,7 +1142,7 @@
         if ((value + "").length === 10) {
           value *= 1000
         }
-        return echarts.format.formatTime(formatText, new Date(value));
+        return echarts.format.formatTime(formatText, new Date(parseInt(value)));
       },
       // 保留位数
       formatterToFixed(precision) {
