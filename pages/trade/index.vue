@@ -85,7 +85,7 @@
             <view class="trade-sub-btn-box">
               <my-button class="trade-sub-btn"
                          :class="[tradeForm.direction === 1 ? 'buy' : 'sell']"
-                         @click="orderSub" type="success"
+                         @click="showPayPwd" type="success"
                          :loading="tradeFormLoading">
                 <text class="trade-sub-btn__text">{{ memberInfo.memberId <= 0 ? loginText : tradeDirectionArr[tradeForm.direction - 1] + " " + pair.tradeCoin.name }}</text>
               </my-button>
@@ -156,6 +156,9 @@
       </view>
     </view>
 
+    <!--支付密码弹框-->
+    <my-pay-pwd ref="payPwd" @close="closePayPwd" @success="orderSub"></my-pay-pwd>
+
   </view>
 
 </template>
@@ -171,6 +174,7 @@
   import myPopup from "../../components/my-popup/my-popup"
   import myEmpty from "../../components/my-empty/my-empty";
   import myButton from "../../components/my-button/button"
+  import myPayPwd from "../../components/my-pay-pwd/index"
   import {marketDepthList} from "../../api/market/depth";
   import {memberCoinPairBalance} from "../../api/user/memberCoin";
   import {entrustOrderList} from "../../api/trade/entrustOrder";
@@ -186,6 +190,7 @@
       myPopup,
       myEmpty,
       myButton,
+      myPayPwd,
     },
     computed: {
       ...mapGetters({
@@ -316,10 +321,11 @@
         loadingStatus: "more",
         orderList: [],
         isShowInit: false, // 是否在页面显示的时候重新加载
-        isShowOrderSub: false, // 是否在页面显示的时候重新提交订单
+        isShowPayPwd: false, // 是否在页面显示的时候重新调起支付
         // 交易数据
         tradeFormLoading: false,
         tradeForm: {
+          payPwd: "",
           tradeCoinId: 0,
           coinId: 0,
           type: 1,
@@ -350,9 +356,9 @@
         this.isShowInit = false
         this.init()
       }
-      if (this.isShowOrderSub) {
-        this.isShowOrderSub = false
-        this.orderSub()
+      if (this.isShowPayPwd) {
+        this.isShowPayPwd = false
+        this.showPayPwd()
       }
     },
     onUnload() {
@@ -375,7 +381,14 @@
       loadMore() {
         this.getOrderList();
       },
+      initTradeForm() {
+        this.tradeForm.payPwd = ""
+        this.tradeForm.price = ""
+        this.tradeForm.amount = ""
+        this.tradeForm.total = ""
+      },
       init() {
+        this.initTradeForm()
         this.setPair(this.params)
           .then(b => {
             uni.stopPullDownRefresh()
@@ -385,9 +398,6 @@
             }
             this.tradeForm.coinId = this.pair.coin.id
             this.tradeForm.tradeCoinId = this.pair.tradeCoin.id
-            this.tradeForm.price = ""
-            this.tradeForm.amount = ""
-            this.tradeForm.total = ""
             this.getBalance()
             this.getDepth()
             this.getOrderList(true);
@@ -473,22 +483,12 @@
       depthTypeSelected(index) {
         this.depthType = index
       },
-      orderSub() {
+      showPayPwd() {
         if (this.memberInfo.memberId <= 0) {
           // 打开显示页面时重新加载数据的开关
           this.isShowInit = true
           const redirect = encodeURIComponent("trade/index")
           navigateToLogin(redirect)
-          return false
-        } else if (this.memberInfo.isPayPwd !== 1) {
-          this.isShowOrderSub = true
-          // 未设置支付密码
-          const redirect = encodeURIComponent("trade/index")
-          const setPayPwdUrl = "mine/setPayPwd?redirect=" + redirect
-          navigateTo(setPayPwdUrl)
-          return false
-        }
-        if (this.tradeFormLoading) {
           return false
         }
         if (this.tradeForm.type === 1 && (!this.tradeForm.price || this.tradeForm.price <= 0)) {
@@ -499,25 +499,39 @@
           this.$tui.toast( t('trade.order.sub.not.amount'))
           return false
         }
+
+        this.isShowPayPwd = true
+        // 打开支付界面
+        const redirect = encodeURIComponent("trade/index")
+        this.$refs.payPwd.open(this.memberInfo.isPayPwd, redirect)
+      },
+      closePayPwd() {
+        this.isShowPayPwd = false
+      },
+      orderSub(payPwd) {
+        if (this.tradeFormLoading) {
+          return false
+        }
         if (this.tradeForm.type === 2 && this.tradeForm.direction === 1) {
           this.tradeForm.total = this.tradeForm.amount
         }
         this.tradeFormLoading = true
+        this.tradeForm.payPwd = payPwd
         entrustOrderCreate(this.tradeForm)
-            .then(res => {
-              this.tradeFormLoading = false
-              if (res.code > 0) {
-                this.$tui.toast(t('http.code.' + res.code))
-                return false
-              }
-              let msg = this.tradeForm.direction === 1 ? t('trade.order.sub.buy.success') : t('trade.order.sub.sell.success')
-              this.$tui.toast(msg)
-              this.init()
-            })
-            .catch(() => {
-              this.tradeFormLoading = false
-              this.$tui.toast(t('http.code.1'))
-            })
+          .then(res => {
+            this.tradeFormLoading = false
+            if (res.code > 0) {
+              this.$tui.toast(t('http.code.' + res.code))
+              return false
+            }
+            let msg = this.tradeForm.direction === 1 ? t('trade.order.sub.buy.success') : t('trade.order.sub.sell.success')
+            this.$tui.toast(msg)
+            this.init()
+          })
+          .catch(() => {
+            this.tradeFormLoading = false
+            this.$tui.toast(t('http.code.1'))
+          })
       }
 		}
 	}

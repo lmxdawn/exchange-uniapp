@@ -20,6 +20,7 @@
 import myInput from "../../components/my-input/input"
 import myButton from "../../components/my-button/button"
 import {FORGET_PAY_PWD} from "../../constant/codeScene";
+import {isBackNavigateBack} from "../../utils/common";
 export default {
   components: {
     myButton,
@@ -38,9 +39,13 @@ export default {
         password: "",
         scene: FORGET_PAY_PWD,
       },
+      redirect: ""
     }
   },
-  onLoad() {
+  onLoad(option) {
+    if (option.redirect) {
+      this.redirect = decodeURIComponent(option.redirect)
+    }
   },
   methods: {
     passwordCloseClick() {
@@ -51,6 +56,13 @@ export default {
     },
     okClick() {
 
+
+      // 成功后
+      this.$tui.toast(this.$t('mine.set.pay.pwd.success'))
+      setTimeout(() => {
+        const path = this.redirect ? this.redirect : "home/index"
+        isBackNavigateBack(path)
+      }, 1000)
     }
   }
 }

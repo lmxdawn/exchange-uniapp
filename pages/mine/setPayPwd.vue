@@ -36,7 +36,7 @@ import myInput from "../../components/my-input/input"
 import myButton from "../../components/my-button/button"
 import myCode from "../../components/my-code/index"
 import {isBackNavigateBack, navigateBack} from "../../utils/common";
-import {FORGET_PWD} from "../../constant/codeScene";
+import {SET_PAY_PWD} from "../../constant/codeScene";
 import { mapActions, mapGetters } from "vuex";
 import {setPayPwd} from "../../api/mine/member";
 
@@ -60,7 +60,7 @@ export default {
       return this.$t('mine.pwd.ok')
     },
     okType() {
-      return this.form.code.length > 0 && this.form.password.length >= 8 && this.form.password.length <= 20 && this.form.okPassword.length > 0 ? 'success' : 'default'
+      return this.form.code.length > 0 && this.form.password.length === 6 && this.form.okPassword.length > 0 ? 'success' : 'default'
     },
     type() {
       return this.memberInfo.tel ? "tel" : "email"
@@ -70,7 +70,7 @@ export default {
         areaCode: this.memberInfo.telAreaCode,
         email: this.memberInfo.email,
         tel: this.memberInfo.tel,
-        scene: FORGET_PWD,
+        scene: SET_PAY_PWD,
       }
     }
   },
@@ -88,7 +88,6 @@ export default {
     }
   },
   onLoad(option) {
-    this.type = option.type
     if (option.redirect) {
       this.redirect = decodeURIComponent(option.redirect)
     }
@@ -166,7 +165,6 @@ export default {
 
 <style scoped>
 .set-pay-pwd-box {
-  padding-top: 50rpx;
   padding-left: 30px;
   padding-right: 30px;
   box-sizing: border-box;

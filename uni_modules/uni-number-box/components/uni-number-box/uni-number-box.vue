@@ -79,9 +79,17 @@
 		},
 		watch: {
 			value(val) {
+			  if (val === "") {
+          this.inputValue = ""
+			    return false
+        }
 				this.inputValue = +val;
 			},
 			modelValue(val) {
+        if (val === "") {
+          this.inputValue = ""
+          return false
+        }
 				this.inputValue = +val;
 			}
 		},
@@ -144,7 +152,7 @@
 				this.$emit('blur', event)
 				let value = event.detail.value;
 				if (!value) {
-					// this.inputValue = 0;
+					// this.inputValue = "";
 					return;
 				}
 				value = +value;
