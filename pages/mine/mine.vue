@@ -1,6 +1,6 @@
 <template>
   <view class="mine-box">
-    <uni-nav-bar @clickLeft="back" class="mine-nav-bar" leftIcon="closeempty" color="#E1E8F5" :border="false" background-color="#191E29" :statusBar="true"></uni-nav-bar>
+    <uni-nav-bar @clickLeft="back" class="mine-nav-bar" leftIcon="closeempty" color="#E1E8F5" :border="false" background-color="#11151F" :statusBar="true"></uni-nav-bar>
     <view class="mine-body">
       <view class="mine-header" @click="headerClick">
         <my-avatar :member-info="memberInfo" size="big"></my-avatar>
@@ -113,7 +113,10 @@ export default {
 </script>
 
 <style scoped>
+
 .mine-box {
+  background-color: #11151F;
+  min-height: 100vh;
 }
 .mine-nav-bar {
   padding: 0 15px;

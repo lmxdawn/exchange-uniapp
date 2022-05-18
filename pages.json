@@ -96,7 +96,7 @@
         "navigationBarTitleText": "%common.title%",
         "navigationStyle":"custom",
         "app-plus":{
-          "background":"#191E29"
+          "background":"#11151F"
         }
       }
     },
@@ -104,7 +104,6 @@
       "path": "pages/mine/setting",
       "style": {
         "navigationBarTitleText": "%mine.setting%",
-        "navigationBarBackgroundColor": "#212631",
         "app-plus":{
           "background":"#191E29"
         }
@@ -114,7 +113,6 @@
       "path": "pages/mine/securitySetting",
       "style": {
         "navigationBarTitleText": "%mine.security.setting%",
-        "navigationBarBackgroundColor": "#212631",
         "app-plus":{
           "background":"#191E29"
         }
@@ -181,6 +179,15 @@
       "style": {
         "navigationBarTitleText": "%common.title%",
         "navigationStyle":"custom",
+        "app-plus":{
+          "background":"#191E29"
+        }
+      }
+    },
+    {
+      "path": "pages/mine/about",
+      "style": {
+        "navigationBarTitleText": "%mine.about%",
         "app-plus":{
           "background":"#191E29"
         }

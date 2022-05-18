@@ -30,7 +30,7 @@ const getters = {
 
 // actions
 const actions = {
-    logout({dispatch,commit}, isNoToLoginPage) {
+    logout({commit}) {
         let info = {
             memberId: 0,
             name: "",
@@ -45,11 +45,8 @@ const actions = {
         };
         commit(types.MEMBER_INFO, info);
         commit(types.MEMBER_CLEAR_LOGIN);
-        if (isNoToLoginPage) {
-            dispatch("toLoginPage");
-        }
     },
-    getUserInfo({dispatch, commit}, invite_code) {
+    getUserInfo({commit}) {
         return new Promise((resolve, reject) => {
             if (!getToken()) {
                 resolve({});
@@ -73,14 +70,6 @@ const actions = {
                             isGoogleKey: data.isGoogleKey || 0,
                         };
                         commit(types.MEMBER_INFO, info);
-                        // 没有绑定手机号，并且没有绑定邮箱
-                        if (!data.tel && !data.email) {
-                            // 跳转到填写信息页面
-                            setTimeout(() => {
-                                dispatch("toBindingTelPage", invite_code);
-                            }, 800);
-                            return;
-                        }
                     }
                     resolve(res);
                 })
@@ -92,21 +81,6 @@ const actions = {
     },
     setMemberIsPayPwd({ commit }, isPayPwd) {
         commit("setMemberIsPayPwd", isPayPwd);
-    },
-    toBindingTelPage({ commit }, invite_code) {
-        commit(types.MEMBER_BINDING_TEL_PAGE, invite_code);
-    },
-    setBindingTelPageStatus({ commit }, status) {
-        commit(types.MEMBER_BINDING_TEL_PAGE_STATUS, status);
-    },
-    toLoginPage({ commit }, invite_code) {
-        commit(types.MEMBER_LOGIN_PAGE, invite_code);
-    },
-    setLoginPageStatus({ commit }, status) {
-        commit(types.MEMBER_LOGIN_PAGE_STATUS, status);
-    },
-    setRegisterInviteCode({ commit }, value) {
-        commit(types.MEMBER_REGISTER_INVITE_CODE, value);
     },
 };
 
@@ -126,38 +100,6 @@ const mutations = {
     ["setMemberIsPayPwd"](state, isPayPwd) {
         state.memberInfo.isPayPwd = isPayPwd;
         setMemberInit(state.memberInfo);
-    },
-    //当前是否在绑定手机号的页面
-    [types.MEMBER_BINDING_TEL_PAGE](state, invite_code) {
-        // 如果在绑定页面, 则不要重复跳转
-        if (state.memberBindingPageStatus) {
-            return false;
-        }
-        state.memberBindingPageStatus = true;
-        reLaunch("login/binding?invite_code=" + invite_code);
-    },
-    //当前是否在绑定手机号的页面
-    [types.MEMBER_BINDING_TEL_PAGE_STATUS](state, status) {
-        state.memberBindingPageStatus = status
-    },
-    //当前是否在登录的页面
-    [types.MEMBER_LOGIN_PAGE](state, invite_code) {
-        if (!isWeChatWebView()) {
-            console.log("跳转登录页面", state.memberLoginPageStatus, isWeChatWebView());
-            // 如果在登录页面, 则不要重复跳转
-            if (state.memberLoginPageStatus) {
-                return false;
-            }
-            state.memberLoginPageStatus = true;
-            reLaunch("login/login?invite_code=" + invite_code);
-        } else {
-            console.log("微信跳转");
-            weChatLogin();
-        }
-    },
-    //当前是否在登录的页面
-    [types.MEMBER_LOGIN_PAGE_STATUS](state, status) {
-        state.memberLoginPageStatus = status
     },
 };
 export default {

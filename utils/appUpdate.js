@@ -80,7 +80,7 @@ export function checkAppVersion(isShowModal) {
             params = {
                 version: inf.version || ""
             };
-            // #endif
+        // #endif
             store.dispatch("setAppVersion", params.version);
             settingAppVersion(params)
                 .then(res => {
@@ -106,7 +106,7 @@ export function checkAppVersion(isShowModal) {
                     // #endif
                 })
                 .catch(err => {});
-            // #ifdef APP-PLUS
+        // #ifdef APP-PLUS
         });
         // #endif
     }catch (e) {

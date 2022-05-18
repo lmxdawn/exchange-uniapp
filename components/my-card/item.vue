@@ -1,5 +1,5 @@
 <template>
-  <view class="my-card-item" @click="click()">
+  <view class="my-card-item" @click="click()" hover-class="my-card-item-hover">
     <view class="my-card-item-left">
       <uni-icons v-if="leftIcon" class="my-card-item-left-icon" custom-prefix="custom-icon" :type="leftIcon" color="#c1cdde" size="18"></uni-icons>
       <text class="my-card-item-left-text">{{leftText}}</text>
@@ -35,7 +35,7 @@ export default {
   display: flex;
   flex-direction: row;
   justify-content: space-between;
-  padding: 20px 5px;
+  padding: 20px 12px;
 }
 .my-card-item-left {
   display: flex;
@@ -62,5 +62,8 @@ export default {
   color: #9197A3;
   font-size: 12px;
   font-weight: 500;
+}
+.my-card-item-hover {
+  background-color: #212631;
 }
 </style>

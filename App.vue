@@ -35,14 +35,14 @@ export default {
       getUserInfo: "getUserInfo",
       usdtRateSet: "usdtRateSet",
     }),
-    userInfo(invite_code) {
+    userInfo() {
       // #ifdef APP-PLUS
       // 是否完成了引导页的
       if (!this.guide || this.guide.length === 0) {
-        return false
+        // return false
       }
       // #endif
-      this.getUserInfo(invite_code)
+      this.getUserInfo()
         .then(res => {
           if (res.code > 0) {
             this.$tui.toast(this.$t('http.code.' + res.code))

@@ -19,7 +19,7 @@
 
     <!-- 提示窗示例 -->
     <uni-popup ref="alertDialog" type="dialog">
-      <my-dialog type="row" cancelText="关闭" confirmText="去设置" title="提示" content="为了资金安全，交易时需要先设置交易密码" @confirm="dialogConfirm" @close="dialogClose">
+      <my-dialog type="row" :cancelText="this.$t('common.close')" :confirmText="this.$t('common.setTo')" :title="this.$t('common.tip')" :content="this.$t('common.pay.pwd.tip')" @confirm="dialogConfirm" @close="dialogClose">
       </my-dialog>
     </uni-popup>
 

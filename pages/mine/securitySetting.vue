@@ -84,5 +84,7 @@ export default {
 <style scoped>
 .line {
   height: 10px;
+  width: 750rpx;
+  background-color: #11151F;
 }
 </style>

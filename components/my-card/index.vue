@@ -32,11 +32,11 @@ export default {
 
 <style lang="scss" scoped>
 .my-card {
-  padding: 0 10px;
-  background-color: #212631;
+  background-color: #191E29;
   box-sizing: border-box;
   &.is-round {
     border-radius: 10px;
   }
+  overflow: hidden;
 }
 </style>
