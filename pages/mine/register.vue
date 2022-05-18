@@ -222,7 +222,7 @@ export default {
 .register-user {
   display: flex;
   flex-direction: row;
-  justify-content: end;
+  justify-content: flex-end;
   align-items: center;
   margin-top: 10px;
 }

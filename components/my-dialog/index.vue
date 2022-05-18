@@ -78,7 +78,7 @@ export default {
     justify-content: start;
   }
   &.right {
-    justify-content: end;
+    justify-content: flex-end;
   }
   &.column-center {
     flex-direction: column-reverse;

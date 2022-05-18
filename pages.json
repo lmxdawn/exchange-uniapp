@@ -47,6 +47,28 @@
       }
     },
     {
+      "path": "pages/trade/history",
+      "style": {
+        "navigationBarTitleText": "%common.title%",
+        "navigationStyle":"custom",
+        "enablePullDownRefresh": true,
+        "app-plus":{
+          "titleNView":false,
+          "background":"#191E29"
+        }
+      }
+    },
+    {
+      "path": "pages/trade/historyDetails",
+      "style": {
+        "navigationBarTitleText": "%trade.order.history.details%",
+        "enablePullDownRefresh": true,
+        "app-plus":{
+          "background":"#191E29"
+        }
+      }
+    },
+    {
       "path": "pages/contract/index",
       "style": {
         "navigationBarTitleText": "%common.title%",

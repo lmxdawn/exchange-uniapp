@@ -136,8 +136,13 @@
         </view>
 
         <view class="trade-order-head">
-          <view class="trade-order-head-tab">
-            <text class="trade-order-head-tab__text">{{orderHeadTitle}}</text>
+          <view class="trade-order-head-box">
+            <view class="trade-order-head-tab selected">
+              <text class="trade-order-head-tab__text">{{orderCurrentTitle}}</text>
+            </view>
+            <view class="trade-order-head-tab" @click="historyOrderTo">
+              <text class="trade-order-head-tab__text">{{orderHistoryTitle}}</text>
+            </view>
           </view>
           <uni-icons color="#E1E8F5" type="list" size="28"></uni-icons>
         </view>
@@ -147,7 +152,7 @@
             <my-empty :text="emptyText" height="80px" width="80px" :loadingStatus="loadingStatus"></my-empty>
           </view>
           <view class="trade-order-list" v-else>
-            <view class="trade-order-item" v-for="item in orderList" :key="item.id">{{item.modifiedTime}}</view>
+            <entrust-order class="trade-order-item" v-for="item in orderList" :key="item.id" :item="item"></entrust-order>
             <view class="load-more" v-if="loadingStatus !== 'noMore' || params.page > 1">
               <uni-load-more :status="loadingStatus" color="#2DBD96" iconType="circle" :contentText="loadingMoreText"></uni-load-more>
             </view>
@@ -175,6 +180,7 @@
   import myEmpty from "../../components/my-empty/my-empty";
   import myButton from "../../components/my-button/button"
   import myPayPwd from "../../components/my-pay-pwd/index"
+  import entrustOrder from "../../components/trade/entrust-order"
   import {marketDepthList} from "../../api/market/depth";
   import {memberCoinPairBalance} from "../../api/user/memberCoin";
   import {entrustOrderList} from "../../api/trade/entrustOrder";
@@ -191,6 +197,7 @@
       myEmpty,
       myButton,
       myPayPwd,
+      entrustOrder,
     },
     computed: {
       ...mapGetters({
@@ -201,9 +208,10 @@
       }),
       tabBars() {
         return [t('trade.coin2coin'),t('trade.lever')]
-      },stepPrice() {
+      },
+      stepPrice() {
         let precision = this.pair.tradePricePrecision
-        if (precision == 0) {
+        if (precision <= 0) {
           return 1
         } else {
           let pow = Math.pow(10, precision)
@@ -212,7 +220,7 @@
       },
       stepAmount() {
         let precision = this.tradeForm.type === 1 ? this.pair.tradeAmountPrecision : this.pair.tradeTotalPrecision
-        if (precision == 0) {
+        if (precision <= 0) {
           return 1
         } else {
           let pow = Math.pow(10, precision)
@@ -292,8 +300,11 @@
       decimalTitle() {
         return t('common.decimal')
       },
-      orderHeadTitle() {
-        return t('trade.order.head')
+      orderCurrentTitle() {
+        return t('trade.order.current')
+      },
+      orderHistoryTitle() {
+        return t('trade.order.history')
       },
       emptyText() {
         return t('common.empty')
@@ -303,8 +314,9 @@
 			return {
         navBarTabIndex: 0,
         params: {
-          tradeCoinId: 3,
-          coinId: 1,
+          tradeCoinId: "",
+          coinId: "",
+          status: 1,
           page: 1,
           limit: 10,
         },
@@ -398,6 +410,8 @@
             }
             this.tradeForm.coinId = this.pair.coin.id
             this.tradeForm.tradeCoinId = this.pair.tradeCoin.id
+            this.params.coinId = this.pair.coin.id
+            this.params.tradeCoinId = this.pair.tradeCoin.id
             this.getBalance()
             this.getDepth()
             this.getOrderList(true);
@@ -484,11 +498,7 @@
         this.depthType = index
       },
       showPayPwd() {
-        if (this.memberInfo.memberId <= 0) {
-          // 打开显示页面时重新加载数据的开关
-          this.isShowInit = true
-          const redirect = encodeURIComponent("trade/index")
-          navigateToLogin(redirect)
+        if (this.isLoginTo()) {
           return false
         }
         if (this.tradeForm.type === 1 && (!this.tradeForm.price || this.tradeForm.price <= 0)) {
@@ -532,6 +542,22 @@
             this.tradeFormLoading = false
             this.$tui.toast(t('http.code.1'))
           })
+      },
+      isLoginTo() {
+        if (this.memberInfo.memberId <= 0) {
+          // 打开显示页面时重新加载数据的开关
+          this.isShowInit = true
+          const redirect = encodeURIComponent("trade/index")
+          navigateToLogin(redirect)
+          return true
+        }
+        return false
+      },
+      historyOrderTo() {
+        if (this.isLoginTo()) {
+          return false
+        }
+        navigateTo("trade/history?tabIndex=1")
       }
 		}
 	}
@@ -821,14 +847,31 @@
     justify-content: space-between;
     align-items: center;
     padding: 0 15px;
-    border-bottom: solid 1px rgba(184,198,216,.08);
+    border-bottom: solid 1px #292E39;
+  }
+  .trade-order-head-box {
+    flex: 1;
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+  }
+  .trade-order-head-tab:first-child {
+    margin-left: 0;
   }
   .trade-order-head-tab {
+    margin-left: 15px;
     padding: 8px 0;
-    border-bottom: solid 3px #2DBD96;
+    border-bottom: solid 3px transparent;
+    &.selected {
+      border-bottom: solid 3px #2DBD96;
+      .trade-order-head-tab__text {
+        color: #E1E8F5;
+      }
+    }
     &__text {
       font-size: 13px;
-      color: #E1E8F5;
+      color: #9197A3;
+      font-weight: 600;
     }
   }
   .trade-order-box {
@@ -837,6 +880,9 @@
     position: relative;
     width: 750rpx;
     height: 170px;
+  }
+  .trade-order-item {
+    background-color: transparent;
   }
 
   .load-more {
