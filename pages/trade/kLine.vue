@@ -3,14 +3,14 @@
 </template>
 <script>
 import myKLine from '../../components/my-k-line/index'
-import {mapActions, mapGetters} from "vuex";
+import {mapGetters} from "vuex";
 import {marketDepthList} from "../../api/market/depth";
 import {marketKLineList} from "../../api/market/kLine";
+import {pairRead} from "../../api/trade/pair";
 
 export default {
   computed: {
     ...mapGetters({
-      pair: "pair",
       usdtRate: "usdtRate",
     }),
   },
@@ -23,9 +23,29 @@ export default {
         tradeCoinId: "",
         coinId: "",
       },
+      pair: {
+        coin: {},
+        tradeCoin: {},
+        price: -1,
+        price24: -1,
+        rate24: -1,
+        tradeTotal24: -1,
+        tradeAmount24: -1,
+        highest24: -1,
+        lowest24: -1,
+        tradeTotalPrecision: 0,
+        tradePricePrecision: 0,
+        tradeAmountPrecision: 0
+      },
       echartsLoadingStatus: 'loading',
       echartsDepthLoadingStatus: 'loading',
     };
+  },
+  onLoad(option) {
+    if (option.coinId && option.tradeCoinId) {
+      this.params.coinId = option.coinId
+      this.params.tradeCoinId = option.tradeCoinId
+    }
   },
   onReady() {
     // 初始化
@@ -392,18 +412,19 @@ export default {
     uni.$off('depthWs');
   },
   methods: {
-    ...mapActions({
-      setPair: "setPair"
-    }),
     init() {
       // 获取交易对信息
-      this.setPair(this.params)
-          .then(b => {
-            // 获取K线
-            this.getKLine(false)
-            // 获取深度图
-            this.getDepth()
-          })
+      pairRead(this.params)
+        .then(res => {
+          if (res.code > 0) {
+            return false
+          }
+          this.pair = res.data
+          // 获取K线
+          this.getKLine(false)
+          // 获取深度图
+          this.getDepth()
+        })
       // 监听深度图数据事件
       uni.$on('depthWs',(res)=>{
         // 判断是不是当前交易对

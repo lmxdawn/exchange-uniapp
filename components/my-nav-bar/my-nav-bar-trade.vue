@@ -69,7 +69,8 @@ export default {
       }
     },
     kLineClick() {
-      navigateTo("trade/kLine", "slide-in-right")
+      const kLineUrl = `trade/kLine?coinId=${this.pair.coin.id}&tradeCoinId=${this.pair.tradeCoin.id}`
+      navigateTo(kLineUrl, "slide-in-right")
     }
   }
 }

@@ -68,7 +68,8 @@ export default {
   computed: {
     priceRate() {
       return price => {
-        let usdtPrice = this.pair.coin.usdtPrice
+        let usdtPrice = this.pair.coin.usdtPrice ?? 0
+        price = price ?? 0
         return Number(accMul(accMul(this.usdtRate.price, usdtPrice), price)).toFixed(this.usdtRate.precision)
       }
     },

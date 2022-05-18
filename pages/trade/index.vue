@@ -364,7 +364,7 @@
       })
 		},
     onShow() {
-      if (this.isShowInit) {
+      if (this.isShowInit && this.memberInfo.memberId > 0) {
         this.isShowInit = false
         this.init()
       }

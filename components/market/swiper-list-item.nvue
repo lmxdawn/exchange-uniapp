@@ -27,6 +27,7 @@
 <script>
   import {mapGetters} from "vuex";
   import {accMul} from "../../utils/decimal"
+  import {navigateTo} from "../../utils/common";
 	export default {
 		props: {
 			listItem: {
@@ -71,7 +72,8 @@
     },
 		methods: {
 			click() {
-				this.$emit('click');
+        const kLineUrl = `trade/kLine?coinId=${this.listItem.coin.id}&tradeCoinId=${this.listItem.tradeCoin.id}`
+        navigateTo(kLineUrl, "slide-in-right")
 			},
 		}
 	}
