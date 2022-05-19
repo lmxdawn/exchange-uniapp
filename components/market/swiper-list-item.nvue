@@ -1,5 +1,5 @@
 <template>
-	<view class="swiper-item-cell" @click="click" :class="[background]">
+	<view class="swiper-item-cell" @click="click" :class="[background]" hover-class="swiper-item-cell-hover">
     <view class="swiper-item-cell-left">
       <view class="swiper-item-cell-left1">
         <view class="swiper-item-cell-text-box">
@@ -86,11 +86,14 @@
     align-items: center;
     flex-direction: row;
     width: 750rpx;
-    padding: 5px 10px;
+    padding: 5px 15px;
     background-color: transparent;
     transition-property: background-color;
     transition-duration: .5s
 	}
+  .swiper-item-cell-hover {
+    background-color: #212631;
+  }
   .swiper-item-cell-left {
     flex: 1;
     display: flex;
@@ -137,7 +140,7 @@
     color: #b8c6d8!important;
   }
   .swiper-item-cell-text-big-b {
-    font-size: 18px;
+    font-size: 16px;
     color: #b8c6d8!important;
   }
   .swiper-item-cell-text-small {

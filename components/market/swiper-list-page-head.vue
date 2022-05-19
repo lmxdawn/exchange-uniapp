@@ -142,7 +142,7 @@
     align-items: center;
     flex-direction: row;
     width: 750rpx;
-    padding: 5px 10px 0;
+    padding: 5px 15px 0;
   }
   .swiper-list-page-table-head-left {
     flex: 1;
@@ -162,7 +162,6 @@
     justify-content: flex-end;
     align-items: center;
     height: 55rpx;
-    padding-left: 5px;
   }
   .swiper-list-page-table-head-right {
     width: 230rpx;
