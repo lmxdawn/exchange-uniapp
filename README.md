@@ -2,7 +2,11 @@
 
 交易所APP代码
 
-# 由于uniapp的限制，暂停开发
+# 说明
+
+> *之前由于uniapp的闪屏一度准备放弃，暂时解决闪屏问题，重新开始开发*
+
+# ~~由于uniapp的限制，暂停开发~~
 
 [uni-app切换页面闪屏或者白屏](https://ask.dcloud.net.cn/question/73807)
 
