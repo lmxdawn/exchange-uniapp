@@ -25,7 +25,9 @@
               </view>
               <view class="swiper-list-scroll-view-indicator">
                 <view ref="underline" class="swiper-list-scroll-view-underline" :class="isTap ? 'swiper-list-scroll-view-animation':''"
-                      :style="{left: indicatorLineLeft + 'px', width: indicatorLineWidth + 'px'}"></view>
+                      :style="{left: indicatorLineLeft + 'px', width: indicatorLineWidth + 'px'}">
+                  <view class="swiper-list-scroll-view-underline-bg"></view>
+                </view>
               </view>
             </view>
           </scroll-view>
@@ -419,7 +421,7 @@ page {
 
 .swiper-list-scroll-view-indicator {
   position: relative;
-  height: 2px;
+  height: 4px;
   background-color: transparent;
 }
 
@@ -428,6 +430,14 @@ page {
   top: 0;
   bottom: 0;
   width: 0;
+  padding-left: 20px;
+  padding-right: 20px;
+  display: flex;
+  flex-direction: row;
+}
+
+.swiper-list-scroll-view-underline-bg {
+  flex: 1;
   background-color: #2DBD96;
 }
 
@@ -457,8 +467,8 @@ page {
 .swiper-list-uni-tab-item-title {
   color: #9197A3;
   font-size: 15px;
-  height: 40px;
-  line-height: 40px;
+  height: 35px;
+  line-height: 35px;
   flex-wrap: nowrap;
   /* #ifndef APP-PLUS */
   white-space: nowrap;
