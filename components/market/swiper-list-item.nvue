@@ -25,9 +25,9 @@
 </template>
 
 <script>
-  import {mapGetters} from "vuex";
+  import {mapActions, mapGetters} from "vuex";
   import {accMul} from "../../utils/decimal"
-  import {navigateTo} from "../../utils/common";
+  import {navigateTo, switchTab} from "../../utils/common";
 	export default {
 		props: {
 			listItem: {
@@ -40,6 +40,7 @@
     computed: {
       ...mapGetters({
         usdtRate: "usdtRate",
+        marketFrom: "marketFrom",
       }),
       priceRate() {
         let usdtPrice = this.listItem.coin.usdtPrice
@@ -71,7 +72,21 @@
       }
     },
 		methods: {
+      ...mapActions({
+        setPairCoinId: "setPairCoinId",
+        setMarketFrom: "setMarketFrom",
+      }),
 			click() {
+			  if (this.marketFrom === "trade") {
+			    const params = {
+            coinId: this.listItem.coin.id,
+            tradeCoinId: this.listItem.tradeCoin.id,
+          }
+          this.setMarketFrom("market")
+			    this.setPairCoinId(params)
+			    switchTab("trade/index")
+			    return false
+        }
         const kLineUrl = `trade/kLine?coinId=${this.listItem.coin.id}&tradeCoinId=${this.listItem.tradeCoin.id}`
         navigateTo(kLineUrl, "slide-in-right")
 			},

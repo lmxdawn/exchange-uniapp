@@ -203,6 +203,7 @@
       ...mapGetters({
         pair: "pair",
         marketCollect: "marketCollect",
+        marketFrom: "marketFrom",
         memberInfo: "memberInfo",
         usdtRate: "usdtRate",
       }),
@@ -232,7 +233,8 @@
       },
       priceRate() {
         return price => {
-          let usdtPrice = this.pair.coin.usdtPrice
+          let usdtPrice = this.pair.coin.usdtPrice || 0
+          price = price || 0
           return Number(accMul(accMul(this.usdtRate.price, usdtPrice), price)).toFixed(this.usdtRate.precision)
         }
       },
@@ -364,8 +366,11 @@
       })
 		},
     onShow() {
-      if (this.isShowInit && this.memberInfo.memberId > 0) {
+      if (this.isShowInit || this.marketFrom === "market") {
         this.isShowInit = false
+        if (this.marketFrom === "market") {
+          this.setMarketFrom()
+        }
         this.init()
       }
       if (this.isShowPayPwd) {
@@ -386,6 +391,7 @@
 		methods: {
       ...mapActions({
         setPair: "setPair",
+        setMarketFrom: "setMarketFrom",
       }),
       onNavBarTabClickItem(index) {
         this.navBarTabIndex = index
@@ -401,7 +407,7 @@
       },
       init() {
         this.initTradeForm()
-        this.setPair(this.params)
+        this.setPair({})
           .then(b => {
             uni.stopPullDownRefresh()
             if (!b) {
@@ -412,9 +418,11 @@
             this.tradeForm.tradeCoinId = this.pair.tradeCoin.id
             this.params.coinId = this.pair.coin.id
             this.params.tradeCoinId = this.pair.tradeCoin.id
-            this.getBalance()
             this.getDepth()
-            this.getOrderList(true);
+            if (this.memberInfo.memberId > 0) {
+              this.getBalance()
+              this.getOrderList(true);
+            }
           })
       },
       getBalance() {

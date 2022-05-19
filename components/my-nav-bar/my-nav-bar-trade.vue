@@ -10,7 +10,7 @@
 
     <view class="header-box" :style="{backgroundColor: backgroundColor}">
       <view class="header-box-left">
-        <uni-icons class="header-box-left__drawer" :color="color" type="bars" size="28"></uni-icons>
+        <uni-icons class="header-box-left__drawer" :color="color" type="bars" size="28" @click="pairListTo"></uni-icons>
         <text class="header-box-left__pair">{{ pair.tradeCoin.name }}/{{ pair.coin.name }}</text>
         <text class="header-box-left__rate" :class="[('header-box-left__rate__' + (rate >= 0 ? 'up' : 'down'))]">{{rate > 0 ? '+' : ''}}{{ rate }}%</text>
       </view>
@@ -23,7 +23,8 @@
 </template>
 
 <script>
-import {navigateTo} from "../../utils/common";
+import {navigateTo, switchTab} from "../../utils/common";
+import {mapActions} from "vuex";
 
 export default {
   name: "my-nav-bar-trade",
@@ -63,6 +64,9 @@ export default {
     }
   },
   methods: {
+    ...mapActions({
+      setMarketFrom: "setMarketFrom",
+    }),
     onClickItem(e) {
       if (this.current !== e.currentIndex) {
         this.$emit('clickItem', e.currentIndex)
@@ -71,6 +75,16 @@ export default {
     kLineClick() {
       const kLineUrl = `trade/kLine?coinId=${this.pair.coin.id}&tradeCoinId=${this.pair.tradeCoin.id}`
       navigateTo(kLineUrl, "slide-in-right")
+    },
+    pairListTo() {
+      // #ifdef APP-PLUS
+      navigateTo("trade/pairList")
+      // #endif
+      // #ifndef APP-PLUS
+      // 设置跳转到行情页面的来源
+      this.setMarketFrom("trade")
+      switchTab("market/index")
+      // #endif
     }
   }
 }

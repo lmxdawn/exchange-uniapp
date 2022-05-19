@@ -82,6 +82,7 @@ const state = {
     pair: pair,
     usdtRate: usdtRate,
     marketCollect: marketCollectSet,
+    marketFrom: "",
 };
 
 // getters
@@ -89,6 +90,7 @@ const getters = {
     pair: state => state.pair,
     usdtRate: state => state.usdtRate,
     marketCollect: state => state.marketCollect,
+    marketFrom: state => state.marketFrom,
 };
 
 // actions
@@ -112,6 +114,20 @@ const actions = {
                     resolve()
                 })
         })
+    },
+    setPairCoinId({state, commit}, data) {
+        const obj = {
+            coin: {
+                id: data.coinId
+            },
+            tradeCoin: {
+                id: data.tradeCoinId
+            }
+        }
+        commit("setPair", obj)
+    },
+    setMarketFrom({state, commit}, from) {
+        commit("setMarketFrom", from)
     },
     usdtRateSet({state, commit}, name) {
         if (!name) {
@@ -177,6 +193,9 @@ const mutations = {
         state.pair.tradePricePrecision = obj.tradePricePrecision || 0 // 价格精度
         state.pair.tradeAmountPrecision = obj.tradeAmountPrecision || 0 // 数量精度
         setStorageSync(pairKey, JSON.stringify(state.pair))
+    },
+    ["setMarketFrom"](state, from) {
+        state.marketFrom = from
     }
 };
 export default {

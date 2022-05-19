@@ -132,7 +132,7 @@ export default {
         contentdown: t('common.more.down'),
         contentrefresh: t('common.more.refresh'),
         contentnomore: t('common.more.nomore')
-      }
+      },
     }
   },
   onReady() {

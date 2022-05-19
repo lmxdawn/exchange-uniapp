@@ -69,6 +69,17 @@
       }
     },
     {
+      "path": "pages/trade/pairList",
+      "style": {
+        "navigationBarTitleText": "%common.title%",
+        "navigationStyle":"custom",
+        "enablePullDownRefresh": true,
+        "app-plus":{
+          "background":"#191E29"
+        }
+      }
+    },
+    {
       "path": "pages/contract/index",
       "style": {
         "navigationBarTitleText": "%common.title%",
