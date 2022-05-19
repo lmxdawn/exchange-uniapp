@@ -1,5 +1,5 @@
 <template>
-  <view class="pair-list-box" @click="close" :class="[isShowMask ? 'mask' : '']">
+  <view class="pair-list-box" @click="close">
     <my-status-bar></my-status-bar>
     <view class="pair-list-body" @click.stop="bodyClick($event)">
       <view class="pair-list-head">
@@ -11,9 +11,6 @@
         </my-input>
       </view>
       <view class="swiper-list-tabs">
-
-        <view class="pair-list-head-list" v-if="search.length > 0"></view>
-
         <scroll-view ref="tabbar1" id="swiper-list-tab-bar" class="swiper-list-tab-bar" :scroll="false" :scroll-x="true" :show-scrollbar="false"
                      :scroll-into-view="scrollInto">
           <view style="flex-direction: column;">
@@ -45,6 +42,14 @@
             <!--#endif-->
           </swiper-item>
         </swiper>
+
+
+        <cover-view class="pair-list-head-list" v-if="search.length > 0"></cover-view>
+
+        <cover-view class="swiper-list-tabs-loading" v-if="pageLoading">
+          <uni-load-more color="#2DBD96" iconType="circle" status="loading" :contentText="{}"></uni-load-more>
+        </cover-view>
+
       </view>
     </view>
   </view>
@@ -138,7 +143,7 @@ export default {
         contentnomore: t('common.more.nomore')
       },
       search: "",
-      isShowMask: false,
+      pageLoading: true,
     }
   },
   onReady() {
@@ -161,14 +166,16 @@ export default {
     this.switchTab(this.tabIndex);
     this.selectorQuery();
 
-    this.isShowMask = true;
+    setTimeout(() => {
+      this.pageLoading = false
+    }, 500)
+
   },
   onPullDownRefresh() {
     this.refreshData(this.tabIndex)
   },
   methods: {
     close() {
-      this.isShowMask = false;
       navigateBack()
     },
     bodyClick(e) {
@@ -368,12 +375,7 @@ page {
   /* #ifndef APP-NVUE */
   display: flex;
   /* #endif */
-  transition-property: background-color;
-  transition-duration: 0.3s;
-  &.mask {
-    transition-duration: 0.5s;
-    background-color: rgba(0, 0, 0, 0.4);
-  }
+  background-color: rgba(0, 0, 0, 0.4);
 }
 
 .pair-list-body {
@@ -414,6 +416,20 @@ page {
   bottom: 0;
   background-color: #1C222B;
   z-index: 10000;
+}
+
+.swiper-list-tabs-loading {
+  position: absolute;
+  left: 0;
+  right: 0;
+  top: 0;
+  bottom: 0;
+  flex: 1;
+  display: flex;
+  flex-direction: row;
+  justify-content: center;
+  background-color: #1C222B;
+  z-index: 20001;
 }
 
 .swiper-list-tabs {

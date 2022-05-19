@@ -384,6 +384,8 @@
     onPullDownRefresh() {
       this.init()
     },
+    onReady() {
+    },
 		methods: {
       ...mapActions({
         setPair: "setPair",

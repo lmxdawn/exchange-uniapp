@@ -18,7 +18,7 @@
       <cell v-if="isNoData">
         <my-empty :text="emptyText" :click-data="nid" @emptyClick="emptyClick" :loadingStatus="loadingStatus"></my-empty>
       </cell>
-      <cell v-if="loadingStatus !== 'noMore' || params.page > 1">
+      <cell v-if="loadingStatus !== 'noMore' && params.page > 1">
         <uni-load-more :status="loadingStatus" iconType="circle" :contentText="loadingMoreText"></uni-load-more>
       </cell>
     </list>
@@ -29,7 +29,7 @@
         <entrust-order class="list-item" :item="item" forward></entrust-order>
       </view>
       <my-empty v-if="isNoData" :text="emptyText" :click-data="nid" @emptyClick="emptyClick" :loadingStatus="loadingStatus"></my-empty>
-      <view class="loading-more" v-if="loadingStatus !== 'noMore' || params.page > 1">
+      <view class="loading-more" v-if="loadingStatus !== 'noMore' && params.page > 1">
         <uni-load-more :status="loadingStatus" iconType="circle" :contentText="loadingMoreText"></uni-load-more>
       </view>
     </scroll-view>
