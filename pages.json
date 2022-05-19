@@ -17,6 +17,9 @@
       "style": {
         "navigationBarTitleText": "%common.title%",
         "navigationStyle":"custom",
+        // #ifndef APP-PLUS
+        "enablePullDownRefresh": true,
+        // #endif
         "app-plus":{
           "titleNView":false,
           "background":"#191E29"
@@ -51,7 +54,9 @@
       "style": {
         "navigationBarTitleText": "%common.title%",
         "navigationStyle":"custom",
+        // #ifndef APP-PLUS
         "enablePullDownRefresh": true,
+        // #endif
         "app-plus":{
           "titleNView":false,
           "background":"#191E29"
@@ -73,9 +78,14 @@
       "style": {
         "navigationBarTitleText": "%common.title%",
         "navigationStyle":"custom",
+        // #ifndef APP-PLUS
         "enablePullDownRefresh": true,
+        // #endif
+        "backgroundColor": "transparent",
         "app-plus":{
-          "background":"#191E29"
+          "animationType": "slide-in-left",
+          "background": "transparent",
+          "popGesture": "none"
         }
       }
     },

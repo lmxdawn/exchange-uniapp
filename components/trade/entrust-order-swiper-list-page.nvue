@@ -1,38 +1,39 @@
 <template>
   <view class="page-news">
-    <my-empty v-if="isNoData" :text="emptyText" :click-data="nid" @click="emptyClick" :loadingStatus="loadingStatus"></my-empty>
-    <block v-else>
-      <!-- #ifdef APP-NVUE -->
-      <list ref="list" class="listview" @loadmore="loadMore">
-        <refresh class="refresh" :display="refreshing ? 'show' : 'hide'" @refresh="onrefresh" @pullingdown="onpullingdown">
-          <!--<div class="refresh-view">-->
-          <!--  <text class="loading-icon">加载中...</text>-->
-          <!--</div>-->
-          <div class="refresh-view">
-            <image class="refresh-icon" :src="refreshIcon" :style="{width: (refreshing || pulling) ? 0: '30px'}" :class="{'refresh-icon-active': refreshFlag}"></image>
-            <loading-indicator class="loading-icon" animating="true" v-if="refreshing || pulling"></loading-indicator>
-            <text class="loading-text">{{refreshText}}</text>
-          </div>
-        </refresh>
-        <cell class="listview-box" v-for="(item, index) in dataList" :key="item.id">
-          <entrust-order class="list-item" :item="item" forward></entrust-order>
-        </cell>
-        <cell v-if="loadingStatus !== 'noMore' || params.page > 1">
-          <uni-load-more :status="loadingStatus" iconType="circle" :contentText="loadingMoreText"></uni-load-more>
-        </cell>
-      </list>
-      <!-- #endif -->
-      <!-- #ifndef APP-NVUE -->
-      <scroll-view class="listview" style="flex: 1;" enableBackToTop="true" scroll-y @scrolltolower="loadMore()">
-        <view class="listview-box" v-for="(item, index) in dataList" :key="item.id">
-          <entrust-order class="list-item" :item="item" forward></entrust-order>
-        </view>
-        <view class="loading-more" v-if="loadingStatus !== 'noMore' || params.page > 1">
-          <uni-load-more :status="loadingStatus" iconType="circle" :contentText="loadingMoreText"></uni-load-more>
-        </view>
-      </scroll-view>
-      <!-- #endif -->
-    </block>
+    <!-- #ifdef APP-NVUE -->
+    <list ref="list" class="listview" @loadmore="loadMore">
+      <refresh class="refresh" :display="refreshing ? 'show' : 'hide'" @refresh="onrefresh" @pullingdown="onpullingdown">
+        <!--<div class="refresh-view">-->
+        <!--  <text class="loading-icon">加载中...</text>-->
+        <!--</div>-->
+        <div class="refresh-view">
+          <image class="refresh-icon" :src="refreshIcon" :style="{width: (refreshing || pulling) ? 0: '30px'}" :class="{'refresh-icon-active': refreshFlag}"></image>
+          <loading-indicator class="loading-icon" animating="true" v-if="refreshing || pulling"></loading-indicator>
+          <text class="loading-text">{{refreshText}}</text>
+        </div>
+      </refresh>
+      <cell class="listview-box" v-for="(item, index) in dataList" :key="item.id">
+        <entrust-order class="list-item" :item="item" forward></entrust-order>
+      </cell>
+      <cell v-if="isNoData">
+        <my-empty :text="emptyText" :click-data="nid" @emptyClick="emptyClick" :loadingStatus="loadingStatus"></my-empty>
+      </cell>
+      <cell v-if="loadingStatus !== 'noMore' || params.page > 1">
+        <uni-load-more :status="loadingStatus" iconType="circle" :contentText="loadingMoreText"></uni-load-more>
+      </cell>
+    </list>
+    <!-- #endif -->
+    <!-- #ifndef APP-NVUE -->
+    <scroll-view class="listview" style="flex: 1;" enableBackToTop="true" scroll-y @scrolltolower="loadMore()">
+      <view class="listview-box" v-for="(item, index) in dataList" :key="item.id">
+        <entrust-order class="list-item" :item="item" forward></entrust-order>
+      </view>
+      <my-empty v-if="isNoData" :text="emptyText" :click-data="nid" @emptyClick="emptyClick" :loadingStatus="loadingStatus"></my-empty>
+      <view class="loading-more" v-if="loadingStatus !== 'noMore' || params.page > 1">
+        <uni-load-more :status="loadingStatus" iconType="circle" :contentText="loadingMoreText"></uni-load-more>
+      </view>
+    </scroll-view>
+    <!-- #endif -->
   </view>
 </template>
 
@@ -112,16 +113,14 @@ export default {
       }
     },
     loadData(refresh) {
-      if (this.loadingStatus !== "more") {
-        if (refresh) {
-          this.refreshStatus()
-        }
+      if (this.loadingStatus !== "more" && !refresh) {
         return;
       }
       this.loadingStatus = "loading";
 
       entrustOrderList(this.params)
         .then(res => {
+          uni.stopPullDownRefresh()
           this.isNoData = false
           if (res.code > 0) {
             this.loadingStatus = "noMore";
@@ -149,6 +148,7 @@ export default {
           }
         })
         .catch(() => {
+          uni.stopPullDownRefresh()
           this.isNoData = false
           this.loadingStatus = "noMore";
           if (this.dataList.length === 0) {

@@ -1,5 +1,5 @@
 <template>
-	<view class="swiper-item-cell" @click="click" :class="[background]" hover-class="swiper-item-cell-hover">
+	<view class="swiper-item-cell" @click="click" :class="[background]" :style="{width: width}" hover-class="swiper-item-cell-hover">
     <view class="swiper-item-cell-left">
       <view class="swiper-item-cell-left1">
         <view class="swiper-item-cell-text-box">
@@ -30,6 +30,11 @@
   import {navigateTo, switchTab} from "../../utils/common";
 	export default {
 		props: {
+      //  宽度，单位px
+      width: {
+        type: [String, Number],
+        default: '750rpx'
+      },
 			listItem: {
 				type: Object,
 				default: function(e) {
@@ -100,7 +105,6 @@
     justify-content: center;
     align-items: center;
     flex-direction: row;
-    width: 750rpx;
     padding: 5px 15px;
     background-color: transparent;
     transition-property: background-color;

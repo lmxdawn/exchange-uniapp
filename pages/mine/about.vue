@@ -7,9 +7,12 @@
       <my-card-item :left-text="agreementText"
                     right-icon="forward">
       </my-card-item>
+      <!--#ifdef APP-PLUS-->
       <my-card-item :left-text="versionText"
-                    :right-text="version">
+                    :right-text="version"
+                    right-icon="forward">
       </my-card-item>
+      <!--#endif-->
     </my-card>
   </view>
 </template>
@@ -36,12 +39,14 @@ export default {
   },
   data() {
     return {
-      version: ""
+      version: "V1.0.0"
     }
   },
   onLoad() {
     // #ifdef APP-PLUS
-    this.version = plus.runtime.version
+    plus.runtime.getProperty(plus.runtime.appid, wgtinfo => {
+      this.version = "V" + wgtinfo.version
+    })
     // #endif
   },
   methods: {

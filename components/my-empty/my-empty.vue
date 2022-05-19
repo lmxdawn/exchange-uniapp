@@ -1,5 +1,5 @@
 <template>
-  <view class="my-empty-box" :style="{paddingTop:paddingTop}">
+  <view class="my-empty-box" :style="{paddingTop:paddingTop,width: width,height: height}">
     <view class="my-empty" v-if="loadingStatus === 'noMore'" @click="onClick">
       <image class="my-empty__image" :src="icon" :style="[imageStyle]"></image>
       <text
@@ -38,13 +38,23 @@ export default {
       type: [String, Number],
       default: 15
     },
-    //  图标宽度，单位px
+    // 宽度，单位px
     width: {
+      type: [String, Number],
+      default: '750rpx'
+    },
+    // 高度，单位px
+    height: {
+      type: [String, Number],
+      default: '300px'
+    },
+    //  图标宽度，单位px
+    imageWidth: {
       type: [String, Number],
       default: '128px'
     },
     // 图标高度，单位px
-    height: {
+    imageHeight: {
       type: [String, Number],
       default: '128px'
     },
@@ -61,8 +71,8 @@ export default {
   computed: {
     imageStyle() {
       const style = {}
-      style.width = this.width
-      style.height = this.height
+      style.width = this.imageWidth
+      style.height = this.imageHeight
       return style
     },
     // 文本样式
@@ -75,7 +85,7 @@ export default {
   },
   methods: {
     onClick() {
-      this.$emit('click', this.clickData)
+      this.$emit('emptyClick', this.clickData)
     },
   }
 }
@@ -87,7 +97,6 @@ export default {
   position: absolute;
   top: 0;
   left: 0;
-  width: 750rpx;
   display: flex;
   flex-direction: row;
   justify-content: center;

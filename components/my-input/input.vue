@@ -82,6 +82,7 @@ export default {
   border: 1px solid #292E39;
   border-radius: 2px;
   display: flex;
+  flex-direction: row;
   align-items: center;
   justify-content: space-between;
   caret-color: #2DBD96;
@@ -92,12 +93,13 @@ export default {
 
   .m-input__box {
     display: flex;
-    flex: auto;
+    flex-direction: row;
+    flex: 1;
     align-items: center;
     white-space: nowrap;
     padding: 14px 14px;
     &.mini {
-      padding: 10px 10px;
+      padding: 8px 8px;
     }
   }
 

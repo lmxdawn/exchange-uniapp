@@ -65,21 +65,21 @@ export default {
       tabIndex: 0,
       cacheTab: [],
       refreshStatusText: {
-        initial: "正在刷新",
-        complete: "刷新完成",
-        pull: "下拉刷新",
-        freed: "释放刷新",
+        initial: t('common.refresh.initial'),
+        complete: t('common.refresh.complete'),
+        pull: t('common.refresh.pull'),
+        freed: t('common.refresh.freed'),
       },
       loadingMoreText: {
-        contentdown: "上拉显示更多",
-        contentrefresh: "正在加载...",
-        contentnomore: "我是有底线的"
+        contentdown: t('common.more.down'),
+        contentrefresh: t('common.more.refresh'),
+        contentnomore: t('common.more.nomore')
       },
       pageList: []
     }
   },
   onPullDownRefresh() {
-    this.refreshTabData(this.tabIndex)
+    this.refreshData(this.tabIndex)
   },
   onLoad(option) {
     const tabIndex = parseInt(option.tabIndex)
@@ -145,7 +145,7 @@ export default {
     loadTabData(index) {
       this.pageList[index].loadData();
     },
-    refreshTabData(index) {
+    refreshData(index) {
       this.pageList[index].refreshData();
     },
     clearTabData(index) {
