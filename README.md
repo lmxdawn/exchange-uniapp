@@ -1,6 +1,6 @@
 # exchange-uniapp
 
-交易所APP代码
+> Java 交易所源码，前端APP使用uniapp开发，后端使用java开发，采用 Spring Cloud Alibaba 微服务架构，撮合引擎使用Disruptor高效内存队列，所有服务可以实现分布式部署，websocket推送通过增加一层路由服务实现分布式部署
 
 # 说明
 
