@@ -23,8 +23,7 @@
 </template>
 
 <script>
-import {navigateTo, switchTab} from "../../utils/common";
-import {mapActions} from "vuex";
+import {navigateTo} from "../../utils/common";
 
 export default {
   name: "my-nav-bar-trade",
@@ -64,9 +63,6 @@ export default {
     }
   },
   methods: {
-    ...mapActions({
-      setMarketFrom: "setMarketFrom",
-    }),
     onClickItem(e) {
       if (this.current !== e.currentIndex) {
         this.$emit('clickItem', e.currentIndex)
@@ -77,14 +73,7 @@ export default {
       navigateTo(kLineUrl, "slide-in-right")
     },
     pairListTo() {
-      // #ifdef APP-PLUS
       navigateTo("trade/pairList")
-      // #endif
-      // #ifndef APP-PLUS
-      // 设置跳转到行情页面的来源
-      this.setMarketFrom("trade")
-      switchTab("market/index")
-      // #endif
     }
   }
 }

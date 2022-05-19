@@ -1,13 +1,13 @@
 <template>
   <view class="my-empty-box" :style="{paddingTop:paddingTop,width: width,height: height}">
-    <view class="my-empty" v-if="loadingStatus === 'noMore'" @click="onClick">
+    <view class="my-empty" v-if="loadingStatus === 'noMore'" @click="onClick()">
       <image class="my-empty__image" :src="icon" :style="[imageStyle]"></image>
       <text
           class="my-empty__text"
           :style="[textStyle]"
       >{{text}}</text>
     </view>
-    <uni-load-more v-else color="#2DBD96" iconType="circle" :status="loadingStatus" :contentText="{}"></uni-load-more>
+    <uni-load-more v-else color="#2DBD96" iconType="circle" status="loading" :contentText="{}"></uni-load-more>
   </view>
 </template>
 
@@ -94,9 +94,6 @@ export default {
 <style lang="scss" scoped>
 
 .my-empty-box {
-  position: absolute;
-  top: 0;
-  left: 0;
   display: flex;
   flex-direction: row;
   justify-content: center;

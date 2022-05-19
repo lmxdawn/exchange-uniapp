@@ -1,33 +1,27 @@
 <template>
 	<view class="swiper-item-cell" @click="click" :class="[background]" :style="{width: width}" hover-class="swiper-item-cell-hover">
     <view class="swiper-item-cell-left">
-      <view class="swiper-item-cell-left1">
-        <view class="swiper-item-cell-text-box">
-          <text class="swiper-item-cell-text swiper-item-cell-text-big-b">{{listItem.tradeCoin.name}}/{{listItem.coin.name}}</text>
-          <text class="swiper-item-cell-text swiper-item-cell-text-small">{{listItem.tradeTotal24}}</text>
-        </view>
-      </view>
-      <view class="swiper-item-cell-left2">
-        <view class="swiper-item-cell-text-box">
-          <text class="swiper-item-cell-text swiper-item-cell-text-big">{{listItem.price}}</text>
-          <text class="swiper-item-cell-text swiper-item-cell-text-small">≈ {{priceRate}} {{usdtRate.symbol}}</text>
+      <view class="swiper-item-cell-text-box">
+        <view class="swiper-item-cell-text-list">
+          <text class="swiper-item-cell-text">{{listItem.tradeCoin.name}}</text>
+          <text class="swiper-item-cell-text gray">/</text>
+          <text class="swiper-item-cell-text gray">{{listItem.coin.name}}</text>
         </view>
       </view>
     </view>
     <view class="swiper-item-cell-right">
-      <view class="swiper-item-cell-text-box">
-        <view class="swiper-item-cell-up-button" :class="[rate >= 0 ? 'upRate' : 'downRate']">
-          <text class="swiper-item-cell-text">{{rate >= 0 ? '+' : ''}}{{ rate }}%</text>
-        </view>
+      <view class="swiper-item-cell-text-box" :class="[rate >= 0 ? 'upRate' : 'downRate']">
+        <text class="swiper-item-cell-text">{{listItem.price}}</text>
+        <text class="swiper-item-cell-text-small">{{rate >= 0 ? '+' : ''}}{{ rate }}%</text>
       </view>
     </view>
   </view>
 </template>
 
 <script>
-  import {mapGetters} from "vuex";
+  import {mapActions, mapGetters} from "vuex";
   import {accMul} from "../../utils/decimal"
-  import {navigateTo} from "../../utils/common";
+  import {navigateBack, navigateTo} from "../../utils/common";
 	export default {
 		props: {
       //  宽度，单位px
@@ -76,9 +70,16 @@
       }
     },
 		methods: {
+      ...mapActions({
+        setPairCoinId: "setPairCoinId",
+      }),
 			click() {
-        const kLineUrl = `trade/kLine?coinId=${this.listItem.coin.id}&tradeCoinId=${this.listItem.tradeCoin.id}`
-        navigateTo(kLineUrl, "slide-in-right")
+        const params = {
+          coinId: this.listItem.coin.id,
+          tradeCoinId: this.listItem.tradeCoin.id,
+        }
+        this.setPairCoinId(params)
+        navigateBack()
 			},
 		}
 	}
@@ -88,9 +89,9 @@
 	.swiper-item-cell {
     display: flex;
     justify-content: center;
-    align-items: center;
+    align-items: flex-start;
     flex-direction: row;
-    padding: 5px 15px;
+    padding: 12px 15px 0;
     background-color: transparent;
     transition-property: background-color;
     transition-duration: .5s
@@ -104,62 +105,52 @@
     flex-direction: row;
     justify-content: space-between;
     align-items: center;
-    //background-color: red;
   }
   .swiper-item-cell-right {
-    width: 230rpx;
-    //background-color: green;
+    width: 130px;
   }
-  .swiper-item-cell-left1 {
-    .swiper-item-cell-text-box {
-      align-items: flex-start;
-    }
-  }
-  .swiper-item-cell-left2 {
-    display: flex;
-    flex-direction: row;
-    justify-content: space-between;
-    align-items: center;
-  }
-  .swiper-item-cell-up-button {
-    padding: 9px 15px;
-    .swiper-item-cell-text {
-      font-size: 13px;
-    }
-    &.upRate {
-      background-color: rgba(26,187,151,.08);
-      .swiper-item-cell-text {
-        color: #2DBD96;
-      }
-    }
-    &.downRate {
-      background-color: rgba(237,102,102,.08);
-      .swiper-item-cell-text {
-        color: #ED6666;
-      }
-    }
-  }
-  .swiper-item-cell-text-big {
-    font-size: 16px;
-    color: #b8c6d8!important;
-  }
-  .swiper-item-cell-text-big-b {
-    font-size: 16px;
-    color: #b8c6d8!important;
-  }
+
   .swiper-item-cell-text-small {
-    font-size: 12px;
-    color: rgba(184,198,216,.38)!important;
+    font-size: 20rpx;
     margin-top: 5px;
   }
+
   .swiper-item-cell-text-box {
     display: flex;
     flex-direction: column;
     justify-content: center;
     align-items: flex-end;
+    &.upRate {
+      .swiper-item-cell-text {
+        color: #2DBD96;
+      }
+      .swiper-item-cell-text-small {
+        color: #2DBD96;
+      }
+    }
+    &.downRate {
+      .swiper-item-cell-text {
+        color: #ED6666;
+      }
+      .swiper-item-cell-text-small {
+        color: #ED6666;
+      }
+    }
   }
+
+  .swiper-item-cell-text-list {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+  }
+
   .swiper-item-cell-text {
+    font-size: 14px;
     color: #FFFFFF;
+    &.gray {
+      font-size: 13px;
+      color: #9197A3;
+    }
   }
 
   .transparent-up {

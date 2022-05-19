@@ -43,11 +43,11 @@ import {mapGetters} from "vuex";
 import {
   initVueI18n
 } from '@dcloudio/uni-i18n'
-import messages from '../../locale/index';
-import swiperListItem from './swiper-list-item.nvue';
+import messages from '../../locale';
+import swiperListItem from './pair-swiper-list-item.nvue';
 import {accAdd, accMul, accSub, accDiv} from "../../utils/decimal";
 import {pairList} from "../../api/trade/pair";
-import myEmpty from "../../components/my-empty/my-empty";
+import myEmpty from "../my-empty/my-empty";
 
 const { t } = initVueI18n(messages)
 
@@ -60,7 +60,7 @@ export default {
     //  宽度，单位px
     width: {
       type: [String, Number],
-      default: '750rpx'
+      default: '750rpx',
     },
     nid: {
       type: [Number, String],

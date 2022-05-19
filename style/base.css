@@ -3,8 +3,6 @@
 }
 
 page {
-  /* #ifndef APP-NVUE */
   width: 750rpx;
-  /* #endif */
   background-color: #191E29;
 }

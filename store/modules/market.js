@@ -82,7 +82,7 @@ const state = {
     pair: pair,
     usdtRate: usdtRate,
     marketCollect: marketCollectSet,
-    marketFrom: "",
+    tradeIsShowInit: 0, // 是否在交易页面显示的时候重新加载
 };
 
 // getters
@@ -90,7 +90,7 @@ const getters = {
     pair: state => state.pair,
     usdtRate: state => state.usdtRate,
     marketCollect: state => state.marketCollect,
-    marketFrom: state => state.marketFrom,
+    tradeIsShowInit: state => state.tradeIsShowInit,
 };
 
 // actions
@@ -116,18 +116,11 @@ const actions = {
         })
     },
     setPairCoinId({state, commit}, data) {
-        const obj = {
-            coin: {
-                id: data.coinId
-            },
-            tradeCoin: {
-                id: data.tradeCoinId
-            }
-        }
-        commit("setPair", obj)
+        commit("setPairCoinId", data)
+        commit("setTradeIsShowInit", 1)
     },
-    setMarketFrom({state, commit}, from) {
-        commit("setMarketFrom", from)
+    setTradeIsShowInit({state, commit}, isInit) {
+        commit("setTradeIsShowInit", isInit)
     },
     usdtRateSet({state, commit}, name) {
         if (!name) {
@@ -194,8 +187,12 @@ const mutations = {
         state.pair.tradeAmountPrecision = obj.tradeAmountPrecision || 0 // 数量精度
         setStorageSync(pairKey, JSON.stringify(state.pair))
     },
-    ["setMarketFrom"](state, from) {
-        state.marketFrom = from
+    ["setPairCoinId"](state, obj) {
+        state.pair.coin.id = obj.coinId
+        state.pair.tradeCoin.id = obj.tradeCoinId
+    },
+    ["setTradeIsShowInit"](state, isInit) {
+        state.tradeIsShowInit = isInit
     }
 };
 export default {

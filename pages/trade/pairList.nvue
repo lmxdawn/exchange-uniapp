@@ -1,10 +1,10 @@
 <template>
-  <view class="pair-list-box" @click="close">
+  <view class="pair-list-box" @click="close" :class="[isShowMask ? 'mask' : '']">
     <my-status-bar></my-status-bar>
-    <view class="pair-list-body" @click.stop="bodyClick()">
+    <view class="pair-list-body" @click.stop="bodyClick($event)">
       <view class="pair-list-head">
-        <text class="pair-list-head-title">币币</text>
-        <my-input class="pair-list-head-input" size="mini" placeholder="搜索" v-model="search">
+        <text class="pair-list-head-title">{{headTitle}}</text>
+        <my-input class="pair-list-head-input" size="mini" :placeholder="searchPlaceholder" v-model="search">
           <template slot="prefix">
             <uni-icons class="pair-list-head-search" type="search" size="20" color="#E1E8F5" />
           </template>
@@ -37,7 +37,12 @@
         <swiper class="swiper-list-tab-box" ref="swiper1" :current="tabIndex" :duration="300" @change="onswiperchange"
                 @transition="onswiperscroll" @animationfinish="animationfinish" @onAnimationEnd="animationfinish">
           <swiper-item class="swiper-list-swiper-item" v-for="(page, index) in tabList" :key="index">
+            <!--#ifdef APP-PLUS-->
             <swiper-list-page class="swiper-list-page-item" :loading-more-text="loadingMoreText" :refresh-status-text="refreshStatusText" :nid="page.nid" :ref="'page' + index" width="600rpx"></swiper-list-page>
+            <!--#endif-->
+            <!--#ifndef APP-PLUS-->
+            <swiper-list-page class="swiper-list-page-item" :loading-more-text="loadingMoreText" :refresh-status-text="refreshStatusText" :nid="page.nid" :ref="'page' + index" width="750rpx"></swiper-list-page>
+            <!--#endif-->
           </swiper-item>
         </swiper>
       </view>
@@ -47,7 +52,7 @@
 
 <script>
 import {navigateBack} from "../../utils/common"
-import swiperListPage from '../../components/market/swiper-list-page.nvue';
+import swiperListPage from '../../components/trade/pair-swiper-list-page.nvue';
 import MyStatusBar from "../../components/my-status-bar";
 import MyInput from "../../components/my-input/input";
 // #ifdef APP-PLUS
@@ -71,6 +76,14 @@ export default {
     MyStatusBar,
     MyInput,
     swiperListPage
+  },
+  computed: {
+    headTitle() {
+      return t('trade.coin2coin')
+    },
+    searchPlaceholder() {
+      return t('common.search.placeholder')
+    }
   },
   data() {
     return {
@@ -125,6 +138,7 @@ export default {
         contentnomore: t('common.more.nomore')
       },
       search: "",
+      isShowMask: false,
     }
   },
   onReady() {
@@ -146,16 +160,19 @@ export default {
     }
     this.switchTab(this.tabIndex);
     this.selectorQuery();
+
+    this.isShowMask = true;
   },
   onPullDownRefresh() {
     this.refreshData(this.tabIndex)
   },
   methods: {
     close() {
+      this.isShowMask = false;
       navigateBack()
     },
-    bodyClick() {
-
+    bodyClick(e) {
+      e.stopPropagation();
     },
     ontabtap(e) {
       let index = e.target.dataset.current || e.currentTarget.dataset.current;
@@ -314,10 +331,14 @@ export default {
       });
     },
     loadTabData(index) {
-      this.pageList[index].loadData();
+      setTimeout(() => {
+        this.pageList[index].loadData();
+      }, 500)
     },
     refreshData(index) {
-      this.pageList[index].refreshData();
+      setTimeout(() => {
+        this.pageList[index].refreshData();
+      }, 500)
     },
     setTabItem(index, obj) {
       this.pageList[index].setItem(obj);
@@ -329,12 +350,14 @@ export default {
 }
 </script>
 
-<style>
+<style lang="scss">
 
+/* #ifndef APP-NVUE */
 page {
   background: transparent;
   display: flex;
 }
+/* #endif */
 
 .pair-list-box {
   position: fixed;
@@ -345,22 +368,32 @@ page {
   /* #ifndef APP-NVUE */
   display: flex;
   /* #endif */
-  background-color: rgba(0, 0, 0, 0.1);
+  transition-property: background-color;
+  transition-duration: 0.3s;
+  &.mask {
+    transition-duration: 0.5s;
+    background-color: rgba(0, 0, 0, 0.4);
+  }
 }
 
 .pair-list-body {
   flex: 1;
+  /* #ifdef APP-PLUS */
   width: 600rpx;
-  background-color: #191E29;
+  /* #endif */
+  /* #ifndef APP-PLUS */
+  width: 750rpx;
+  /* #endif */
+  background-color: #1C222B;
 }
 
 .pair-list-head {
   padding: 35px 15px 15px;
-  color: #E1E8F5;
 }
 
 .pair-list-head-title {
   font-size: 20px;
+  color: #E1E8F5;
 }
 
 .pair-list-head-input {
@@ -379,7 +412,7 @@ page {
   right: 0;
   top: 0;
   bottom: 0;
-  background-color: #191E29;
+  background-color: #1C222B;
   z-index: 10000;
 }
 

@@ -96,7 +96,6 @@ export default {
     flex-direction: row;
     flex: 1;
     align-items: center;
-    white-space: nowrap;
     padding: 14px 14px;
     &.mini {
       padding: 8px 8px;
@@ -106,7 +105,6 @@ export default {
   &.m-input-plain {
     padding-top: 0;
     padding-bottom: 0;
-    border-bottom: none;
   }
 
   &.m-input-default {
@@ -114,8 +112,7 @@ export default {
   }
 
   .m-input__inner {
-    display: inline-block;
-    flex: auto;
+    flex: 1;
 
     &::-webkit-input-placeholder {
       color: #4F5460;

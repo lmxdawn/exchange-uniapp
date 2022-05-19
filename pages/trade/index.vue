@@ -203,7 +203,7 @@
       ...mapGetters({
         pair: "pair",
         marketCollect: "marketCollect",
-        marketFrom: "marketFrom",
+        tradeIsShowInit: "tradeIsShowInit",
         memberInfo: "memberInfo",
         usdtRate: "usdtRate",
       }),
@@ -334,7 +334,6 @@
         isNoData: true,
         loadingStatus: "more",
         orderList: [],
-        isShowInit: false, // 是否在页面显示的时候重新加载
         isShowPayPwd: false, // 是否在页面显示的时候重新调起支付
         // 交易数据
         tradeFormLoading: false,
@@ -366,11 +365,8 @@
       })
 		},
     onShow() {
-      if (this.isShowInit || this.marketFrom === "market") {
-        this.isShowInit = false
-        if (this.marketFrom === "market") {
-          this.setMarketFrom()
-        }
+      if (this.tradeIsShowInit === 1) {
+        this.setTradeIsShowInit(0)
         this.init()
       }
       if (this.isShowPayPwd) {
@@ -391,7 +387,7 @@
 		methods: {
       ...mapActions({
         setPair: "setPair",
-        setMarketFrom: "setMarketFrom",
+        setTradeIsShowInit: "setTradeIsShowInit",
       }),
       onNavBarTabClickItem(index) {
         this.navBarTabIndex = index
@@ -404,6 +400,13 @@
         this.tradeForm.price = ""
         this.tradeForm.amount = ""
         this.tradeForm.total = ""
+
+        this.params.page = 1
+        this.orderList = []
+        this.loadingStatus = "more"
+
+        this.depthBuy = []
+        this.depthSell = []
       },
       init() {
         this.initTradeForm()
@@ -451,10 +454,6 @@
             })
       },
       getOrderList(refresh) {
-        if (refresh) {
-          this.params.page = 1
-          this.loadingStatus = "more"
-        }
         if (this.loadingStatus !== "more") {
           return false
         }
@@ -463,7 +462,7 @@
           .then(res => {
             if (res.code > 0) {
               this.loadingStatus = "noMore";
-              if (this.orderList.length === 0) {
+              if (refresh) {
                 this.isNoData = true;
               }
               return false
@@ -482,7 +481,6 @@
             }
           })
           .catch(() => {
-            console.log(123456)
             this.isNoData = false
             this.loadingStatus = "noMore";
             if (this.orderList.length === 0) {
@@ -554,7 +552,7 @@
       isLoginTo() {
         if (this.memberInfo.memberId <= 0) {
           // 打开显示页面时重新加载数据的开关
-          this.isShowInit = true
+          this.setTradeIsShowInit(1)
           const redirect = encodeURIComponent("trade/index")
           navigateToLogin(redirect)
           return true
@@ -768,6 +766,8 @@
     border-top: solid 1px #292E39;
     border-bottom: solid 1px #292E39;
     padding: 5px 0;
+    display: flex;
+    flex-direction: column;
     &__price {
       font-size: 16px;
       font-weight: bold;
@@ -885,9 +885,10 @@
   .trade-order-box {
   }
   .trade-order-empty {
-    position: relative;
     width: 750rpx;
     height: 170px;
+    display: flex;
+    justify-content: center;
   }
   .trade-order-item {
     background-color: transparent;

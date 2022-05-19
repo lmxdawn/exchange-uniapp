@@ -254,6 +254,8 @@
 	.uni-navbar--border {
 		border-bottom-width: 1rpx;
 		border-bottom-style: solid;
+    /* #ifndef APP-NVUE */
 		border-bottom-color: #eee;
+    /* #endif */
 	}
 </style>
