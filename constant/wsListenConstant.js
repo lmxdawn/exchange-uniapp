@@ -1,0 +1,8 @@
+// ws的监听常量
+const WS_MARKET_LISTEN = "WS_MARKET_LISTEN"; // 行情事件的监听
+const WS_ENTRUST_ORDER_LISTEN = "WS_ENTRUST_ORDER_LISTEN"; // 委托订单的监听
+
+export {
+    WS_MARKET_LISTEN,
+    WS_ENTRUST_ORDER_LISTEN,
+}

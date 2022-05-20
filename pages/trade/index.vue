@@ -220,7 +220,8 @@
   import {entrustOrderList} from "../../api/trade/entrustOrder";
   import {accMul,accDiv} from "../../utils/decimal";
   import {entrustOrderCreate} from "../../api/trade/entrustOrder";
-  import {navigateTo, navigateToLogin} from "../../utils/common";
+  import {navigateTo, navigateToLogin, redirectTo} from "../../utils/common";
+  import {WS_MARKET_LISTEN} from "../../constant/wsListenConstant";
 
   const { t } = initVueI18n(messages)
 
@@ -439,15 +440,34 @@
       this.init()
 
       // 监听深度图数据事件
-      uni.$on('depthWs',(res)=>{
+      uni.$on(WS_MARKET_LISTEN,(res)=>{
         // 判断是不是当前交易对
-        if (res.tradeCoinId !== this.pair.tradeCoinId || res.coinId !== this.pair.coinId) {
-          return false
+        console.log(res.tradeCoinId, res.coinId)
+        console.log(this.pair.tradeCoin.id, this.pair.coin.id)
+        if (res.tradeCoinId === this.pair.tradeCoin.id && res.coinId === this.pair.coin.id) {
+          let sellList = res.sellList || []
+          this.depthSell = sellList.reverse()
+          this.depthBuy = res.buyList || []
         }
-        let sellList = res.sellList || []
-        this.depthSell = sellList.reverse()
-        this.depthBuy = res.buyList || []
+        if (res.match) {
+          const obj = res.match
+          // 更新价格
+          this.setPairPrice(obj.price)
+          let coinId = res.coinId
+          obj.coinId = coinId
+          obj.tradeCoinId = res.tradeCoinId
+          let len = this.tabList.length
+          for (let i = 0; i < len; i++) {
+            if (this.tabList[i].nid === coinId) {
+              this.setTabItem(i, obj)
+              break;
+            }
+          }
+          // 总是去更新自选
+          this.setTabItem(0, obj)
+        }
       })
+
 		},
     onShow() {
       if (this.tradeIsShowInit === 1) {
@@ -460,8 +480,8 @@
       }
     },
     onUnload() {
-      // 移除深度图数据监听事件
-      uni.$off('depthWs');
+      // 移除行情监听事件
+      uni.$off(WS_MARKET_LISTEN);
     },
     onReachBottom() {
       this.loadMore()
@@ -475,6 +495,7 @@
       ...mapActions({
         setPair: "setPair",
         setTradeIsShowInit: "setTradeIsShowInit",
+        setPairPrice: "setPairPrice",
         setPairCoinId: "setPairCoinId",
       }),
       onNavBarTabClickItem(index) {
@@ -717,6 +738,9 @@
       },
       refreshData(index) {
         this.pageList[index].refreshData();
+      },
+      setTabItem(index, obj) {
+        this.pageList[index].setItem(obj);
       },
       clearTabData(index) {
         this.pageList[index].clear();

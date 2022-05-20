@@ -115,6 +115,9 @@ const actions = {
                 })
         })
     },
+    setPairPrice({state, commit}, price) {
+        commit("setPairPrice", price)
+    },
     setPairCoinId({state, commit}, data) {
         commit("setPairCoinId", data)
     },
@@ -185,6 +188,9 @@ const mutations = {
         state.pair.tradePricePrecision = obj.tradePricePrecision || 0 // 价格精度
         state.pair.tradeAmountPrecision = obj.tradeAmountPrecision || 0 // 数量精度
         setStorageSync(pairKey, JSON.stringify(state.pair))
+    },
+    ["setPairPrice"](state, price) {
+        state.pair.price = price
     },
     ["setPairCoinId"](state, obj) {
         state.pair.coin.id = obj.coinId

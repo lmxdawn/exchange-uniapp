@@ -62,6 +62,7 @@ import messages from '../../locale/index';
 import myNavBarTab from '../../components/my-nav-bar/my-nav-bar-tab';
 import swiperListPage from '../../components/market/swiper-list-page.nvue';
 import swiperListPageHead from '../../components/market/swiper-list-page-head.vue';
+import {WS_MARKET_LISTEN} from "../../constant/wsListenConstant";
 
 // 缓存每页最多
 const MAX_CACHE_DATA = 100;
@@ -158,29 +159,36 @@ export default {
     this.selectorQuery();
   },
   onLoad() {
-    // 监听撮合事件
-    uni.$on('matchWs',(obj)=>{
-      let coinId = obj.coinId
-      let len = this.tabList.length
-      for (var i = 0; i < len; i++) {
-        if (this.tabList[i].nid === coinId) {
-          this.setTabItem(i, obj)
-          break;
+    // 监听行情事件
+    uni.$on(WS_MARKET_LISTEN,(res)=>{
+      if (res.match) {
+        const obj = res.match
+        let coinId = res.coinId
+        obj.coinId = coinId
+        obj.tradeCoinId = res.tradeCoinId
+        let len = this.tabList.length
+        for (let i = 0; i < len; i++) {
+          if (this.tabList[i].nid === coinId) {
+            this.setTabItem(i, obj)
+            break;
+          }
         }
+        // 总是去更新自选
+        this.setTabItem(0, obj)
       }
-      // 总是去更新自选
-      this.setTabItem(0, obj)
     })
 
     // 模拟撮合
     setTimeout(() => {
-      let item = {
+      let matchData = {
         tradeCoinId: 3,
         coinId: 1,
-        price: 3.311,
-        amount: 2,
+        match: {
+          price: 3.311,
+          amount: 2,
+        }
       }
-      uni.$emit('matchWs', item)
+      uni.$emit(WS_MARKET_LISTEN, matchData)
 
     }, 2 * 1000)
   },
@@ -188,8 +196,8 @@ export default {
     this.refreshData(this.tabIndex)
   },
   onUnload() {
-    // 移除撮合监听事件
-    uni.$off('matchWs');
+    // 移除行情事件的监听
+    uni.$off(WS_MARKET_LISTEN);
   },
   methods: {
     onNavBarTabClickItem(index) {

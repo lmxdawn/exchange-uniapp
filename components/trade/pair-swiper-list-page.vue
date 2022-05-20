@@ -174,7 +174,6 @@ export default {
       let price = obj.price
       let amount = obj.amount
       let len = this.dataList.length
-      console.log(this.dataList)
       for (let i = 0; i < len; i++) {
         let item = this.dataList[i]
         if (item.tradeCoin && item.tradeCoin.id === tradeCoinId && item.coin && item.coin.id === coinId) {
