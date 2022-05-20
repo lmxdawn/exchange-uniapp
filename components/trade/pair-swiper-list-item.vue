@@ -19,9 +19,8 @@
 </template>
 
 <script>
-  import {mapActions, mapGetters} from "vuex";
+  import {mapGetters} from "vuex";
   import {accMul} from "../../utils/decimal"
-  import {navigateBack, navigateTo} from "../../utils/common";
 	export default {
 		props: {
       //  宽度，单位px
@@ -70,16 +69,12 @@
       }
     },
 		methods: {
-      ...mapActions({
-        setPairCoinId: "setPairCoinId",
-      }),
 			click() {
         const params = {
           coinId: this.listItem.coin.id,
           tradeCoinId: this.listItem.tradeCoin.id,
         }
-        this.setPairCoinId(params)
-        navigateBack()
+        this.$emit("click", params)
 			},
 		}
 	}

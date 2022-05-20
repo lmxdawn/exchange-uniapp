@@ -187,7 +187,7 @@
           </scroll-view>
           <swiper :current="tabIndex" class="pair-list-page-swiper" :duration="300" @change="ontabchange">
             <swiper-item class="pair-list-page-swiper-item" v-for="(page, index) in tabList" :key="page.id">
-              <swiper-list-page class="pair-list-page-swiper-list-item" :loading-more-text="loadingMoreText" :nid="page.nid" :ref="'page' + index" width="300px"></swiper-list-page>
+              <swiper-list-page class="pair-list-page-swiper-list-item" :loading-more-text="loadingMoreText" :nid="page.nid" :ref="'page' + index" width="300px" @pairItemClick="pairItemClick"></swiper-list-page>
             </swiper-item>
           </swiper>
 
@@ -475,6 +475,7 @@
       ...mapActions({
         setPair: "setPair",
         setTradeIsShowInit: "setTradeIsShowInit",
+        setPairCoinId: "setPairCoinId",
       }),
       onNavBarTabClickItem(index) {
         this.navBarTabIndex = index
@@ -654,6 +655,11 @@
       },
       pairListTo() {
         this.$refs.pairList.open()
+      },
+      pairItemClick(params) {
+        this.$refs.pairList.close()
+        this.setPairCoinId(params)
+        this.init()
       },
       pairListChange(status) {
         if (!this.changeStatus && status) {

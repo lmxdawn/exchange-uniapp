@@ -2,7 +2,7 @@
   <view class="page-news">
     <scroll-view class="listview" style="flex: 1;" enableBackToTop="true" scroll-y @scrolltolower="loadMore()">
       <view v-for="(item, index) in dataList" :key="item.id">
-        <swiper-list-item :listItem="item" :width="width"></swiper-list-item>
+        <swiper-list-item :listItem="item" :width="width" @click="itemClick"></swiper-list-item>
       </view>
       <my-empty v-if="isNoData" :text="emptyText" :click-data="nid" @emptyClick="emptyClick" :loadingStatus="loadingStatus" :width="width"></my-empty>
       <view class="loading-more" v-if="loadingStatus !== 'noMore' && params.page > 1">
@@ -100,6 +100,9 @@ export default {
       if (data === 0) {
         console.log("点击了空状态")
       }
+    },
+    itemClick(params) {
+      this.$emit("pairItemClick", params)
     },
     loadData(refresh) {
       if (this.nid === 0 && this.marketCollect.size === 0) {
