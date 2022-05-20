@@ -117,7 +117,6 @@ const actions = {
     },
     setPairCoinId({state, commit}, data) {
         commit("setPairCoinId", data)
-        commit("setTradeIsShowInit", 1)
     },
     setTradeIsShowInit({state, commit}, isInit) {
         commit("setTradeIsShowInit", isInit)
