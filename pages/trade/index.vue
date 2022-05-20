@@ -441,18 +441,18 @@
 
       // 监听深度图数据事件
       uni.$on(WS_MARKET_LISTEN,(res)=>{
+        const obj = res.match || {}
         // 判断是不是当前交易对
-        console.log(res.tradeCoinId, res.coinId)
-        console.log(this.pair.tradeCoin.id, this.pair.coin.id)
         if (res.tradeCoinId === this.pair.tradeCoin.id && res.coinId === this.pair.coin.id) {
           let sellList = res.sellList || []
           this.depthSell = sellList.reverse()
           this.depthBuy = res.buyList || []
+          if (obj.price && obj.price > 0) {
+            // 更新价格
+            this.setPairPrice(obj.price)
+          }
         }
-        if (res.match) {
-          const obj = res.match
-          // 更新价格
-          this.setPairPrice(obj.price)
+        if (obj.price && obj.price > 0) {
           let coinId = res.coinId
           obj.coinId = coinId
           obj.tradeCoinId = res.tradeCoinId

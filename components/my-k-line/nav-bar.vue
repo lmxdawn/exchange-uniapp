@@ -67,6 +67,7 @@ export default {
   margin-left: 5rpx;
   margin-right: 10rpx;
   color: #b8c6d8;
+  font-size: 20px;
 }
 
 .header-box-left {

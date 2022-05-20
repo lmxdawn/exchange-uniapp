@@ -7,6 +7,7 @@ import {mapGetters} from "vuex";
 import {marketDepthList} from "../../api/market/depth";
 import {marketKLineList} from "../../api/market/kLine";
 import {pairRead} from "../../api/trade/pair";
+import {WS_MARKET_LISTEN} from "../../constant/wsListenConstant";
 
 export default {
   computed: {
@@ -46,6 +47,21 @@ export default {
       this.params.coinId = option.coinId
       this.params.tradeCoinId = option.tradeCoinId
     }
+
+    // 监听深度图数据事件
+    uni.$on(WS_MARKET_LISTEN,(res)=>{
+      // 判断是不是当前交易对
+      if (res.tradeCoinId === this.pair.tradeCoin.id && res.coinId === this.pair.coin.id) {
+        const buyList = res.buyList || []
+        const sellList = res.sellList || []
+        this.createDepth(buyList, sellList)
+        const obj = res.match || {}
+        if (obj.price && obj.price > 0) {
+          // 更新价格
+          this.pair.price = obj.price
+        }
+      }
+    })
   },
   onReady() {
     // 初始化
@@ -408,8 +424,8 @@ export default {
     // }, 2000)
   },
   onUnload() {
-    // 移除深度图数据监听事件
-    uni.$off('depthWs');
+    // 移除行情监听事件
+    uni.$off(WS_MARKET_LISTEN);
   },
   methods: {
     init() {
@@ -489,25 +505,28 @@ export default {
               return false
             }
             let buyList = res.data.buyList ||[]
-            let buyData = []
-            for (let i = 0; i < buyList.length; i++) {
-              buyData.push([
-                  buyList[i].price,
-                  buyList[i].amount,
-              ])
-            }
             let sellList = res.data.sellList || []
-            let sellData = []
-            for (let i = 0; i < sellList.length; i++) {
-              sellData.push([
-                sellList[i].price,
-                sellList[i].amount,
-              ])
-            }
-            this.$refs.myKLine.createDepth(buyData, sellData)
+            this.createDepth(buyList, sellList)
           })
           .catch(() => {
           })
+    },
+    createDepth(buyList, sellList) {
+      let buyData = []
+      for (let i = 0; i < buyList.length; i++) {
+        buyData.push([
+          buyList[i].price,
+          buyList[i].amount,
+        ])
+      }
+      let sellData = []
+      for (let i = 0; i < sellList.length; i++) {
+        sellData.push([
+          sellList[i].price,
+          sellList[i].amount,
+        ])
+      }
+      this.$refs.myKLine.createDepth(buyData, sellData)
     }
   }
 };

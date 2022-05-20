@@ -1,6 +1,7 @@
+import {WS_MARKET_LISTEN,WS_ENTRUST_ORDER_LISTEN} from "../constant/wsListenConstant";
+
 export default class socketIO {
     constructor(time) {
-        this.socketTask = null
         this.wsUrl = "" // 链接地址
         this.wsPort = "" // 端口
         this.socketOpen = false //避免重复连接
@@ -48,13 +49,8 @@ export default class socketIO {
     // 启动连接
     connectSocket() {
         const wsUrl = `ws://${this.wsUrl}:${this.wsPort}/ws`
-        this.socketTask = uni.connectSocket({
+        uni.connectSocket({
             url: wsUrl,
-            success: () => {
-                console.log("正准备建立websocket中...");
-                // 返回实例
-                return this.socketTask
-            },
         });
     }
 
@@ -85,9 +81,10 @@ export default class socketIO {
     onSocketMessage() {
         uni.onSocketMessage((res) => {
             console.log('收到服务器内容：' + res.data);
-            let data = res.data
+            const data = JSON.parse(res.data)
+            const type = parseInt(data.type)
             // type:（0：心跳，1：登录成功的返回，2：行情的推送，3：委托订单变化）
-            switch (data.type) {
+            switch (type) {
                 case 0:
                     console.log("服务端心跳")
                     break
@@ -96,9 +93,11 @@ export default class socketIO {
                     break
                 case 2:
                     console.log("行情推送来了", data)
+                    uni.$emit(WS_MARKET_LISTEN, JSON.parse(data.data))
                     break
                 case 3:
                     console.log("委托订单的变化通知来了", data)
+                    uni.$emit(WS_ENTRUST_ORDER_LISTEN, JSON.parse(data.data))
                     break
             }
         });
@@ -133,7 +132,7 @@ export default class socketIO {
 
     //发送消息。type：（0：心跳，1：用户登录，2：游客登录）
     Send(data, success) {
-        console.log("data---------->", data);
+        // console.log("data---------->", data);
         // 注：只有连接正常打开中 ，才能正常成功发送消息
         if (!this.socketOpen) {
             // 没有在线，加入队列
@@ -142,7 +141,7 @@ export default class socketIO {
         }
         if (typeof success !== 'function') {
             success = () => {
-                console.log("消息发送成功");
+                // console.log("消息发送成功");
             }
         }
         uni.sendSocketMessage({
@@ -191,7 +190,6 @@ export default class socketIO {
             return false
         }
         this.reconnectLock = true
-        this.socketTask = null
         this.socketOpen = false;
         // 停止发送心跳
         clearInterval(this.heartbeatInterval)
@@ -203,7 +201,7 @@ export default class socketIO {
             return false
         }
 
-        console.log(`WebSocket连接失败，正尝试第${this.connectNum}次连接`)
+        // console.log(`WebSocket连接失败，正尝试第${this.connectNum}次连接`)
 
         this.reconnectTimeOut = setInterval(() => {
             this.connectSocketInit();
