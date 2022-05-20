@@ -1,5 +1,5 @@
 <template>
-	<view class="swiper-item-cell" @click="click" :class="[background]" :style="{width: width}" hover-class="swiper-item-cell-hover">
+	<view class="swiper-item-cell" @click="click" :class="[background]" hover-class="swiper-item-cell-hover">
     <view class="swiper-item-cell-left">
       <view class="swiper-item-cell-text-box">
         <view class="swiper-item-cell-text-list">
@@ -91,7 +91,7 @@
     justify-content: center;
     align-items: flex-start;
     flex-direction: row;
-    padding: 12px 15px 0;
+    padding: 8px 15px 0;
     background-color: transparent;
     transition-property: background-color;
     transition-duration: .5s

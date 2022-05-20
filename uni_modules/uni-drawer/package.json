@@ -1,21 +1,26 @@
 {
-  "id": "uni-scss",
-  "displayName": "uni-scss 辅助样式",
-  "version": "1.0.3",
-  "description": "uni-sass是uni-ui提供的一套全局样式 ，通过一些简单的类名和sass变量，实现简单的页面布局操作，比如颜色、边距、圆角等。",
+  "id": "uni-drawer",
+  "displayName": "uni-drawer 抽屉",
+  "version": "1.2.1",
+  "description": "抽屉式导航，用于展示侧滑菜单，侧滑导航。",
   "keywords": [
-    "uni-scss",
     "uni-ui",
-    "辅助样式"
+    "uniui",
+    "drawer",
+    "抽屉",
+    "侧滑导航"
 ],
   "repository": "https://github.com/dcloudio/uni-ui",
   "engines": {
-    "HBuilderX": "^3.1.0"
+    "HBuilderX": ""
+  },
+  "directories": {
+    "example": "../../temps/example_temps"
   },
   "dcloudext": {
     "category": [
-        "JS SDK",
-        "通用 SDK"
+      "前端组件",
+      "通用组件"
     ],
     "sale": {
       "regular": {
@@ -36,7 +41,7 @@
     "npmurl": "https://www.npmjs.com/package/@dcloudio/uni-ui"
   },
   "uni_modules": {
-    "dependencies": [],
+    "dependencies": ["uni-scss"],
     "encrypt": [],
     "platforms": {
       "cloud": {
@@ -46,7 +51,7 @@
       "client": {
         "App": {
           "app-vue": "y",
-          "app-nvue": "u"
+          "app-nvue": "y"
         },
         "H5-mobile": {
           "Safari": "y",
@@ -69,8 +74,8 @@
           "QQ": "y"
         },
         "快应用": {
-          "华为": "n",
-          "联盟": "n"
+          "华为": "u",
+          "联盟": "u"
         },
         "Vue": {
             "vue2": "y",

@@ -73,7 +73,8 @@ export default {
       navigateTo(kLineUrl, "slide-in-right")
     },
     pairListTo() {
-      navigateTo("trade/pairList")
+      this.$emit("pairListTo")
+      // navigateTo("trade/pairList")
     }
   }
 }

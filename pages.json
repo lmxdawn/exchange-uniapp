@@ -74,22 +74,6 @@
       }
     },
     {
-      "path": "pages/trade/pairList",
-      "style": {
-        "navigationBarTitleText": "%common.title%",
-        "navigationStyle":"custom",
-        // #ifndef APP-PLUS
-        "enablePullDownRefresh": true,
-        // #endif
-        "backgroundColor": "transparent",
-        "app-plus":{
-          "animationType": "slide-in-left",
-          "background": "transparent",
-          "popGesture": "none"
-        }
-      }
-    },
-    {
       "path": "pages/contract/index",
       "style": {
         "navigationBarTitleText": "%common.title%",

@@ -1,29 +1,5 @@
 <template>
   <view class="page-news">
-    <!-- #ifdef APP-NVUE -->
-    <list ref="list" class="listview" @loadmore="loadMore">
-      <refresh class="refresh" :style="{width: width}" :display="refreshing ? 'show' : 'hide'" @refresh="onrefresh" @pullingdown="onpullingdown">
-        <!--<div class="refresh-view">-->
-        <!--  <text class="loading-icon">加载中...</text>-->
-        <!--</div>-->
-        <div class="refresh-view">
-          <image class="refresh-icon" :src="refreshIcon" :style="{width: (refreshing || pulling) ? 0: '30px'}" :class="{'refresh-icon-active': refreshFlag}"></image>
-          <loading-indicator class="loading-icon" animating="true" v-if="refreshing || pulling"></loading-indicator>
-          <text class="loading-text">{{refreshText}}</text>
-        </div>
-      </refresh>
-      <cell class="cell" v-for="(item, index) in dataList" :key="item.id">
-        <swiper-list-item :listItem="item" :width="width"></swiper-list-item>
-      </cell>
-      <cell v-if="isNoData">
-        <my-empty :text="emptyText" :click-data="nid" @emptyClick="emptyClick" :loadingStatus="loadingStatus" :width="width"></my-empty>
-      </cell>
-      <cell v-if="loadingStatus !== 'noMore' && params.page > 1">
-        <uni-load-more :status="loadingStatus" iconType="circle" :contentText="loadingMoreText"></uni-load-more>
-      </cell>
-    </list>
-    <!-- #endif -->
-    <!-- #ifndef APP-NVUE -->
     <scroll-view class="listview" style="flex: 1;" enableBackToTop="true" scroll-y @scrolltolower="loadMore()">
       <view v-for="(item, index) in dataList" :key="item.id">
         <swiper-list-item :listItem="item" :width="width"></swiper-list-item>
@@ -33,7 +9,6 @@
         <uni-load-more :status="loadingStatus" iconType="circle" :contentText="loadingMoreText"></uni-load-more>
       </view>
     </scroll-view>
-    <!-- #endif -->
   </view>
 </template>
 
@@ -44,7 +19,7 @@ import {
   initVueI18n
 } from '@dcloudio/uni-i18n'
 import messages from '../../locale';
-import swiperListItem from './pair-swiper-list-item.nvue';
+import swiperListItem from './pair-swiper-list-item';
 import {accAdd, accMul, accSub, accDiv} from "../../utils/decimal";
 import {pairList} from "../../api/trade/pair";
 import myEmpty from "../my-empty/my-empty";
@@ -127,7 +102,6 @@ export default {
       }
     },
     loadData(refresh) {
-
       if (this.nid === 0 && this.marketCollect.size === 0) {
         this.isNoData = true
         this.dataList = []
@@ -216,15 +190,6 @@ export default {
       this.params.page = 1;
     },
     refreshStatus() {
-      setTimeout(() => {
-        this.pulling = true;
-        this.refreshing = false;
-        this.refreshFlag = false;
-        this.refreshText = this.refreshStatusText.complete;
-        setTimeout(() => { // TODO fix ios和Android 动画时间相反问题
-          this.pulling = false;
-        }, 500);
-      }, 500);
     },
     refreshData() {
       this.refreshing = true;
@@ -232,29 +197,6 @@ export default {
       this.params.page = 1
       this.loadData(true);
     },
-    onrefresh(e) {
-      if (!this.refreshFlag) {
-        return;
-      }
-      this.refreshData();
-      // #ifdef APP-NVUE
-      this.$refs.list.resetLoadmore();
-      // #endif
-
-    },
-    onpullingdown(e) {
-      if (this.refreshing || this.pulling) {
-        return;
-      }
-
-      if (Math.abs(e.pullingDistance) > Math.abs(e.viewHeight)) {
-        this.refreshFlag = true;
-        this.refreshText = this.refreshStatusText.freed;
-      } else {
-        this.refreshFlag = false;
-        this.refreshText = this.refreshStatusText.pull;
-      }
-    }
   }
 }
 </script>
@@ -263,6 +205,7 @@ export default {
 
 .page-news {
   flex: 1;
+  display: flex;
   flex-direction: column;
   position: relative;
   left: 0;
@@ -284,35 +227,6 @@ export default {
   /* #ifndef MP-ALIPAY */
   flex-direction: column;
   /* #endif */
-}
-
-.refresh {
-  height: 64px;
-  flex-direction: row;
-  align-items: center;
-  justify-content: center;
-}
-
-.refresh-view {
-  width: 750rpx;
-  flex-direction: row;
-  flex-wrap: nowrap;
-  align-items: center;
-  justify-content: center;
-}
-
-.refresh-icon {
-  margin-top: 1px;
-  width: 35px;
-  height: 35px;
-  transition-duration: .5s;
-  transition-property: transform;
-  transform: rotate(0deg);
-  transform-origin: 16px 17px;
-}
-
-.refresh-icon-active {
-  transform: rotate(180deg);
 }
 
 .loading-icon {
