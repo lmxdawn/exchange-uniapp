@@ -220,7 +220,7 @@
   import {entrustOrderList} from "../../api/trade/entrustOrder";
   import {accMul,accDiv} from "../../utils/decimal";
   import {entrustOrderCreate} from "../../api/trade/entrustOrder";
-  import {navigateTo, navigateToLogin, redirectTo} from "../../utils/common";
+  import {navigateTo, navigateToLogin} from "../../utils/common";
   import {WS_MARKET_LISTEN} from "../../constant/wsListenConstant";
 
   const { t } = initVueI18n(messages)

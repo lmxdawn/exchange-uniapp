@@ -1,6 +1,6 @@
 <template>
   <view class="my-k-line">
-    <nav-bar :pair="pair" :statusBar="true"></nav-bar>
+    <nav-bar :pair="pair" :statusBar="true" @drawerClick="drawerClick"></nav-bar>
     <view class="k-line-header">
       <view class="k-line-header-left">
         <text class="k-line-header-left-up">{{pair.price < 0 ? '--' : Number(pair.price).toFixed(pair.tradePricePrecision)}}</text>
@@ -153,6 +153,9 @@ export default {
     },
     dataZoomLeft() {
       this.$emit('dataZoomLeft')
+    },
+    drawerClick() {
+      this.$emit("drawerClick")
     }
   }
 }

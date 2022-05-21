@@ -5,7 +5,7 @@
         <view class="header-box-left">
           <uni-icons type="back" color="#b8c6d8" size="28"@click="back"></uni-icons>
           <text class="header-line">|</text>
-          <uni-icons class="header-box-left__drawer" color="#b8c6d8" type="bars" size="28"></uni-icons>
+          <uni-icons class="header-box-left__drawer" color="#b8c6d8" type="bars" size="28" @click="drawerClick"></uni-icons>
           <text class="header-box-left__symbol">{{ pair.tradeCoin.name }}/{{ pair.coin.name }}</text>
         </view>
         <view class="header-box-right">
@@ -46,6 +46,9 @@ export default {
   methods: {
     back() {
       navigateBack()
+    },
+    drawerClick() {
+      this.$emit("drawerClick")
     }
   }
 }
