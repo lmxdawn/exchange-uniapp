@@ -1,6 +1,6 @@
 <template>
   <view class="entrust-order" @click="forwardTo">
-    <view class="entrust-order-info" :class="[item.status === 1 ? 'center' : '']">
+    <view class="entrust-order-info">
       <view class="entrust-order-info-right">
         <view class="entrust-order-info-right-top">
           <uni-icons color="#2DBD96" type="download" size="25" v-if="item.direction === 1"></uni-icons>
@@ -10,27 +10,27 @@
         </view>
         <text class="entrust-order-info-right-time">{{item.createTime}}</text>
       </view>
-      <view class="entrust-order-info-cancel-box" :class="[item.status !== 1 ? 'gray' : '']">
+      <view class="entrust-order-info-cancel-box" :class="typeClass">
         <text class="entrust-order-info-cancel">{{cancelText}}</text>
         <uni-icons class="entrust-order-info-forward" v-if="item.status !== 1 && forward" type="forward" color="#E1E8F5" size="17"></uni-icons>
       </view>
     </view>
-    <view class="entrust-order-data" :class="[item.status === 1 ? 'row' : '']">
-      <view class="entrust-order-data-item">
+    <view class="entrust-order-data">
+      <view class="entrust-order-data-item" :style="dataItemStyle">
         <text class="entrust-order-data-item-head">{{numText}}</text>
         <text class="entrust-order-data-item-value">{{num}}</text>
       </view>
-      <view class="entrust-order-data-item">
+      <view class="entrust-order-data-item" :style="dataItemStyle">
         <text class="entrust-order-data-item-head">{{priceText}}</text>
         <text class="entrust-order-data-item-value">{{price}}</text>
       </view>
-      <view class="entrust-order-data-item" v-if="item.status !== 1">
+      <view class="entrust-order-data-item" v-if="item.status !== 1" :style="dataItemStyle">
         <text class="entrust-order-data-item-head">{{priceAvgText}}</text>
         <text class="entrust-order-data-item-value">{{priceAvg}}</text>
       </view>
-      <view class="entrust-order-data-item">
+      <view class="entrust-order-data-item" :style="dataItemStyle">
         <text class="entrust-order-data-item-head">{{completeText}}</text>
-        <text class="entrust-order-data-item-value bg">{{completeNum}}</text>
+        <text class="entrust-order-data-item-value" :class="totalClass">{{completeNum}}</text>
       </view>
     </view>
   </view>
@@ -62,7 +62,16 @@ export default {
       default() {
         return false;
       }
-    }
+    },
+    typeClass: {
+      type: String,
+      default: ""
+    },
+    totalClass: {
+      type: String,
+      default: ""
+    },
+    dataItemStyle: Object
   },
   computed: {
     ...mapGetters({
@@ -197,13 +206,15 @@ export default {
   display: flex;
   flex-direction: row;
   justify-content: space-between;
+  align-items: center;
   &.gray {
+    align-items: flex-start;
     .entrust-order-info-cancel {
       color: #9197A3;
       border: 0;
       padding: 5px 0 0;
       /* #ifndef APP-NVUE */
-      padding-top: 2px
+      padding-top: 3px
       /* #endif */
     }
   }
@@ -224,25 +235,15 @@ export default {
 .entrust-order-data {
   margin-top: 10px;
   display: flex;
+  flex-direction: row;
   justify-content: space-between;
-  &.row {
-    flex-direction: row;
-    .entrust-order-data-item {
-      flex-direction: column;
-    }
-    .entrust-order-data-item-value {
-      &.bg {
-        padding: 2px 0;
-        background-color: #1B2B32;
-        width: 90px;
-      }
-    }
-  }
+  flex-flow: row wrap;
 }
 .entrust-order-data-item {
   display: flex;
-  flex-direction: row;
   justify-content: space-between;
+  flex-direction: column;
+  align-items: flex-start;
 }
 .entrust-order-data-item-head {
   font-size: 12px;
@@ -253,5 +254,11 @@ export default {
   font-weight: 500;
   color: #E1E8F5;
   margin-top: 5px;
+  &.bg {
+    padding: 2px 0;
+    background-color: #1B2B32;
+    width: 100px;
+    border-radius: 2px;
+  }
 }
 </style>

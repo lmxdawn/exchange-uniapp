@@ -10,7 +10,6 @@
         <uni-icons color="#E1E8F5" type="back" size="22"/>
       </view>
     </view>
-    <view class="history-line"></view>
     <swiper :current="tabIndex" class="history-page-swiper" :duration="300" @change="ontabchange">
       <swiper-item class="history-page-swiper-item" v-for="(page, index) in tabList" :key="page.id">
         <entrust-order-swiper-list-page class="history-page-swiper-list-item" :loading-more-text="loadingMoreText" :refresh-status-text="refreshStatusText" :nid="page.nid" :ref="'page' + index"></entrust-order-swiper-list-page>
@@ -21,7 +20,7 @@
 
 <script>
 import myNavBarTab from '../../components/my-nav-bar/my-nav-bar-tab';
-import entrustOrderSwiperListPage from "../../components/trade/entrust-order-swiper-list-page.nvue";
+import entrustOrderSwiperListPage from "../../components/trade/entrust-order-swiper-list-page";
 import {
   initVueI18n
 } from '@dcloudio/uni-i18n'
@@ -157,19 +156,11 @@ export default {
 
 <style lang="scss" scoped>
 
-/* #ifndef APP-PLUS */
-page {
-  width: 100%;
-  min-height: 100%;
-  display: flex;
-}
-/* #endif */
-
 .page-box {
-  flex: 1;
-  /* #ifndef APP-PLUS */
   width: 100%;
-  /* #endif */
+  height: 100vh;
+  display: flex;
+  flex-direction: column;
 }
 
 .history-tab-box {
@@ -215,19 +206,16 @@ page {
   font-size: 16px;
   font-weight: bold;
 }
-//.history-tab-item-title-active-line {
-//  background-color: #2DBD96;
-//  height: 2px;
-//  margin-top: 5px;
-//}
 
 .history-page-swiper {
   flex: 1;
+  display: flex;
   background-color: #11151F;
 }
 
 .history-page-swiper-item {
   flex: 1;
+  display: flex;
   flex-direction: column;
 }
 
@@ -239,12 +227,6 @@ page {
   top: 0;
   right: 0;
   bottom: 0;
-}
-
-.history-line {
-  width: 750rpx;
-  height: 10px;
-  background-color: #11151F;
 }
 
 </style>

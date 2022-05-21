@@ -54,12 +54,10 @@
       "style": {
         "navigationBarTitleText": "%common.title%",
         "navigationStyle":"custom",
-        // #ifndef APP-PLUS
         "enablePullDownRefresh": true,
-        // #endif
         "app-plus":{
           "titleNView":false,
-          "background":"#191E29"
+          "background":"#11151F"
         }
       }
     },
@@ -67,9 +65,10 @@
       "path": "pages/trade/historyDetails",
       "style": {
         "navigationBarTitleText": "%trade.order.history.details%",
+        "navigationBarBackgroundColor": "#11151F",
         "enablePullDownRefresh": true,
         "app-plus":{
-          "background":"#191E29"
+          "background":"#11151F"
         }
       }
     },

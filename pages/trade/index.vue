@@ -153,7 +153,7 @@
             <my-empty :text="emptyText" height="80px" width="80px" :loadingStatus="loadingStatus"></my-empty>
           </view>
           <view class="trade-order-list" v-else>
-            <entrust-order class="trade-order-item" v-for="item in orderList" :key="item.id" :item="item"></entrust-order>
+            <entrust-order class="trade-order-item" v-for="item in orderList" :key="item.id" :item="item" total-class="bg"></entrust-order>
             <view class="load-more" v-if="loadingStatus !== 'noMore' || params.page > 1">
               <uni-load-more :status="loadingStatus" color="#2DBD96" iconType="circle" :contentText="loadingMoreText"></uni-load-more>
             </view>

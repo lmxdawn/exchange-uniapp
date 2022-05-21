@@ -8,6 +8,15 @@ export function entrustOrderList(params) {
         params: params
     });
 }
+
+// 委托单详情
+export function entrustOrderRead(params) {
+    return request({
+        url: "/trade/entrust-order/read",
+        method: "get",
+        params: params
+    });
+}
 // 发起委托单
 export function entrustOrderCreate(data) {
     return request({
