@@ -2,9 +2,11 @@
 
 > Java 交易所源码，前端APP使用uniapp开发，后端使用java开发，采用 Spring Cloud Alibaba 微服务架构，撮合引擎使用Disruptor高效内存队列，所有服务可以实现分布式部署，websocket推送通过增加一层路由服务实现分布式部署
 
+**如果对你有帮助，麻烦小手给一个star**
+
 # 说明
 
-> *之前由于uniapp的闪屏一度准备放弃，暂时解决闪屏问题，重新开始开发*
+> **之前由于uniapp的闪屏一度准备放弃，暂时解决闪屏问题，重新开始开发**
 
 [uni-app切换页面闪屏或者白屏](https://ask.dcloud.net.cn/question/73807)
 
