@@ -88,7 +88,7 @@
 </template>
 
 <script>
-  // 解析数据 数据意义(下标)：[1]开盘(open)，[2]收盘(close)，[3]最低(lowest)，[4]最高(highest)，[5]数量(vol)
+  // 解析数据 数据意义(下标)：[1]开盘(open)，[2]收盘(close)，[3]最低(lowest)，[4]最高(highest)，[5]成交额(vol)
   function splitData(raw) {
     let categoryData = [];
     let values = [];
@@ -233,7 +233,7 @@
     methods: {
       // 追加历史数据
       addHistoryData(historyData, tabItem) {
-        this.kLineData = historyData.reverse().concat(this.kLineData)
+        this.kLineData = historyData.concat(this.kLineData)
         this.createKline(this.kLineData, tabItem)
       },
       // 追加数据

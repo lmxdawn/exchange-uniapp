@@ -80,31 +80,37 @@ export default {
   data() {
     return {
       data: [],
+      // 时间类型（1min：1分钟,5min：5分钟,15min：15分钟,30min：30分钟,1hour：1小时,4hour：1小时,1day：1天,1week：1周,1month：1月）
       tabList: [
         {
           id: 'time-sharing',
           timeType: 'm',
           name: '分时',
+          value: '1min',
         },
         {
           id: '15min',
           timeType: 'h',
           name: '15分钟',
+          value: '15min',
         },
         {
           id: '1h',
           timeType: 'h',
           name: '1小时',
+          value: '1hour',
         },
         {
           id: '4h',
           timeType: 'h',
           name: '4小时',
+          value: '4hour',
         },
         {
           id: 'one-day',
           timeType: 'd',
           name: '日K',
+          value: '1day',
         },
         {
           id: 'more',
