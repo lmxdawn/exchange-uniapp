@@ -221,7 +221,7 @@
   import {accMul,accDiv} from "../../utils/decimal";
   import {entrustOrderCreate} from "../../api/trade/entrustOrder";
   import {navigateTo, navigateToLogin} from "../../utils/common";
-  import {WS_MARKET_LISTEN} from "../../constant/wsListenConstant";
+  import {WS_ENTRUST_ORDER_LISTEN, WS_MARKET_LISTEN} from "../../constant/wsListenConstant";
 
   const { t } = initVueI18n(messages)
 
@@ -433,6 +433,7 @@
         tabIndex: 0,
         cacheTab: [],
         scrollInto: "",
+        pageList: [],
         search: "",
       }
 		},
@@ -468,6 +469,11 @@
         }
       })
 
+      // 监听委托订单变化的通知
+      uni.$emit(WS_ENTRUST_ORDER_LISTEN, (res) => {
+        this.getOrderList()
+      })
+
 		},
     onShow() {
       if (this.tradeIsShowInit === 1) {
@@ -482,6 +488,8 @@
     onUnload() {
       // 移除行情监听事件
       uni.$off(WS_MARKET_LISTEN);
+      // 移除委托订单发生变化的通知
+      uni.$off(WS_ENTRUST_ORDER_LISTEN);
     },
     onReachBottom() {
       this.loadMore()
@@ -740,7 +748,9 @@
         this.pageList[index].refreshData();
       },
       setTabItem(index, obj) {
-        this.pageList[index].setItem(obj);
+        if (this.pageList.length > index) {
+          this.pageList[index].setItem(obj);
+        }
       },
       clearTabData(index) {
         this.pageList[index].clear();

@@ -2,6 +2,7 @@ import * as types from "../mutation-types";
 import {getStorageSync, setStorageSync} from "../../utils/storage"
 import {usdtRateRead} from "../../api/trade/usdtRate";
 import {pairRead} from "../../api/trade/pair";
+import {accDiv, accMul, accSub} from "../../utils/decimal";
 
 // 自选
 const marketCollectKey = "marketCollectKey";
@@ -190,6 +191,9 @@ const mutations = {
         setStorageSync(pairKey, JSON.stringify(state.pair))
     },
     ["setPairPrice"](state, price) {
+        let difference = accSub(price, state.pair.price24)
+        // 计算涨跌幅 涨跌幅=涨跌值/昨收盘*100%
+        state.pair.rate24 = Number(accMul(accDiv(difference, state.pair.price24), 100)).toFixed(2)
         state.pair.price = price
     },
     ["setPairCoinId"](state, obj) {

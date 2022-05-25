@@ -120,6 +120,7 @@ export default {
       tabIndex: 1,
       tabId: '15min',
       timeType: 'h',
+      value: '15min',
     }
   },
   methods: {
@@ -127,6 +128,7 @@ export default {
       this.tabIndex = index
       this.tabId = item.id
       this.timeType = item.timeType
+      this.value = item.value
       this.$emit('tabSelected', item)
     },
     addHistoryData(historyData) {
@@ -140,6 +142,7 @@ export default {
       let tabItem = {
         id: this.tabId,
         timeType: this.timeType,
+        value: this.value,
       }
       this.$refs.kEcharts.addData(oo, tabItem)
     },
@@ -147,6 +150,7 @@ export default {
       let tabItem = {
         id: this.tabId,
         timeType: this.timeType,
+        value: this.value,
       }
       this.$refs.kEcharts.createKline(optionData, tabItem)
     },
@@ -154,6 +158,7 @@ export default {
       let tabItem = {
         id: this.tabId,
         timeType: this.timeType,
+        value: this.value,
       }
       this.$refs.kEcharts.createDepth(buy, sell, tabItem)
     },

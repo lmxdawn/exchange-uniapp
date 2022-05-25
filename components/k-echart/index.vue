@@ -13,7 +13,7 @@
         <text>{{volMA5}}</text>
       </view>
       <view class="echarts-MA5">
-        MA10:
+        MA5:
         <text>{{MA5}}</text>
       </view>
       <view class="echarts-MA10">
@@ -89,6 +89,7 @@
 
 <script>
   // 解析数据 数据意义(下标)：[1]开盘(open)，[2]收盘(close)，[3]最低(lowest)，[4]最高(highest)，[5]成交额(vol)
+
   function splitData(raw) {
     let categoryData = [];
     let values = [];
@@ -132,7 +133,7 @@
     ** 返回值：arg1加上arg2的精确结果
   **/
   function accAdd(arg1, arg2) {
-    var r1, r2, m, c;
+    let r1, r2, m, c;
     try {
       r1 = arg1.toString().split(".")[1].length;
     } catch (e) {
@@ -160,6 +161,29 @@
     }
     return (arg1 + arg2) / m;
   }
+
+  /**
+   ** 乘法函数，用来得到精确的乘法结果
+   ** 说明：javascript的乘法结果会有误差，在两个浮点数相乘的时候会比较明显。这个函数返回较为精确的乘法结果。
+   ** 调用：accMul(arg1,arg2)
+   ** 返回值：arg1乘以 arg2的精确结果
+   **/
+  export function accMul(arg1, arg2) {
+    let m = 0,
+        s1 = arg1.toString(),
+        s2 = arg2.toString();
+    try {
+      m += s1.split(".")[1].length;
+    } catch (e) {}
+    try {
+      m += s2.split(".")[1].length;
+    } catch (e) {}
+    return (
+        (Number(s1.replace(".", "")) * Number(s2.replace(".", ""))) /
+        Math.pow(10, m)
+    );
+  }
+
   let upColor = '#2DBD96';
   let downColor = '#ED6666';
   let colorList = ['#c23531', '#2f4554', '#61a0a8', '#d48265', '#91c7ae', '#749f83', '#ca8622', '#bda29a', '#6e7074',
@@ -226,6 +250,7 @@
         depthOption: {},
         tabId: '15min',
         timeType: 'h',
+        isAdd: false,
       }
     },
     mounted() {
@@ -233,26 +258,80 @@
     methods: {
       // 追加历史数据
       addHistoryData(historyData, tabItem) {
+        if (historyData.length === 0) {
+          return false
+        }
+        this.isAdd = false
         this.kLineData = historyData.concat(this.kLineData)
         this.createKline(this.kLineData, tabItem)
       },
       // 追加数据
       addData(oo, tabItem) {
+        if (!this.option.kLineData) {
+          return false
+        }
+        const timeStr = tabItem.value
+        const timeMap = {
+          "1min": 60,
+          "5min": 5 * 60,
+          "15min": 15 * 60,
+          "30min": 30 * 60,
+          "1hour": 60 * 60,
+          "4hour": 4 * 60 * 60,
+          "1day": 24 * 60 * 60,
+          "1week": 7 * 24 * 60 * 60,
+          "1month": 0,
+        }
+        const timeSubMap = {
+          "1day": -8 * 60 * 60,
+          "1week": 4 * 24 * 60 * 60 - 8 * 60 * 60,
+        }
+        if (tabItem.value === "1month") {
+          let dateTime = new Date();
+          dateTime.setMilliseconds(0);
+          dateTime.setSeconds(0);
+          dateTime.setHours(0);
+          dateTime.setMinutes(0);
+          dateTime.setDate(1);
+          oo.time = dateTime.getTime() / 1000;
+        } else {
+          const nowTime = new Date().getTime() / 1000;
+          const timeValue = timeMap[timeStr];
+          let time = nowTime - (nowTime % timeValue);
+          if (timeSubMap[timeStr]) {
+            time = time + timeSubMap[timeStr];
+          }
+          oo.time = time;
+        }
+        console.log(tabItem.value, oo)
         this.tabId = tabItem.id
         this.timeType = tabItem.timeType
+        const price = oo.price;
+        const vol = accMul(oo.amount, oo.price);
+        let item = [oo.time,price,price,price,price,vol];
+        let kLineData = this.option.kLineData;
+        let lastIndex = kLineData.length > 0 ? kLineData.length - 1 : -1;
         let isUp = false;
-        let isUpIndex = -1;
-        for (let i = 0; i < this.kLineData.length; i++) {
-          if (this.kLineData[i][0] === oo[0]) {
-            isUp = true;
-            isUpIndex = i;
-            this.kLineData[isUpIndex] = oo
+        if (lastIndex !== -1) {
+          const tempItem = kLineData[lastIndex];
+          if (kLineData[lastIndex][0] === oo.time) {
+            isUp = true
+            item[1] = tempItem[1];
+            item[3] = price < tempItem[3] ? price : tempItem[3];
+            item[4] = price > tempItem[4] ? price : tempItem[4];
+            item[5] += vol;
+          } else {
+            item[1] = tempItem[2];
           }
         }
-        if (!isUp) {
-          this.kLineData.push(oo)
+        if (isUp) {
+          kLineData[lastIndex] = item
+        } else {
+          kLineData.push(item)
         }
-        this.createKline(this.kLineData)
+
+        this.isAdd = kLineData.length > 20
+        this.createKline(kLineData, tabItem)
       },
       // 获取k线数据,生成k线
       createKline(kLineData, tabItem) {
@@ -530,12 +609,13 @@
               type: 'candlestick',
               name: 'k',
               data: data.values,
+              barMaxWidth: 10,
               markLine: {
                 symbol: 'none', //去掉警戒线最后面的箭头
                 data: [
                   {
                     silent: false,//鼠标悬停事件  true没有，false有
-                    yAxis: data.values[data.values.length - 1][1],// 这里收盘价作为警戒线的标注值，可以有多个yAxis,多条警示线   或者采用   {type : 'average', name: '平均值'}，type值有  max  min  average，分为最大，最小，平均值
+                    yAxis: data.values.length > 0 ? data.values[data.values.length - 1][1] : 0,// 这里收盘价作为警戒线的标注值，可以有多个yAxis,多条警示线   或者采用   {type : 'average', name: '平均值'}，type值有  max  min  average，分为最大，最小，平均值
                     lineStyle: {               //警戒线的样式  ，虚实  颜色
                       type: "dotted",
                       color: '#5A96E8',
@@ -617,6 +697,7 @@
             {
               name: 'Volume',
               type: 'bar',
+              barMaxWidth: 10,
               xAxisIndex: 1,
               yAxisIndex: 1,
               data: data.volumes
@@ -723,7 +804,7 @@
           tooltipClose: this.tooltipClose,
           tooltipVol: this.tooltipVol,
         }
-        option.kLineData = this.kLineData
+        option.kLineData = kLineData
         this.option = option
       },
       createDepth(buy, sell, tabItem) {
@@ -1005,6 +1086,9 @@
               color: 'rgba(90,150,232, 0.02)'
             }], false)
           }
+          if (this.isAdd) {
+            delete newValue.dataZoom
+          }
           myChart.setOption(newValue)
         }
 			},
@@ -1074,27 +1158,27 @@
                   '<view style="display: flex;flex-direction: row;align-items: center;justify-content: space-between;padding: 5px 0;"><view style="color: #51617b;">' + i18n.tooltipVol + '</view><view style="color: #acbadf;margin-left: 30px">' + amount + '</view></view></view>';
             }
             if (params[i].seriesName === 'MA5') {
-              let MA5 = params[i].data !== 'NAN' ? Number(params[i].data).toFixed(2) : 0
+              let MA5 = params[i].data !== '-' ? Number(params[i].data).toFixed(2) : 0
               // 调用 service 层的方法
               ownerInstance.callMethod('onTooltipMA5', MA5)
             }
             if (params[i].seriesName === 'MA10') {
-              let MA10 = params[i].data !== 'NAN' ? Number(params[i].data).toFixed(2) : 0
+              let MA10 = params[i].data !== '-' ? Number(params[i].data).toFixed(2) : 0
               // 调用 service 层的方法
               ownerInstance.callMethod('onTooltipMA10', MA10)
             }
             if (params[i].seriesName === 'MA30') {
-              let MA30 = params[i].data !== 'NAN' ? Number(params[i].data).toFixed(2) : 0
+              let MA30 = params[i].data !== '-' ? Number(params[i].data).toFixed(2) : 0
               // 调用 service 层的方法
               ownerInstance.callMethod('onTooltipMA30', MA30)
             }
             if (params[i].seriesName === 'VolumeMA5') {
-              let volMA5 = params[i].data !== 'NAN' ? Number(params[i].data).toFixed(2) : 0
+              let volMA5 = params[i].data !== '-' ? Number(params[i].data).toFixed(2) : 0
               // 调用 service 层的方法
               ownerInstance.callMethod('onTooltipVolMA5', volMA5)
             }
             if (params[i].seriesName === 'VolumeMA10') {
-              let volMA10 = params[i].data !== 'NAN' ? Number(params[i].data).toFixed(2) : 0
+              let volMA10 = params[i].data !== '-' ? Number(params[i].data).toFixed(2) : 0
               // 调用 service 层的方法
               ownerInstance.callMethod('onTooltipVolMA10', volMA10)
             }

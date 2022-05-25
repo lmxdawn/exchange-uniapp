@@ -45,6 +45,7 @@ import {pairRead} from "../../api/trade/pair";
 import swiperListPage from "../../components/trade/pair-swiper-list-page"
 import myInput from "../../components/my-input/input"
 import {WS_MARKET_LISTEN} from "../../constant/wsListenConstant";
+import {accDiv, accMul, accSub} from "../../utils/decimal";
 
 // 缓存每页最多
 const MAX_CACHE_DATA = 100;
@@ -129,6 +130,7 @@ export default {
       tabIndex: 0,
       cacheTab: [],
       scrollInto: "",
+      pageList: [],
       search: "",
       loadingMoreText: {
         contentdown: this.$t('common.more.down'),
@@ -159,10 +161,17 @@ export default {
         if (obj.price && obj.price > 0) {
           // 更新价格
           this.pair.price = obj.price
+          let difference = accSub(this.pair.price, this.pair.price24)
+          // 计算涨跌幅 涨跌幅=涨跌值/昨收盘*100%
+          this.pair.rate24 = Number(accMul(accDiv(difference, this.pair.price24), 100)).toFixed(2)
         }
       }
 
       if (obj.price && obj.price > 0) {
+        this.$refs.myKLine.addData({
+          amount: obj.amount,
+          price: obj.price,
+        })
         let coinId = res.coinId
         obj.coinId = coinId
         obj.tradeCoinId = res.tradeCoinId
@@ -177,6 +186,7 @@ export default {
         this.setTabItem(0, obj)
       }
     })
+
   },
   onUnload() {
     // 移除行情监听事件
@@ -198,6 +208,26 @@ export default {
             // 获取深度图
             this.echartsDepthLoadingStatus = 'loading'
             this.getDepth()
+
+            // let i = 0;
+            // let o = 0;
+            // setInterval(() => {
+            //   if (o > 3) {
+            //     // return
+            //   }
+            //   o++
+            //   const r = Math.ceil(Math.random()*10)
+            //   uni.$emit(WS_MARKET_LISTEN, {
+            //     tradeCoinId: this.pair.tradeCoin.id,
+            //     coinId: this.pair.coin.id,
+            //     match: {
+            //       amount: 10,
+            //       price: 30000 + r > 5 ? r : -r,
+            //     }
+            //   })
+            //   i = i + 60
+            // }, 1000)
+
           })
     },
     echartsTabSelected(item) {
@@ -219,7 +249,7 @@ export default {
               return false
             }
             let data = res.data
-            // 组装数据，数据意义(下标)：[0]时间，[1]开盘(open)，[2]收盘(close)，[3]最低(lowest)，[4]最高(highest)，[5]数量(vol)
+            // 组装数据，数据意义(下标)：[0]时间，[1]开盘(open)，[2]收盘(close)，[3]最低(lowest)，[4]最高(highest)，[5]成交额(vol)
             let kLineData = []
             for (let i = 0; i < data.length; i++) {
               kLineData.push([
@@ -340,7 +370,9 @@ export default {
       this.pageList[index].refreshData();
     },
     setTabItem(index, obj) {
-      this.pageList[index].setItem(obj);
+      if (this.pageList.length > index) {
+        this.pageList[index].setItem(obj);
+      }
     },
     clearTabData(index) {
       this.pageList[index].clear();

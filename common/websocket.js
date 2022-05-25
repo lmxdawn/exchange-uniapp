@@ -97,7 +97,7 @@ export default class socketIO {
                     break
                 case 3:
                     console.log("委托订单的变化通知来了", data)
-                    uni.$emit(WS_ENTRUST_ORDER_LISTEN, JSON.parse(data.data))
+                    uni.$emit(WS_ENTRUST_ORDER_LISTEN, data.data)
                     break
             }
         });
