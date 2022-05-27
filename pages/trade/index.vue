@@ -300,7 +300,7 @@
           let item = this.depthSell[i] || {price: -1, amount: -1}
           list.push(item)
         }
-        return list
+        return list.reverse()
       },
       depthBuyList() {
         let len = this.depthType === 0 ? 7 : (this.depthType === 2 ? 14 : 0)
@@ -445,9 +445,14 @@
         const obj = res.match || {}
         // 判断是不是当前交易对
         if (res.tradeCoinId === this.pair.tradeCoin.id && res.coinId === this.pair.coin.id) {
-          let sellList = res.sellList || []
-          this.depthSell = sellList.reverse()
-          this.depthBuy = res.buyList || []
+          const sellList = res.sellList || []
+          if (sellList.length > 0) {
+            this.depthSell = sellList
+          }
+          const buyList = res.buyList || []
+          if (buyList.length > 0) {
+            this.depthBuy = buyList
+          }
           if (obj.price && obj.price > 0) {
             // 更新价格
             this.setPairPrice(obj.price)
@@ -564,7 +569,7 @@
                 return false
               }
               let sellList = res.data.sellList || []
-              this.depthSell = sellList.reverse()
+              this.depthSell = sellList
               this.depthBuy = res.data.buyList ||[]
             })
             .catch(() => {
