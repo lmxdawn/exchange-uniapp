@@ -102,6 +102,7 @@
               </view>
               <view class="depth-list-body">
                 <view class="depth-list-item" v-for="(item, index) in depthSellList" :key="index">
+                  <view class="depth-list-item__bg sell" :style="{width: (depthSellSum > 0 ? item.sum / depthSellSum * 100 + 5 : 0) + '%'}"></view>
                   <text class="depth-list-item__price sell">{{item.price < 0 ? '--' : Number(item.price).toFixed(pair.tradePricePrecision)}}</text>
                   <text class="depth-list-item__amount">{{ item.amount < 0 ? '--' : Number(item.amount).toFixed(pair.tradeAmountPrecision) }}</text>
                 </view>
@@ -112,6 +113,7 @@
               </view>
               <view class="depth-list-body">
                 <view class="depth-list-item" v-for="(item, index) in depthBuyList" :key="index">
+                  <view class="depth-list-item__bg buy" :style="{width: (depthBuySum > 0 ? item.sum / depthBuySum * 100 + 5 : 0) + '%'}"></view>
                   <text class="depth-list-item__price buy">{{item.price < 0 ? '--' : Number(item.price).toFixed(pair.tradePricePrecision)}}</text>
                   <text class="depth-list-item__amount">{{ item.amount < 0 ? '--' : Number(item.amount).toFixed(pair.tradeAmountPrecision) }}</text>
                 </view>
@@ -218,7 +220,7 @@
   import {marketDepthList} from "../../api/market/depth";
   import {memberCoinPairBalance} from "../../api/user/memberCoin";
   import {entrustOrderList} from "../../api/trade/entrustOrder";
-  import {accMul,accDiv} from "../../utils/decimal";
+  import {accMul,accDiv,accAdd} from "../../utils/decimal";
   import {entrustOrderCreate} from "../../api/trade/entrustOrder";
   import {navigateTo, navigateToLogin} from "../../utils/common";
   import {WS_ENTRUST_ORDER_LISTEN, WS_MARKET_LISTEN} from "../../constant/wsListenConstant";
@@ -296,19 +298,27 @@
       depthSellList() {
         let len = this.depthType === 0 ? 7 : (this.depthType === 1 ? 14 : 0)
         let list = []
+        let sum = 0;
         for (let i = 0; i < len; i++) {
           let item = this.depthSell[i] || {price: -1, amount: -1}
+          sum = accAdd(sum, item.amount)
+          item.sum = sum;
           list.push(item)
         }
+        this.depthSellSum = sum
         return list.reverse()
       },
       depthBuyList() {
         let len = this.depthType === 0 ? 7 : (this.depthType === 2 ? 14 : 0)
         let list = []
+        let sum = 0;
         for (let i = 0; i < len; i++) {
           let item = this.depthBuy[i] || {price: -1, amount: -1}
+          sum = accAdd(sum, item.amount)
+          item.sum = sum;
           list.push(item)
         }
+        this.depthBuySum = sum
         return list
       },
       loginText() {
@@ -378,7 +388,9 @@
         tradeBalance: -1,
         balance: -1,
         depthSell: [],
+        depthSellSum: 0,
         depthBuy: [],
+        depthBuySum: 0,
         isNoData: true,
         loadingStatus: "more",
         orderList: [],
@@ -984,8 +996,21 @@
     flex-direction: row;
     justify-content: space-between;
     align-items: center;
-    padding: 3px 0;
+    position: relative;
+    &__bg {
+      position: absolute;
+      top: 0;
+      bottom: 0;
+      right: 0;
+      &.sell {
+        background-color: rgba(237, 102, 102, 0.2);
+      }
+      &.buy {
+        background-color: rgba(45, 189, 150, 0.2);
+      }
+    }
     &__price {
+      padding: 3px 0;
       font-size: 14px;
       &.sell {
         color: #ED6666;
@@ -995,6 +1020,7 @@
       }
     }
     &__amount {
+      padding: 3px 0;
       font-size: 14px;
       color: #E1E8F5;
     }
