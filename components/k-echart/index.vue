@@ -830,7 +830,7 @@
         let sellDataList = [];
         let sellData = [];
         let sellSum = 0;
-        if (!buy || buy.length === 0) {
+        if (!sell || sell.length === 0) {
           sell = this.sellData
         }
         let sellLen = sell.length > 20 ? 20 : sell.length;
@@ -841,6 +841,7 @@
         }
         this.sellSum = sellSum;
         this.sellData = sellDataList;
+
 
         let depthOption = {
           animation: false,

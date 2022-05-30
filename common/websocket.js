@@ -14,6 +14,9 @@ export default class socketIO {
         this.reconnectTimeOut = null //重连之后多久再次重连
         this.reconnectLock = false // 重连锁，防止重复重连
 
+        // 设置行情的变化速率，防止过快造成视觉冲突
+        this.marketTime = new Date().getTime();
+
         // 用户相关
         this.memberId = 0 // 用户ID
         this.token = "" // 用户token
@@ -80,7 +83,7 @@ export default class socketIO {
     // 监听服务端发送过来的消息
     onSocketMessage() {
         uni.onSocketMessage((res) => {
-            console.log('收到服务器内容：' + res.data);
+            // console.log('收到服务器内容：' + res.data);
             const data = JSON.parse(res.data)
             const type = parseInt(data.type)
             // type:（0：心跳，1：登录成功的返回，2：行情的推送，3：委托订单变化）
@@ -93,7 +96,12 @@ export default class socketIO {
                     break
                 case 2:
                     console.log("行情推送来了")
-                    uni.$emit(WS_MARKET_LISTEN, JSON.parse(data.data))
+                    if ((new Date().getTime()) - this.marketTime >= 800) {
+                        this.marketTime = new Date().getTime()
+                        uni.$emit(WS_MARKET_LISTEN, JSON.parse(data.data))
+                    } else {
+                        console.log("速率过快")
+                    }
                     break
                 case 3:
                     console.log("委托订单的变化通知来了", data)
