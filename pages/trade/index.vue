@@ -468,7 +468,7 @@
       if (!this.isListen) {
         // 监听深度图数据事件
         uni.$on(WS_MARKET_LISTEN,(res)=>{
-          console.log("监听到数据")
+          console.log("监听到数据1")
           const obj = res.match || {}
           // 判断是不是当前交易对
           if (res.tradeCoinId === this.pair.tradeCoin.id && res.coinId === this.pair.coin.id) {
