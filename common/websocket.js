@@ -92,7 +92,7 @@ export default class socketIO {
                     console.log("登录成功消息")
                     break
                 case 2:
-                    console.log("行情推送来了", data)
+                    console.log("行情推送来了")
                     uni.$emit(WS_MARKET_LISTEN, JSON.parse(data.data))
                     break
                 case 3:

@@ -372,6 +372,7 @@
     },
 		data() {
 			return {
+			  isListen: false,
         navBarTabIndex: 0,
         params: {
           tradeCoinId: "",
@@ -452,44 +453,6 @@
 		onLoad() {
       this.init()
 
-      // 监听深度图数据事件
-      uni.$on(WS_MARKET_LISTEN,(res)=>{
-        const obj = res.match || {}
-        // 判断是不是当前交易对
-        if (res.tradeCoinId === this.pair.tradeCoin.id && res.coinId === this.pair.coin.id) {
-          const sellList = res.sellList || []
-          if (sellList.length > 0) {
-            this.depthSell = sellList
-          }
-          const buyList = res.buyList || []
-          if (buyList.length > 0) {
-            this.depthBuy = buyList
-          }
-          if (obj.price && obj.price > 0) {
-            // 更新价格
-            this.setPairPrice(obj.price)
-          }
-        }
-        if (obj.price && obj.price > 0) {
-          let coinId = res.coinId
-          obj.coinId = coinId
-          obj.tradeCoinId = res.tradeCoinId
-          let len = this.tabList.length
-          for (let i = 0; i < len; i++) {
-            if (this.tabList[i].nid === coinId) {
-              this.setTabItem(i, obj)
-              break;
-            }
-          }
-          // 总是去更新自选
-          this.setTabItem(0, obj)
-        }
-      })
-
-      // 监听委托订单变化的通知
-      uni.$emit(WS_ENTRUST_ORDER_LISTEN, (res) => {
-        this.getOrderList()
-      })
 
 		},
     onShow() {
@@ -500,6 +463,49 @@
       if (this.isShowPayPwd) {
         this.isShowPayPwd = false
         this.showPayPwd()
+      }
+
+      if (!this.isListen) {
+        // 监听深度图数据事件
+        uni.$on(WS_MARKET_LISTEN,(res)=>{
+          const obj = res.match || {}
+          // 判断是不是当前交易对
+          if (res.tradeCoinId === this.pair.tradeCoin.id && res.coinId === this.pair.coin.id) {
+            const sellList = res.sellList || []
+            if (sellList.length > 0) {
+              console.log("卖盘", sellList)
+              this.depthSell = sellList
+            }
+            const buyList = res.buyList || []
+            if (buyList.length > 0) {
+              console.log("买盘", buyList)
+              this.depthBuy = buyList
+            }
+            if (obj.price && obj.price > 0) {
+              // 更新价格
+              this.setPairPrice(obj.price)
+            }
+          }
+          if (obj.price && obj.price > 0) {
+            let coinId = res.coinId
+            obj.coinId = coinId
+            obj.tradeCoinId = res.tradeCoinId
+            let len = this.tabList.length
+            for (let i = 0; i < len; i++) {
+              if (this.tabList[i].nid === coinId) {
+                this.setTabItem(i, obj)
+                break;
+              }
+            }
+            // 总是去更新自选
+            this.setTabItem(0, obj)
+          }
+        })
+
+        // 监听委托订单变化的通知
+        uni.$emit(WS_ENTRUST_ORDER_LISTEN, (res) => {
+          this.getOrderList()
+        })
       }
     },
     onUnload() {
